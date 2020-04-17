@@ -21,15 +21,3 @@ export const TUsersSchema = new Schema({
   created: { type: Date, default: Date.now },
 });
 TUsersSchema.index({ name: 1, surname: 1 }, { unique: true });
-
-// DTO
-export class CreateUserDto {
-  @IsNotEmpty()
-  readonly ememployeeId: string;
-  @IsNotEmpty()
-  readonly name: string;
-  @IsNotEmpty()
-  readonly surname: string;
-  readonly position: string;
-  readonly role: string;
-}

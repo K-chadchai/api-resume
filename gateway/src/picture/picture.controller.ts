@@ -3,13 +3,13 @@ import { ClientKafka } from '@nestjs/microservices';
 import { catchError } from 'rxjs/operators';
 import { _KafkaModule, _KafkaMessage } from 'src/app.constants';
 
-@Controller()
+@Controller('picture')
 export class PictureController {
-  constructor(@Inject(_KafkaModule.picture) private readonly svcMedia: ClientKafka) {}
+  constructor(@Inject(_KafkaModule.picture) private readonly svcMediaPicture: ClientKafka) {}
   //
   async onModuleInit() {
-    this.svcMedia.subscribeToResponseOf(_KafkaMessage.picture_getPicture);
-    await this.svcMedia.connect();
+    this.svcMediaPicture.subscribeToResponseOf(_KafkaMessage.picture_getPicture);
+    await this.svcMediaPicture.connect();
   }
   //
   @Get()
@@ -17,7 +17,7 @@ export class PictureController {
     const sendTime = new Date().toISOString();
     console.log('sendTime', sendTime);
     const payload = { name: 'nikom', sendTime };
-    return this.svcMedia.send(_KafkaMessage.picture_getPicture, payload).pipe(
+    return this.svcMediaPicture.send(_KafkaMessage.picture_getPicture, payload).pipe(
       catchError(err => {
         throw new InternalServerErrorException(err);
       }),

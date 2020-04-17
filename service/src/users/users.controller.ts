@@ -1,9 +1,9 @@
 import { Controller, UseFilters, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AppExceptions } from 'src/app.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { _KafkaMessage } from 'src/app.constants';
-import { CreateUserDto, TUsersInterface } from './users.schema';
+import { TUsersInterface } from './users.schema';
 
 @Controller()
 @UseFilters(new AppExceptions())
@@ -11,8 +11,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   //
   @MessagePattern(_KafkaMessage.users_createUser)
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.createUser(createUserDto);
+  async createUser(@Payload() { value }) {
+    // console.log('payload-value:', value);
+    try {
+      return await this.usersService.createUser(value);
+    } catch (error) {
+      throw new RpcException(error.errmsg);
+    }
   }
   //
   @MessagePattern(_KafkaMessage.users_getUsersAll)

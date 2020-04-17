@@ -1,8 +1,8 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
+import { RpcException, MessagePattern } from '@nestjs/microservices';
 import { AppExceptions } from 'src/app.service';
-import { CreateUserDto, TUsersInterface } from './users.schema';
-import { _MongoTables } from 'src/app.constants';
+import { TUsersInterface } from './users.schema';
+import { _MongoTables, _KafkaMessage } from 'src/app.constants';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -14,9 +14,10 @@ export class UsersService {
     private tUsersModel: Model<TUsersInterface>,
   ) {}
   //
-  async createUser(createUserDto: CreateUserDto) {
-    const tUsersModel = new this.tUsersModel(createUserDto);
-    await tUsersModel.save();
+  async createUser(value) {
+    // console.log('value:', value);
+    const tUsersModel = new this.tUsersModel(value);
+    return await tUsersModel.save();
   }
   //
   async getUsersAll(): Promise<TUsersInterface[]> {

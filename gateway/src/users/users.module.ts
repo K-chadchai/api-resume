@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PictureController } from './picture.controller';
+import { UsersController } from './users.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { _KafkaBrokers, _KafkaModule } from 'src/app.constants';
+import { _KafkaModule, _KafkaBrokers } from 'src/app.constants';
 
-const kafkaName = _KafkaModule.picture;
+const kafkaName = _KafkaModule.users;
 
 @Module({
-  controllers: [PictureController],
   imports: [
     ClientsModule.register([
       {
@@ -24,5 +23,6 @@ const kafkaName = _KafkaModule.picture;
       },
     ]),
   ],
+  controllers: [UsersController],
 })
-export class PictureModule {}
+export class UsersModule {}
