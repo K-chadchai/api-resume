@@ -15,6 +15,6 @@ async function bootstrap() {
     },
   });
   await app.listenAsync();
-  log.log(`> svc-media is running ... `);
+  log.log(`[Ready] ${_AppName} `);
 }
 bootstrap();

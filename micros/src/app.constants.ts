@@ -1,7 +1,7 @@
 import e = require('express');
 
 const _ProjectName = 'media';
-export const _AppName = `svc-${_ProjectName}`;
+export const _AppName = `${_ProjectName}-micro`;
 
 // Mongo
 export const _MongoConn =
@@ -20,4 +20,5 @@ export const _KafkaMessage = {
   picture_getPicture: `${_ProjectName}.picture.getPicture`,
   users_createUser: `${_ProjectName}.users.createUser`,
   users_getUsersAll: `${_ProjectName}.users.getUsersAll`,
+  users_updateUser: `${_ProjectName}.users.updateUser`,
 };
