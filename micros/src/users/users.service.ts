@@ -1,13 +1,10 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { RpcException, MessagePattern } from '@nestjs/microservices';
-import { AppExceptions } from 'src/app.service';
+import { Injectable } from '@nestjs/common';
 import { TUsersInterface } from './users.schema';
 import { _MongoTables, _KafkaMessage } from 'src/app.constants';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
-@UseFilters(new AppExceptions())
 export class UsersService {
   constructor(
     @InjectModel(_MongoTables.users)

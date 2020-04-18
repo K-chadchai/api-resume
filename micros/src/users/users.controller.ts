@@ -1,4 +1,4 @@
-import { Controller, UseFilters, Body } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AppExceptions } from 'src/app.service';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
@@ -12,7 +12,6 @@ export class UsersController {
   //
   @MessagePattern(_KafkaMessage.users_createUser)
   async createUser(@Payload() { value }) {
-    // console.log('payload-value:', value);
     try {
       return await this.usersService.createUser(value);
     } catch (error) {
