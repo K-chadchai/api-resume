@@ -11,6 +11,7 @@ export const _KafkaModule = {
 // MessagePattern
 export const _KafkaMessage = {
   picture_getPicture: `${_ProjectName}.picture.getPicture`,
+  pokemon_create: `${_ProjectName}.pokemon.create`,
   users_createUser: `${_ProjectName}.users.createUser`,
   users_getUsersAll: `${_ProjectName}.users.getUsersAll`,
   users_updateUser: `${_ProjectName}.users.updateUser`,
