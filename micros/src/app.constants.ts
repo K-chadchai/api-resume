@@ -1,5 +1,3 @@
-import e = require('express');
-
 const _ProjectName = 'media';
 export const _AppName = `${_ProjectName}-micro`;
 
@@ -18,7 +16,6 @@ export const _KafkaBrokers = ['localhost:9092'];
 // MessagePattern
 export const _KafkaMessage = {
   picture_getPicture: `${_ProjectName}.picture.getPicture`,
-  pokemon_create: `${_ProjectName}.pokemon.create`,
   users_createUser: `${_ProjectName}.users.createUser`,
   users_getUsersAll: `${_ProjectName}.users.getUsersAll`,
   users_updateUser: `${_ProjectName}.users.updateUser`,

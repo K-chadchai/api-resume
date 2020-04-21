@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Observable, throwError } from 'rxjs';
+import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @Catch(RpcException)
 export class AppExceptions implements RpcExceptionFilter<RpcException> {
@@ -17,12 +19,13 @@ export class AppExceptions implements RpcExceptionFilter<RpcException> {
 
 @Injectable()
 export class AppService {
+  constructor(@InjectConnection() private connection: Connection) {}
   async execute(onCallback: Function) {
     try {
       let session;
       // Create transaction
       try {
-        // session = await this.connection.startSession();
+        session = await this.connection.startSession();
         session.startTransaction();
       } catch (error) {
         Logger.error(error);
