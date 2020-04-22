@@ -11,7 +11,7 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: { brokers: _KafkaBrokers },
-      consumer: { groupId: _AppName },
+      consumer: { groupId: `media` },
     },
   });
   await app.listenAsync();

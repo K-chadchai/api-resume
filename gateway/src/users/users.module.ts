@@ -1,23 +1,21 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { _KafkaModule, _KafkaBrokers } from 'src/app.constants';
-
-const kafkaName = _KafkaModule.users;
+import { _KafkaBrokers } from 'src/app.constants';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: kafkaName,
+        name: `media.users`,
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: kafkaName,
+            clientId: `media.users`,
             brokers: _KafkaBrokers,
           },
           consumer: {
-            groupId: kafkaName,
+            groupId: `media.users`,
           },
         },
       },
