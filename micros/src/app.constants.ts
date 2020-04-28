@@ -14,5 +14,4 @@ export const _MongoTables = {
 export const _KafkaBrokers = ['localhost:9092'];
 export const _KafaModule = {
   users: `${_ProjectName}.users`,
-  pokemon: `${_ProjectName}.pokemon`,
 };

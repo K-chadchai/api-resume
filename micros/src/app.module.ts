@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { _MongoConn } from './app.constants';
 import { UsersModule } from './users/users.module';
 import { CoreModule } from './core/core.module';
-import { PokemonModule } from './pokemon/pokemon.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -16,7 +15,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     TypeOrmModule.forRoot({ autoLoadEntities: true }),
     UsersModule,
-    PokemonModule,
     CoreModule,
   ],
 })
