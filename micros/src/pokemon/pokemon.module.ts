@@ -3,10 +3,11 @@ import { PokemonService } from './pokemon.service';
 import { PokemonController } from './pokemon.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PokemonEntity } from './pokemon.entity';
+import { AppService } from 'src/app.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PokemonEntity])],
-  providers: [PokemonService],
+  providers: [PokemonService, AppService],
   controllers: [PokemonController],
 })
 export class PokemonModule {}
