@@ -1,6 +1,10 @@
-import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 
-@Entity('pokemon')
+const tname = 'pokemon';
+
+@Entity(tname)
+@Unique(`uc_${tname}_code`, ['code'])
+@Unique(`uc_${tname}_type_name`, ['type', 'name'])
 export class PokemonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
