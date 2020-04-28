@@ -1,19 +1,50 @@
-import { Controller, Inject, Post, Get, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Post,
+  Get,
+  Put,
+  Delete,
+  InternalServerErrorException,
+  Req,
+} from '@nestjs/common';
 import { _KafaModule } from 'src/app.constants';
 import { ClientKafka } from '@nestjs/microservices';
+import { catchError } from 'rxjs/operators';
+
+const _kafkaName = _KafaModule.pokemon;
 
 @Controller('pokemon')
 export class PokemonController {
-  constructor(@Inject(_KafaModule.pokemon) private readonly svcMediaPokemon: ClientKafka) {}
+  constructor(@Inject(_kafkaName) private readonly svcMediaPokemon: ClientKafka) {}
+  //
+  async onModuleInit() {
+    this.svcMediaPokemon.subscribeToResponseOf(_kafkaName);
+    await this.svcMediaPokemon.connect();
+  }
+  //
+  send(_action: String, value = {}) {
+    return this.svcMediaPokemon.send(_kafkaName, { _action, ...value }).pipe(
+      catchError(err => {
+        throw new InternalServerErrorException(err);
+      }),
+    );
+  }
   //
   @Post()
   create() {
-    console.log('Hello Pokemon');
+    return this.send('create', { name: 'nikom' });
   }
 
   @Get()
   findAll() {
     console.log('findAll');
+  }
+
+  @Get('/:id')
+  findById(@Req() { params }) {
+    const { id } = params;
+    console.log('id', id);
   }
 
   @Put()
