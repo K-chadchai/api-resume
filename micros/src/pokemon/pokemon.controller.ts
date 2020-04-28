@@ -18,12 +18,18 @@ export class PokemonController {
     console.log('_action', _action);
     console.log('value', value);
     try {
-      return this.appService.postgresRunner((runner) => {
+      return await this.appService.postgresRunner(async (runner) => {
         switch (_action) {
           case 'create':
-            console.log('create', value);
-            break;
-
+            return await this.pokemonService.create(runner, value);
+          case 'findAll':
+            return await this.pokemonService.findAll(runner);
+          case 'findById':
+            return await this.pokemonService.findById(runner, value);
+          case 'update':
+            return await this.pokemonService.update(runner, value);
+          case 'delete':
+            return await this.pokemonService.delete(runner, value);
           default:
             break;
         }

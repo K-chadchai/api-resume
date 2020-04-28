@@ -12,7 +12,7 @@ import {
 import { _KafaModule } from 'src/app.constants';
 import { ClientKafka } from '@nestjs/microservices';
 import { catchError } from 'rxjs/operators';
-import { CreatePokemonDto } from './pokemon.dto';
+import { CreatePokemonDto, UpdatePokemonDto } from './pokemon.dto';
 
 const _kafkaName = _KafaModule.pokemon;
 
@@ -40,22 +40,23 @@ export class PokemonController {
 
   @Get()
   findAll() {
-    console.log('findAll');
+    return this.send('findAll');
   }
 
   @Get('/:id')
   findById(@Req() { params }) {
     const { id } = params;
-    console.log('id', id);
+    return this.send('findById', { id });
   }
 
   @Put()
-  update() {
-    console.log('Update');
+  update(@Body() updatePokemon: UpdatePokemonDto) {
+    return this.send('update', updatePokemon);
   }
 
-  @Delete()
-  delete() {
-    console.log('Delete');
+  @Delete('/:id')
+  delete(@Req() { params }) {
+    const { id } = params;
+    return this.send('delete', { id });
   }
 }
