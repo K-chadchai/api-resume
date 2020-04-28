@@ -7,10 +7,12 @@ import {
   Delete,
   InternalServerErrorException,
   Req,
+  Body,
 } from '@nestjs/common';
 import { _KafaModule } from 'src/app.constants';
 import { ClientKafka } from '@nestjs/microservices';
 import { catchError } from 'rxjs/operators';
+import { CreatePokemonDto } from './pokemon.dto';
 
 const _kafkaName = _KafaModule.pokemon;
 
@@ -32,8 +34,8 @@ export class PokemonController {
   }
   //
   @Post()
-  create() {
-    return this.send('create', { name: 'nikom' });
+  create(@Body() createPokemon: CreatePokemonDto) {
+    return this.send('create', createPokemon);
   }
 
   @Get()
