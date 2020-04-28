@@ -12,6 +12,6 @@ async function bootstrap() {
     new FastifyAdapter({ logger: false }),
   );
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000, '0.0.0.0', (_, address) => log.log(`[Ready] ${_AppName} >` + address));
+  await app.listen(3000, '0.0.0.0', (_, address) => log.log(`${_AppName}, ${address}`));
 }
 bootstrap();

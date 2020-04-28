@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TUsersInterface } from './users.schema';
+import { TUsersInterface } from './users.entity';
 import { _MongoTables } from 'src/app.constants';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';

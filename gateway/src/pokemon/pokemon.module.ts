@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
+import { PokemonController } from './pokemon.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { _KafkaBrokers, _KafaModule } from 'src/app.constants';
 
-const _kafkaName = _KafaModule.users;
+const _kafkaName = _KafaModule.pokemon;
 
 @Module({
   imports: [
@@ -23,6 +23,6 @@ const _kafkaName = _KafaModule.users;
       },
     ]),
   ],
-  controllers: [UsersController],
+  controllers: [PokemonController],
 })
-export class UsersModule {}
+export class PokemonModule {}

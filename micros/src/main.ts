@@ -15,6 +15,6 @@ async function bootstrap() {
     },
   });
   await app.listenAsync();
-  log.log(`[Ready] ${_AppName} `);
+  log.log(`${_AppName}, Ready.`);
 }
 bootstrap();

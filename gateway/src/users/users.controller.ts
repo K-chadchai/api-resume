@@ -4,7 +4,6 @@ import {
   Body,
   InternalServerErrorException,
   Post,
-  UseFilters,
   Get,
   Put,
   Req,
@@ -12,19 +11,40 @@ import {
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { catchError } from 'rxjs/operators';
-import { CreateUserDto, UpdateUserDto } from './users.dto';
+import { _KafaModule } from 'src/app.constants';
+import { IsNotEmpty } from 'class-validator';
+
+const _kafkaName = _KafaModule.users;
+
+class CreateUserDto {
+  @IsNotEmpty()
+  readonly employeeId: string;
+  @IsNotEmpty()
+  readonly name: string;
+  @IsNotEmpty()
+  readonly surname: string;
+  readonly position: string;
+  readonly role: string;
+}
+
+class UpdateUserDto {
+  @IsNotEmpty()
+  readonly employeeId: string;
+  readonly name: string;
+  readonly surname: string;
+}
 
 @Controller('users')
 export class UsersController {
-  constructor(@Inject(`media.users`) private readonly svcMediaUsers: ClientKafka) {}
+  constructor(@Inject(_kafkaName) private readonly svcMediaUsers: ClientKafka) {}
   //
   async onModuleInit() {
-    this.svcMediaUsers.subscribeToResponseOf(`media.users`);
+    this.svcMediaUsers.subscribeToResponseOf(_kafkaName);
     await this.svcMediaUsers.connect();
   }
   //
-  send(_action, value) {
-    return this.svcMediaUsers.send(`media.users`, { _action, ...value }).pipe(
+  send(_action, value = {}) {
+    return this.svcMediaUsers.send(_kafkaName, { _action, ...value }).pipe(
       catchError(err => {
         throw new InternalServerErrorException(err);
       }),
