@@ -21,12 +21,7 @@ export class UploaderController {
 
   @Post('upload')
   // @UseInterceptors(FilesInterceptor('files'))
-  async uploadFile2(
-    @Req() req,
-    @Res() res,
-    @Query('path') path,
-    @Query('folder') folder,
-  ) {
+  async uploadFile2(@Req() req, @Res() res, @Query() query) {
     // path = 'images/001'
     // folder = id of category_folder
     // if (!folder)
@@ -38,7 +33,7 @@ export class UploaderController {
       return await this.uploaderService.uploadFile2(
         req,
         res,
-        path,
+        query,
         async uploaded => {
           return await this.appService.dbRunner(async runner => {
             return await this.mediaService.uploadFile(runner, uploaded);

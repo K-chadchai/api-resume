@@ -43,15 +43,19 @@ export class UploaderService {
   }
 
   // Upload single file only
-  async uploadFile2(req, res, path, onSuccess) {
-    const sizes = [
-      { suffix: 'x1200x1200', width: 1200, height: 1200 },
-      { suffix: 'x800x800', width: 800, height: 800 },
-      { suffix: 'x500x500', width: 500, height: 500 },
-      { suffix: 'x300x300', width: 300, height: 300 },
-      { suffix: 'x100', width: 100 },
-      { suffix: 'x' },
-    ];
+  async uploadFile2(req, res, query, onSuccess) {
+    const { path, resize, folder } = query;
+    const isResize = resize === 'true';
+    const sizes = isResize
+      ? [
+          { suffix: 'x1200x1200', width: 1200, height: 1200 },
+          { suffix: 'x800x800', width: 800, height: 800 },
+          { suffix: 'x500x500', width: 500, height: 500 },
+          { suffix: 'x300x300', width: 300, height: 300 },
+          { suffix: 'x100', width: 100 },
+          { suffix: 'x' },
+        ]
+      : [{ suffix: 'x' }];
     const fullPath = path ? `${path}/${uuid()}` : uuid();
     //
     const storage = s3Storage({
