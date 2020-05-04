@@ -4,10 +4,15 @@ import { v4 as uuid } from 'uuid';
 
 import multer = require('multer');
 import s3Storage = require('multer-sharp-s3');
+import { AppService } from 'src/app.service';
+import { MediaService } from 'src/media/media.service';
 
 @Injectable()
 export class UploaderService {
-  constructor() {
+  constructor(
+    private readonly appService: AppService,
+    private readonly mediaService: MediaService,
+  ) {
     try {
       aws.config.update({
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -18,11 +23,30 @@ export class UploaderService {
       console.error(`Failed to set AWS Config ${error}`);
     }
   }
+
+  //
+  async deleteFile(key) {
+    return await new aws.S3()
+      .deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: key,
+      })
+      .promise()
+      .then(
+        data => {
+          console.log('deleteFile:success', data);
+        },
+        err => {
+          console.error('deleteFile:error', err);
+        },
+      );
+  }
+
   //
   async uploadFile(fileUpload) {
     const { originalname, buffer } = fileUpload;
     const urlKey = `${uuid()}.${originalname}`;
-    const data = await new aws.S3()
+    return await new aws.S3()
       .putObject({
         Body: buffer,
         Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -31,15 +55,14 @@ export class UploaderService {
       .promise()
       .then(
         data => {
-          console.log('success', data);
+          console.log('uploadFile:success', data);
           return urlKey;
         },
         err => {
-          console.error('error', err);
+          console.error('uploadFile:error', err);
           return err;
         },
       );
-    return data;
   }
 
   // Upload single file only
@@ -105,6 +128,26 @@ export class UploaderService {
       return res.status(200).json(result);
     });
   }
+
+  // Upload file to media
+  async uploadMedia(req, res, query, callback = null) {
+    const uploaded = async uploaded => {
+      return await this.appService.dbRunner(async runner => {
+        const media = await this.mediaService.uploadFile(runner, uploaded);
+        callback && (await callback(runner, media));
+        return media;
+      });
+    };
+    //
+    try {
+      return await this.uploadFile2(req, res, query, uploaded);
+    } catch (error) {
+      return res
+        .status(500)
+        .json(`Failed to upload image file: ${error.message}`);
+    }
+  }
+
   //
   async getImageBody(key) {
     if (!key) return null;

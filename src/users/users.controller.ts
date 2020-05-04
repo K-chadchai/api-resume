@@ -1,4 +1,5 @@
-import { Controller } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/camelcase */
+import { Controller, Post, Res, Req, Query, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Crud } from '@nestjsx/crud';
 import { UsersEntity } from 'src/entities/users.entity';
@@ -11,4 +12,20 @@ import { UsersEntity } from 'src/entities/users.entity';
 @Controller('users')
 export class UsersController {
   constructor(public service: UsersService) {}
+
+  @Post('upload-image')
+  async uploadUserImage(@Req() req, @Res() res, @Query() query) {
+    try {
+      return await this.service.uploadUserImage(req, res, query);
+    } catch (error) {
+      return res
+        .status(500)
+        .json(`Failed to upload user image : ${error.message}`);
+    }
+  }
+
+  @Get('image-key/:employee_id')
+  async getImageKey(@Param('employee_id') employee_id) {
+    return await this.service.getImageKey(employee_id);
+  }
 }
