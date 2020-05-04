@@ -15,12 +15,12 @@ export class UsersService extends TypeOrmCrudService<UsersEntity> {
     super(repo);
   }
 
-  // Upload user picture
-  async uploadUserImage(req, res, query) {
+  async postImage(req, res, query) {
     const { employee_id } = query;
     const callback = async (runner: QueryRunner, result) => {
       // console.log('result', result);
       const key_new = result.files.filter(item => item.suffix === 'x')[0].key;
+
       // console.log('key', key);
       const user =
         (await this.repo.findOne({ employee_id })) || new UsersEntity();
@@ -28,14 +28,17 @@ export class UsersService extends TypeOrmCrudService<UsersEntity> {
       const key_old = user.image_key;
       user.image_key = key_new;
       await runner.manager.save(user);
+
       // delete old file
       if (key_old) await this.uploaderService.deleteFile(key_old);
     };
+
     return this.uploaderService.uploadMedia(req, res, query, callback);
   }
 
-  async getImageKey(employee_id) {
+  async getImage(employee_id) {
     const user = await this.repo.findOne({ employee_id });
-    if (user) return user.image_key;
+    if (user?.image_key)
+      return await this.uploaderService.getImageBody(user.image_key);
   }
 }
