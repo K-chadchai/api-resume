@@ -8,31 +8,47 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UploaderService } from './uploader.service';
+import { MediaService } from 'src/media/media.service';
+import { AppService } from 'src/app.service';
 
 @Controller('uploader')
 export class UploaderController {
-  constructor(private readonly appService: UploaderService) {}
+  constructor(
+    private readonly uploaderService: UploaderService,
+    private readonly mediaService: MediaService,
+    private readonly appService: AppService,
+  ) {}
 
   @Post('upload')
   // @UseInterceptors(FilesInterceptor('files'))
-  async uploadFile2(@Req() req, @Res() res, @Query('path') path) {
+  async uploadFile2(
+    @Req() req,
+    @Res() res,
+    @Query('path') path,
+    @Query('folder') folder,
+  ) {
     // path = 'images/001'
+    // folder = id of category_folder
+    // if (!folder)
+    //   return res
+    //     .status(400)
+    //     .json(`Failed to upload image file: Not found foolder`);
+    //
     try {
-      return await this.appService.uploadFile2(req, res, path);
+      return await this.uploaderService.uploadFile2(
+        req,
+        res,
+        path,
+        async uploaded => {
+          return await this.appService.dbRunner(async runner => {
+            return await this.mediaService.uploadFile(runner, uploaded);
+          });
+        },
+      );
     } catch (error) {
       return res
         .status(500)
         .json(`Failed to upload image file: ${error.message}`);
-    }
-  }
-
-  @Get('fetch')
-  fetchFile(@Query('key') key) {
-    // key = 'images/001/475909f9-0054-4276-a2ff-b3a69c8fb96a-x'
-    try {
-      return this.appService.fetchFile(key);
-    } catch (error) {
-      throw new InternalServerErrorException(error);
     }
   }
 }

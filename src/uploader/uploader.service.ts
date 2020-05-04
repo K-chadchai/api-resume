@@ -43,7 +43,7 @@ export class UploaderService {
   }
 
   // Upload single file only
-  async uploadFile2(req, res, path = null) {
+  async uploadFile2(req, res, path, onSuccess) {
     const sizes = [
       { suffix: 'x1200x1200', width: 1200, height: 1200 },
       { suffix: 'x800x800', width: 800, height: 800 },
@@ -66,7 +66,7 @@ export class UploaderService {
     });
     //
     const upload = multer({ storage }).any();
-    await upload(req, res, function(error) {
+    await upload(req, res, async function(error) {
       if (error) {
         return res.status(400).json(`Failed to upload image file: ${error}`);
       }
@@ -77,7 +77,7 @@ export class UploaderService {
       }
       //
       const file = req.files[0];
-      console.log('file', file);
+      // console.log('file', file);
       const { originalname, mimetype } = file;
       // Video
       if (file.mimetype.startsWith('video/')) {
@@ -96,11 +96,13 @@ export class UploaderService {
           key: Key,
         });
       });
-      return res.status(200).json({ originalname, mimetype, files });
+      //
+      const result = await onSuccess({ originalname, mimetype, files });
+      return res.status(200).json(result);
     });
   }
   //
-  async fetchFile(key) {
+  async getImageBody(key) {
     if (!key) return null;
     const s3 = new aws.S3();
     const file = await s3

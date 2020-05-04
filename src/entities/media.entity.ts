@@ -1,8 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { MediaFiles } from './media_files.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { MediaFilesEntity } from './media_files.entity';
+import { CategoryFolderEntity } from './category_folder.entity';
 
 @Entity('media')
-export class Media {
+export class MediaEntity {
+  @ManyToOne(
+    type => CategoryFolderEntity,
+    folder => folder.id,
+  )
+  folder: CategoryFolderEntity;
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -12,11 +19,11 @@ export class Media {
   @Column()
   mimetype: string;
 
-  @Column()
+  @Column({ nullable: true })
   size: number;
 
-  @Column()
+  @Column({ nullable: true })
   key: string;
 
-  files: MediaFiles[];
+  files: MediaFilesEntity[];
 }

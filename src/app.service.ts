@@ -10,7 +10,7 @@ export class AppService {
   constructor(private connTypeOrm: ConnectionTypeOrm) {}
 
   // Postgres Session
-  async postgresRunner(onCallback: Function) {
+  async dbRunner(onCallback: Function) {
     try {
       let runner: QueryRunner;
       // Create transaction

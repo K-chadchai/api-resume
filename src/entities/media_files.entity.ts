@@ -5,14 +5,20 @@ import {
   Unique,
   ManyToOne,
 } from 'typeorm';
-import { Media } from './media.entity';
+import { MediaEntity } from './media.entity';
 
 const tname = 'media_images';
 
 @Entity(tname)
-@Unique(`uc_${tname}_suffix`, ['id', 'suffix'])
-@Unique(`uc_${tname}_key`, ['id', 'key'])
-export class MediaFiles {
+@Unique(`uc_${tname}_suffix`, ['media', 'suffix'])
+@Unique(`uc_${tname}_key`, ['media', 'key'])
+export class MediaFilesEntity {
+  @ManyToOne(
+    type => MediaEntity,
+    media => media.id,
+  )
+  media: MediaEntity;
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -30,10 +36,4 @@ export class MediaFiles {
 
   @Column()
   key: string;
-
-  @ManyToOne(
-    type => Media,
-    media => media.id,
-  )
-  media: Media;
 }

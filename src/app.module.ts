@@ -4,6 +4,8 @@ import { RouterModule } from 'nest-router';
 import { routes } from './app.routes';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploaderModule } from './uploader/uploader.module';
+import { MediaModule } from './media/media.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -11,6 +13,8 @@ import { UploaderModule } from './uploader/uploader.module';
     ConfigModule.forRoot({ envFilePath: '.env.development' }),
     RouterModule.forRoutes(routes),
     UploaderModule,
+    MediaModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}
