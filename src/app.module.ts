@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploaderModule } from './uploader/uploader.module';
 import { MediaModule } from './media/media.module';
 import { CategoryModule } from './category/category.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CategoryModule } from './category/category.module';
     UploaderModule,
     MediaModule,
     CategoryModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
