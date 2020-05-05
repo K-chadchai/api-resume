@@ -7,6 +7,7 @@ import { UploaderModule } from './uploader/uploader.module';
 import { MediaModule } from './media/media.module';
 import { CategoryModule } from './category/category.module';
 import { UsersModule } from './users/users.module';
+import { CategoryFolderModule } from './category-folder/category-folder.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
     MediaModule,
     CategoryModule,
     UsersModule,
+    CategoryFolderModule,
   ],
 })
 export class AppModule {}
