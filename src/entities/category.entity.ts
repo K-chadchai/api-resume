@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
-import { CategoryFolderEntity } from './category_folder.entity';
+import { CategoryFolderEntity } from './category-folder.entity';
 
 const tname = 'category';
 

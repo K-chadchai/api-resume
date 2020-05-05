@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { Crud } from '@nestjsx/crud';
-import { CategoryFolderEntity } from 'src/entities/category_folder.entity';
+import { CategoryFolderEntity } from 'src/entities/category-folder.entity';
 import { CategoryFolderService } from './category-folder.service';
 
 @Crud({

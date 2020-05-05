@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MediaImagesService } from './media-images.service';
 import { Crud } from '@nestjsx/crud';
-import { MediaImagesEntity } from 'src/entities/media_images.entity';
+import { MediaImagesEntity } from 'src/entities/media-images.entity';
 
 @Crud({
   model: { type: MediaImagesEntity },

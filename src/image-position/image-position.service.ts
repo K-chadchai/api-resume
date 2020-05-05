@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { ImagePostitionEntity } from 'src/entities/image_position.entity';
+import { ImagePostitionEntity } from 'src/entities/image-position.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()

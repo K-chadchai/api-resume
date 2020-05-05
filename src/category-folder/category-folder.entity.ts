@@ -5,8 +5,8 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { CategoryEntity } from './category.entity';
-import { MediaEntity } from './media.entity';
+import { CategoryEntity } from '../entities/category.entity';
+import { MediaEntity } from '../entities/media.entity';
 
 const tname = 'category_folder';
 

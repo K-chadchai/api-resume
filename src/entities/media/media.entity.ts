@@ -5,9 +5,9 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { MediaImagesEntity } from './media-images.entity';
-import { CategoryFolderEntity } from './category-folder.entity';
-import { ImagePostitionEntity } from './image-position.entity';
+import { MediaImagesEntity } from '../media-images.entity';
+import { CategoryFolderEntity } from '../category-folder.entity';
+import { ImagePostitionEntity } from '../image-position.entity';
 
 // รูปภาพและวิดีโอ ที่อัพโหลด
 const tname = 'media';

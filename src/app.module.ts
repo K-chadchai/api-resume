@@ -4,11 +4,11 @@ import { RouterModule } from 'nest-router';
 import { routes } from './app.routes';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MediaModule } from './media/media.module';
-import { CategoryModule } from './category/category.module';
 import { UsersModule } from './users/users.module';
 import { CategoryFolderModule } from './category-folder/category-folder.module';
 import { ImagePositionModule } from './image-position/image-position.module';
 import { MediaImagesModule } from './media-images/media-images.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [

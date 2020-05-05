@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { MediaEntity } from 'src/entities/media.entity';
-import { MediaImagesEntity } from 'src/entities/media_images.entity';
+import { MediaImagesEntity } from 'src/entities/media-images.entity';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app.service';

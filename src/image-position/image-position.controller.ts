@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { ImagePositionService } from './image-position.service';
 import { Crud } from '@nestjsx/crud';
-import { ImagePostitionEntity } from 'src/entities/image_position.entity';
+import { ImagePostitionEntity } from 'src/entities/image-position.entity';
 
 @Crud({
   model: { type: ImagePostitionEntity },
