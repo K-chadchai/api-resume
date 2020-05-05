@@ -11,11 +11,8 @@ export class CategoryEntity {
   @Column()
   cat_name: string;
 
-  @Column()
-  create_user: string;
-
-  @Column()
-  create_time: Date;
+  @Column({ nullable: true, comment: 'คำอธิบาย' })
+  cat_desc: string;
 
   folders: CategoryFolderEntity[];
 }

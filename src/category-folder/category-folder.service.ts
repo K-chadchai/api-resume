@@ -10,4 +10,8 @@ export class CategoryFolderService extends TypeOrmCrudService<
   constructor(@InjectRepository(CategoryFolderEntity) repo) {
     super(repo);
   }
+
+  async getFolderByCat(catId) {
+    return await this.repo.find({ category: catId });
+  }
 }
