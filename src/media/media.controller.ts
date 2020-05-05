@@ -6,21 +6,23 @@ import {
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { UploaderService } from 'src/uploader/uploader.service';
+import { Crud } from '@nestjsx/crud';
+import { MediaEntity } from 'src/entities/media.entity';
 
+@Crud({
+  model: {
+    type: MediaEntity,
+  },
+})
 @Controller('media')
 export class MediaController {
   constructor(
-    private readonly mediaService: MediaService,
+    public service: MediaService,
     private readonly uploaderService: UploaderService,
   ) {}
 
   @Get('image')
-  getImage(@Query('key') key) {
-    // key = 'images/001/475909f9-0054-4276-a2ff-b3a69c8fb96a-x'
-    try {
-      return this.uploaderService.getImageBody(key);
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
+  async getImageBody(@Query('key') key) {
+    return this.uploaderService.getImageBody(key);
   }
 }

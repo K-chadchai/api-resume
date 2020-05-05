@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { MediaEntity } from 'src/entities/media.entity';
 import { MediaFilesEntity } from 'src/entities/media_files.entity';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class MediaService {
+  // Upload media file
   async uploadFile(runner: QueryRunner, value) {
     const { originalname, mimetype } = value;
     const { files }: { files: [] } = value;
