@@ -4,10 +4,11 @@ import { MediaController } from './media.controller';
 import { AppService } from 'src/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MediaEntity } from 'src/entities/media.entity';
+import { UploaderService } from 'src/uploader/uploader.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MediaEntity])],
-  providers: [MediaService, AppService],
+  providers: [MediaService, AppService, UploaderService],
   exports: [MediaService],
   controllers: [MediaController],
 })

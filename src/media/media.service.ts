@@ -6,7 +6,10 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class MediaService {
+export class MediaService extends TypeOrmCrudService<MediaEntity> {
+  constructor(@InjectRepository(MediaEntity) repo) {
+    super(repo);
+  }
   // Upload media file
   async uploadFile(runner: QueryRunner, value) {
     const { originalname, mimetype } = value;
