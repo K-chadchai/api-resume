@@ -5,6 +5,7 @@ import { CategoryModule } from './category/category.module';
 import { UsersModule } from './users/users.module';
 import { CategoryFolderModule } from './category-folder/category-folder.module';
 import { ImagePositionModule } from './image-position/image-position.module';
+import { MediaImagesModule } from './media-images/media-images.module';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,7 @@ export const routes: Routes = [
       UsersModule,
       CategoryFolderModule,
       ImagePositionModule,
+      MediaImagesModule,
     ],
   },
 ];
