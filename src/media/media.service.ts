@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { MediaEntity } from 'src/entities/media.entity';
-import { MediaFilesEntity } from 'src/entities/media_files.entity';
+import { MediaFilesEntity } from 'src/entities/media_images';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -29,7 +29,7 @@ export class MediaService extends TypeOrmCrudService<MediaEntity> {
       mediaFile.width = width;
       mediaFile.height = height;
       mediaFile.size = size;
-      mediaFile.key = key;
+      mediaFile.s3key = key;
       mediaFile.media = media;
       return mediaFile;
     });

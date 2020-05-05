@@ -4,6 +4,7 @@ import { MediaModule } from './media/media.module';
 import { CategoryModule } from './category/category.module';
 import { UsersModule } from './users/users.module';
 import { CategoryFolderModule } from './category-folder/category-folder.module';
+import { ImagePositionModule } from './image-position/image-position.module';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
       CategoryModule,
       UsersModule,
       CategoryFolderModule,
+      ImagePositionModule,
     ],
   },
 ];

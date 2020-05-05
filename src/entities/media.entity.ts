@@ -1,14 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { MediaFilesEntity } from './media_files.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  Unique,
+} from 'typeorm';
+import { MediaFilesEntity } from './media_images';
 import { CategoryFolderEntity } from './category_folder.entity';
+import { ImagePostitionEntity } from './image_position.entity';
 
-@Entity('media')
+// รูปภาพและวิดีโอ ที่อัพโหลด
+const tname = 'media';
+
+@Entity(tname)
+@Unique(`uc_${tname}_folder_originalname`, ['folder', 'originalname'])
 export class MediaEntity {
   @ManyToOne(
     type => CategoryFolderEntity,
     folder => folder.id,
   )
   folder: CategoryFolderEntity;
+
+  @ManyToOne(
+    type => ImagePostitionEntity,
+    position => position.id,
+  )
+  position: ImagePostitionEntity;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,11 +36,14 @@ export class MediaEntity {
   @Column({ comment: 'ประเภทไฟล์ เช่น image/jpeg' })
   mimetype: string;
 
+  @Column({ nullable: true, comment: 'คำอธิบาย' })
+  description: string;
+
   @Column({ nullable: true, comment: 'ขนาดไฟล์ (byte)' })
-  size: number;
+  video_size: number;
 
   @Column({ nullable: true, comment: 'uuid ของไฟล์นี้ที่อยู่ใน S3' })
-  key: string;
+  video_s3key: string;
 
   files: MediaFilesEntity[];
 }
