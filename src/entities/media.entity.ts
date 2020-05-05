@@ -5,7 +5,7 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { MediaFilesEntity } from './media_images';
+import { MediaImagesEntity } from './media_images.entity';
 import { CategoryFolderEntity } from './category_folder.entity';
 import { ImagePostitionEntity } from './image_position.entity';
 
@@ -45,5 +45,5 @@ export class MediaEntity {
   @Column({ nullable: true, comment: 'uuid ของไฟล์นี้ที่อยู่ใน S3' })
   video_s3key: string;
 
-  files: MediaFilesEntity[];
+  images: MediaImagesEntity[];
 }

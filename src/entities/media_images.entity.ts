@@ -12,7 +12,7 @@ const tname = 'media_images';
 @Entity(tname)
 @Unique(`uc_${tname}_suffix`, ['media', 'suffix'])
 @Unique(`uc_${tname}_s3key`, ['media', 's3key'])
-export class MediaFilesEntity {
+export class MediaImagesEntity {
   @ManyToOne(
     type => MediaEntity,
     media => media.id,

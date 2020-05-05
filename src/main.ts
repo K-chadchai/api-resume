@@ -1,10 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { _AppName } from './app.constants';
+import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-const log = new Logger();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +16,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, docbuilder);
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(4000, () => log.log(`> ${_AppName}, Ready`));
+  await app.listen(4000);
 }
 bootstrap();

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { MediaEntity } from 'src/entities/media.entity';
-import { MediaFilesEntity } from 'src/entities/media_images';
+import { MediaImagesEntity } from 'src/entities/media_images.entity';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -24,7 +24,7 @@ export class MediaService extends TypeOrmCrudService<MediaEntity> {
     // Insert media_files
     const mediaFiles = files.map(item => {
       const { suffix, width, height, size, key } = item;
-      const mediaFile = new MediaFilesEntity();
+      const mediaFile = new MediaImagesEntity();
       mediaFile.suffix = suffix;
       mediaFile.width = width;
       mediaFile.height = height;
@@ -33,7 +33,7 @@ export class MediaService extends TypeOrmCrudService<MediaEntity> {
       mediaFile.media = media;
       return mediaFile;
     });
-    await runner.manager.save(MediaFilesEntity, mediaFiles);
+    await runner.manager.save(MediaImagesEntity, mediaFiles);
 
     return { ...value, id: media.id };
   }
