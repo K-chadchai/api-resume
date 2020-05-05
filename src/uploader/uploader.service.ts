@@ -76,7 +76,7 @@ export class UploaderService {
           { suffix: 'x500x500', width: 500, height: 500 },
           { suffix: 'x300x300', width: 300, height: 300 },
           { suffix: 'x100', width: 100 },
-          { suffix: 'x' },
+          { suffix: 'x' }, // Original
         ]
       : [{ suffix: 'x' }];
     const fullPath = path ? `${path}/${uuid()}` : uuid();
