@@ -7,6 +7,7 @@ import { MediaModule } from 'src/media/media.module';
 @Module({
   imports: [MediaModule],
   providers: [UploaderService, AppService],
+  exports: [UploaderService],
   controllers: [UploaderController],
 })
 export class UploaderModule {}
