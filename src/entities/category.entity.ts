@@ -15,7 +15,7 @@ export class CategoryEntity {
   create_user: string;
 
   @Column()
-  create_time: string;
+  create_time: Date;
 
   folders: CategoryFolderEntity[];
 }
