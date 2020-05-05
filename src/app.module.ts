@@ -17,8 +17,8 @@ import { CategoryFolderModule } from './category-folder/category-folder.module';
     UploaderModule,
     MediaModule,
     CategoryModule,
-    UsersModule,
     CategoryFolderModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
