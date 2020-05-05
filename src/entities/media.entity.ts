@@ -16,13 +16,13 @@ export class MediaEntity {
   @Column()
   originalname: string;
 
-  @Column()
+  @Column({ comment: 'ประเภทไฟล์ เช่น image/jpeg' })
   mimetype: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: 'ขนาดไฟล์ (byte)' })
   size: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '' })
   key: string;
 
   files: MediaFilesEntity[];
