@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { RouterModule } from 'nest-router';
 import { routes } from './app.routes';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UploaderModule } from './uploader/uploader.module';
 import { MediaModule } from './media/media.module';
 import { CategoryModule } from './category/category.module';
 import { UsersModule } from './users/users.module';
@@ -16,7 +15,6 @@ import { MediaImagesModule } from './media-images/media-images.module';
     TypeOrmModule.forRoot(),
     ConfigModule.forRoot({ envFilePath: '.env.development' }),
     RouterModule.forRoutes(routes),
-    UploaderModule,
     MediaModule,
     CategoryModule,
     CategoryFolderModule,

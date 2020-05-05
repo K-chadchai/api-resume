@@ -4,12 +4,38 @@ import { MediaEntity } from 'src/entities/media.entity';
 import { MediaImagesEntity } from 'src/entities/media_images.entity';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AppService } from 'src/app.service';
+import { UploaderService } from 'src/services/uploader.service';
 
 @Injectable()
 export class MediaService extends TypeOrmCrudService<MediaEntity> {
-  constructor(@InjectRepository(MediaEntity) repo) {
+  constructor(
+    @InjectRepository(MediaEntity) repo,
+    private readonly appService: AppService,
+    private readonly uploaderService: UploaderService,
+  ) {
     super(repo);
   }
+
+  // Upload file to media
+  async uploadMedia(req, res, query, callback = null) {
+    const uploaded = async uploaded => {
+      return await this.appService.dbRunner(async runner => {
+        const media = await this.uploadFile(runner, uploaded);
+        callback && (await callback(runner, media));
+        return media;
+      });
+    };
+    //
+    try {
+      return await this.uploaderService.uploadFile2(req, res, query, uploaded);
+    } catch (error) {
+      return res
+        .status(500)
+        .json(`Failed to upload image file: ${error.message}`);
+    }
+  }
+
   // Upload media file
   async uploadFile(runner: QueryRunner, value) {
     const { originalname, mimetype } = value;

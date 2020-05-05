@@ -4,11 +4,12 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
 import { AppService } from 'src/app.service';
-import { UploaderModule } from 'src/uploader/uploader.module';
+import { UploaderService } from 'src/services/uploader.service';
+import { MediaModule } from 'src/media/media.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersEntity]), UploaderModule],
-  providers: [UsersService, AppService],
+  imports: [TypeOrmModule.forFeature([UsersEntity]), MediaModule],
+  providers: [UsersService, AppService, UploaderService],
   exports: [UsersService],
   controllers: [UsersController],
 })
