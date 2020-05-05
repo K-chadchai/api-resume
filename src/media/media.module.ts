@@ -10,5 +10,6 @@ import { MediaEntity } from 'src/entities/media.entity';
   imports: [TypeOrmModule.forFeature([MediaEntity])],
   providers: [MediaService, UploaderService, AppService],
   controllers: [MediaController],
+  exports: [MediaService],
 })
 export class MediaModule {}
