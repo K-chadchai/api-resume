@@ -4,9 +4,8 @@ import { CategoryEntity } from 'src/entities/category.entity';
 import { CategoryService } from './category.service';
 
 @Crud({
-  model: {
-    type: CategoryEntity,
-  },
+  model: { type: CategoryEntity },
+  params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('category')
 export class CategoryController {

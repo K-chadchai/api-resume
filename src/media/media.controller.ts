@@ -10,9 +10,8 @@ import { Crud } from '@nestjsx/crud';
 import { MediaEntity } from 'src/entities/media.entity';
 
 @Crud({
-  model: {
-    type: MediaEntity,
-  },
+  model: { type: MediaEntity },
+  params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('media')
 export class MediaController {

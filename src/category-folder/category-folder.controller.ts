@@ -4,9 +4,8 @@ import { CategoryFolderEntity } from 'src/entities/category_folder.entity';
 import { CategoryFolderService } from './category-folder.service';
 
 @Crud({
-  model: {
-    type: CategoryFolderEntity,
-  },
+  model: { type: CategoryFolderEntity },
+  params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('category-folder')
 export class CategoryFolderController {
