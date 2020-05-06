@@ -20,6 +20,10 @@ export class FoldersEntity {
   )
   category: CategoriesEntity;
 
+  // เพื่อให้ get แสดงค่า category.id
+  // @Column()
+  // categoryId: string;
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

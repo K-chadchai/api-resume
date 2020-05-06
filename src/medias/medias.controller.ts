@@ -7,7 +7,7 @@ import { MediasEntity } from 'src/entities/medias.entity';
   model: { type: MediasEntity },
   params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
-@Controller('media')
+@Controller('medias')
 export class MediasController {
   constructor(public service: MediasService) {}
 
