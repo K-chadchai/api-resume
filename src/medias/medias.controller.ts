@@ -27,7 +27,7 @@ export class MediasController {
   }
 
   @Delete('upload/:id')
-  async deleteMedia(@Param('id') id, @Query() query) {
-    return await this.service.deleteMedia(id, query);
+  async deleteUpload(@Param('id') id, @Query() query) {
+    return await this.service.deleteUpload(id, query);
   }
 }

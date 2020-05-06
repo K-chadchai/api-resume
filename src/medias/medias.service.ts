@@ -122,7 +122,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
   }
 
   // ลบไฟล์( user กดลบ)
-  async deleteMedia(id, query) {
+  async deleteUpload(id, query) {
     const { employee_id } = query;
     if (!id) throw new BadRequestException('Invalid id');
     if (!employee_id) throw new BadRequestException('Invalid employee_id');
