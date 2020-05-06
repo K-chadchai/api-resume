@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -5,8 +6,8 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { CategoryEntity } from './category.entity';
 import { MediaEntity } from './media.entity';
+import { CategoryEntity } from './category.entity';
 
 const tname = 'category_folder';
 
@@ -22,14 +23,11 @@ export class CategoryFolderEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ comment: 'ชื่อโฟล์เดอร์(ต้องไม่ซ้ำ)' })
   folder_name: string;
 
-  @Column()
-  create_user: string;
-
-  @Column()
-  create_time: string;
+  @Column({ nullable: true, comment: 'คำอธิบาย' })
+  folder_desc: string;
 
   media: MediaEntity[];
 }

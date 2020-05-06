@@ -5,9 +5,8 @@ import { Crud } from '@nestjsx/crud';
 import { UsersEntity } from 'src/entities/users.entity';
 
 @Crud({
-  model: {
-    type: UsersEntity,
-  },
+  model: { type: UsersEntity },
+  params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('users')
 export class UsersController {

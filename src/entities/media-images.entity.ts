@@ -11,8 +11,8 @@ const tname = 'media_images';
 
 @Entity(tname)
 @Unique(`uc_${tname}_suffix`, ['media', 'suffix'])
-@Unique(`uc_${tname}_key`, ['media', 'key'])
-export class MediaFilesEntity {
+@Unique(`uc_${tname}_s3key`, ['media', 's3key'])
+export class MediaImagesEntity {
   @ManyToOne(
     type => MediaEntity,
     media => media.id,
@@ -35,5 +35,5 @@ export class MediaFilesEntity {
   size: number;
 
   @Column()
-  key: string;
+  s3key: string;
 }

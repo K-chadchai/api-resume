@@ -3,18 +3,21 @@ import { Injectable } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UploaderService } from 'src/uploader/uploader.service';
+import { UploaderService } from 'src/services/uploader.service';
 import { QueryRunner } from 'typeorm';
+import { MediaService } from 'src/media/media.service';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<UsersEntity> {
   constructor(
     @InjectRepository(UsersEntity) repo,
     private readonly uploaderService: UploaderService,
+    private readonly mediaService: MediaService,
   ) {
     super(repo);
   }
 
+  // Upload user image
   async postImage(req, res, query) {
     const { employee_id } = query;
     const callback = async (runner: QueryRunner, result) => {
@@ -33,7 +36,7 @@ export class UsersService extends TypeOrmCrudService<UsersEntity> {
       if (key_old) await this.uploaderService.deleteFile(key_old);
     };
 
-    return this.uploaderService.uploadMedia(req, res, query, callback);
+    return this.mediaService.uploadMedia(req, res, query, callback);
   }
 
   async getImage(employee_id) {

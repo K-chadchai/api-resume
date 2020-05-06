@@ -4,15 +4,10 @@ import { v4 as uuid } from 'uuid';
 
 import multer = require('multer');
 import s3Storage = require('multer-sharp-s3');
-import { AppService } from 'src/app.service';
-import { MediaService } from 'src/media/media.service';
 
 @Injectable()
 export class UploaderService {
-  constructor(
-    private readonly appService: AppService,
-    private readonly mediaService: MediaService,
-  ) {
+  constructor() {
     try {
       aws.config.update({
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -67,6 +62,7 @@ export class UploaderService {
 
   // Upload single file only
   async uploadFile2(req, res, query, onSuccess) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { path, resize, folder } = query;
     const isResize = resize === 'true';
     const sizes = isResize
@@ -129,26 +125,7 @@ export class UploaderService {
     });
   }
 
-  // Upload file to media
-  async uploadMedia(req, res, query, callback = null) {
-    const uploaded = async uploaded => {
-      return await this.appService.dbRunner(async runner => {
-        const media = await this.mediaService.uploadFile(runner, uploaded);
-        callback && (await callback(runner, media));
-        return media;
-      });
-    };
-    //
-    try {
-      return await this.uploadFile2(req, res, query, uploaded);
-    } catch (error) {
-      return res
-        .status(500)
-        .json(`Failed to upload image file: ${error.message}`);
-    }
-  }
-
-  //
+  // Get image body [base64]
   async getImageBody(key) {
     if (!key) return null;
     const s3 = new aws.S3();
