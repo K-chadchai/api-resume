@@ -11,7 +11,7 @@ import {
   QueryRunner,
   QueryFailedError,
 } from 'typeorm';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 @Injectable()
 export class AppService {

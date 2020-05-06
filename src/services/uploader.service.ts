@@ -28,11 +28,11 @@ export class UploaderService {
       })
       .promise()
       .then(
-        data => {
-          console.log('deleteFile:success', data);
+        () => {
+          console.log('deleted:', key);
         },
         err => {
-          console.error('deleteFile:error', err);
+          console.error('delete, Error:', err);
         },
       );
   }
@@ -62,6 +62,7 @@ export class UploaderService {
 
   // Upload single file only
   async uploadFile2(req, res, query, onSuccess) {
+    const deleteFile = this.deleteFile;
     const { path, resize } = query;
     const isResize = resize === 'true';
     const sizes = isResize
@@ -123,7 +124,10 @@ export class UploaderService {
       try {
         result = await onSuccess({ originalname, mimetype, files });
       } catch (error) {
-        // console.log('error', error);
+        // delete file
+        const runAsync = () =>
+          Promise.all(files.map(async item => await deleteFile(item.key)));
+        runAsync();
         return res.status(500).json(error.response);
       }
       return res.status(200).json(result);

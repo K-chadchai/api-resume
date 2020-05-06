@@ -5,6 +5,8 @@ import {
   Column,
   ManyToOne,
   Unique,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { ImagePostitionEntity } from './image-position.entity';
 import { FoldersEntity } from './folders.entity';
@@ -14,21 +16,29 @@ import { ImagesEntity } from './images.entity';
 const tname = 'medias';
 
 @Entity(tname)
-@Unique(`uc_${tname}_folder_originalname`, ['folderId', 'originalname'])
+// @Unique(`uc_${tname}_folder_originalname`, ['folderId', 'originalname']) เช็คเฉพาะสถานะปกติ(N)
 export class MediasEntity {
   @ManyToOne(
     type => FoldersEntity,
     folder => folder.id,
   )
   folder: FoldersEntity;
-  @Column()
+  @Column({
+    nullable: true,
+    comment: 'เป็น null ได้ในกรณีที่ระบุ path เช่นการอัพรูป user',
+  })
   folderId: string;
+
+  @Column({ nullable: true, comment: 'path folder ที่เก็บรูปใน S3' })
+  path: string;
 
   @ManyToOne(
     type => ImagePostitionEntity,
-    position => position.id,
+    inv => inv.id,
   )
-  position: ImagePostitionEntity;
+  imagePosition: ImagePostitionEntity;
+  @Column({ nullable: true, comment: 'ตำแหน่งภาพถ่าย' })
+  imagePositionId: string;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -47,6 +57,34 @@ export class MediasEntity {
 
   @Column({ nullable: true, comment: 'uuid ของไฟล์นี้ที่อยู่ใน S3' })
   video_s3key: string;
+
+  @Column()
+  created_user: string;
+
+  @Column()
+  created_time: Date;
+
+  @Column({
+    length: 1,
+    comment: 'N=ปกติ,D=ลบแล้ว,R=อัพรูปใหม่(replaceById)',
+    default: 'N',
+  })
+  media_status: string;
+
+  @Column({ nullable: true })
+  deleted_user: string;
+
+  @Column({ nullable: true })
+  deleted_time: Date;
+
+  @OneToOne(type => MediasEntity)
+  @JoinColumn()
+  replaceBy: string;
+  @Column({
+    nullable: true,
+    comment: 'รูปใหม่ที่อัพแทนรูปนี้( กรณีที่ media_status=R)',
+  })
+  replaceById: string;
 
   images: ImagesEntity[];
 }

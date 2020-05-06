@@ -4,7 +4,8 @@ import {
   Post,
   Req,
   Res,
-  InternalServerErrorException,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { Crud } from '@nestjsx/crud';
@@ -21,7 +22,12 @@ export class MediasController {
   // Upload media file
   // @UseInterceptors(FilesInterceptor('files'))
   @Post('upload')
-  async uploadMedia(@Req() req, @Res() res, @Query() query) {
+  async postUpload(@Req() req, @Res() res, @Query() query) {
     return await this.service.uploadMedia(req, res, query);
+  }
+
+  @Delete('upload/:id')
+  async deleteMedia(@Param('id') id, @Query() query) {
+    return await this.service.deleteMedia(id, query);
   }
 }
