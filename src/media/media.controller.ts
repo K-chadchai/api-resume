@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  InternalServerErrorException,
-  Query,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Query, Post, Req, Res } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { UploaderService } from 'src/services/uploader.service';
 import { Crud } from '@nestjsx/crud';

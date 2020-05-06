@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -19,7 +20,7 @@ export class CategoryFolderEntity {
   )
   category: CategoryEntity;
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('rowid')
   id: string;
 
   @Column({ comment: 'ชื่อโฟล์เดอร์(ต้องไม่ซ้ำ)' })

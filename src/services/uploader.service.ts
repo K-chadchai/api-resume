@@ -62,6 +62,7 @@ export class UploaderService {
 
   // Upload single file only
   async uploadFile2(req, res, query, onSuccess) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { path, resize, folder } = query;
     const isResize = resize === 'true';
     const sizes = isResize
