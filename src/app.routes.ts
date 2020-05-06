@@ -1,21 +1,21 @@
 import { Routes } from 'nest-router';
-import { MediaModule } from './media/media.module';
+import { MediasModule } from './medias/medias.module';
 import { UsersModule } from './users/users.module';
-import { CategoryFolderModule } from './category-folder/category-folder.module';
+import { FoldersModule } from './folders/folders.module';
 import { ImagePositionModule } from './image-position/image-position.module';
-import { MediaImagesModule } from './media-images/media-images.module';
-import { CategoryModule } from './category/category.module';
+import { ImagesModule } from './images/images.module';
+import { CategoriesModule } from './categories/categories.module';
 
 export const routes: Routes = [
   {
     path: '/v1',
     children: [
-      MediaModule,
-      CategoryModule,
-      UsersModule,
-      CategoryFolderModule,
+      CategoriesModule,
+      FoldersModule,
       ImagePositionModule,
-      MediaImagesModule,
+      ImagesModule,
+      MediasModule,
+      UsersModule,
     ],
   },
 ];

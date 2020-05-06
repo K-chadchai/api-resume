@@ -12,6 +12,13 @@ import { UsersEntity } from 'src/entities/users.entity';
 export class UsersController {
   constructor(public service: UsersService) {}
 
+  // Login success
+  @Post('login-succss')
+  loginSuccess() {
+    return null;
+  }
+
+  // Upload user picture
   @Post('image')
   async postImage(@Req() req, @Res() res, @Query() query) {
     try {
@@ -23,7 +30,7 @@ export class UsersController {
     }
   }
 
-  // @Get('image-key/:employee_id')
+  // Get uesr picture
   @Get('image')
   async getImage(@Query('employee_id') employee_id) {
     return await this.service.getImage(employee_id);

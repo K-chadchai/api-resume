@@ -1,15 +1,15 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { Crud } from '@nestjsx/crud';
-import { CategoryFolderEntity } from 'src/entities/category-folder.entity';
-import { CategoryFolderService } from './category-folder.service';
+import { FoldersEntity } from 'src/entities/folders.entity';
+import { FoldersService } from './folders.service';
 
 @Crud({
-  model: { type: CategoryFolderEntity },
+  model: { type: FoldersEntity },
   params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('category-folder')
-export class CategoryFolderController {
-  constructor(public service: CategoryFolderService) {}
+export class FoldersController {
+  constructor(public service: FoldersService) {}
 
   @Get('category/:catId')
   async getFolderByCat(@Param('catId') catId) {

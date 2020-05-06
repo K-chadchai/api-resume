@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { CategoryFolderEntity } from 'src/entities/category-folder.entity';
+import { FoldersEntity } from 'src/entities/folders.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class CategoryFolderService extends TypeOrmCrudService<
-  CategoryFolderEntity
-> {
-  constructor(@InjectRepository(CategoryFolderEntity) repo) {
+export class FoldersService extends TypeOrmCrudService<FoldersEntity> {
+  constructor(@InjectRepository(FoldersEntity) repo) {
     super(repo);
   }
 

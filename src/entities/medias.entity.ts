@@ -6,21 +6,21 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { MediaImagesEntity } from './media-images.entity';
-import { CategoryFolderEntity } from './category-folder.entity';
 import { ImagePostitionEntity } from './image-position.entity';
+import { FoldersEntity } from './folders.entity';
+import { ImagesEntity } from './images.entity';
 
 // รูปภาพและวิดีโอ ที่อัพโหลด
-const tname = 'media';
+const tname = 'medias';
 
 @Entity(tname)
 @Unique(`uc_${tname}_folder_originalname`, ['folder', 'originalname'])
-export class MediaEntity {
+export class MediasEntity {
   @ManyToOne(
-    type => CategoryFolderEntity,
+    type => FoldersEntity,
     folder => folder.id,
   )
-  folder: CategoryFolderEntity;
+  folder: FoldersEntity;
 
   @ManyToOne(
     type => ImagePostitionEntity,
@@ -46,5 +46,5 @@ export class MediaEntity {
   @Column({ nullable: true, comment: 'uuid ของไฟล์นี้ที่อยู่ใน S3' })
   video_s3key: string;
 
-  images: MediaImagesEntity[];
+  images: ImagesEntity[];
 }

@@ -1,10 +1,10 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
-import { CategoryFolderEntity } from './category-folder.entity';
+import { FoldersEntity } from './folders.entity';
 
-const tname = 'category';
+const tname = 'categories';
 
 @Entity(tname)
-export class CategoryEntity {
+export class CategoriesEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -14,5 +14,5 @@ export class CategoryEntity {
   @Column({ nullable: true, comment: 'คำอธิบาย' })
   cat_desc: string;
 
-  folders: CategoryFolderEntity[];
+  folders: FoldersEntity[];
 }
