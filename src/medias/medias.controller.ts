@@ -22,10 +22,6 @@ export class MediasController {
   // @UseInterceptors(FilesInterceptor('files'))
   @Post('upload')
   async uploadMedia(@Req() req, @Res() res, @Query() query) {
-    try {
-      return await this.service.uploadMedia(req, res, query);
-    } catch (error) {
-      throw new InternalServerErrorException('Media upload Error,');
-    }
+    return await this.service.uploadMedia(req, res, query);
   }
 }

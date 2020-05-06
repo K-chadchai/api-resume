@@ -19,35 +19,37 @@ export class AppService {
 
   // Postgres Session
   async dbRunner(onCallback: Function) {
+    // try {
+    let runner: QueryRunner;
+    // Create transaction
     try {
-      let runner: QueryRunner;
-      // Create transaction
-      try {
-        runner = this.connTypeOrm.createQueryRunner();
-        await runner.connect();
-        await runner.startTransaction();
-      } catch (error) {
-        Logger.error(error);
-        throw new InternalServerErrorException(
-          `Postgres transaction couldn\'t create : ${error.errmsg ||
-            error.message}`,
-        );
-      }
-      // Call service
-      let returnValue: any;
-      try {
-        returnValue = await onCallback(runner);
-        await runner.commitTransaction();
-      } catch (error) {
-        await runner.rollbackTransaction();
-        throw new InternalServerErrorException(error.errmsg || error.message);
-      } finally {
-        await runner.release();
-      }
-      return returnValue;
+      runner = this.connTypeOrm.createQueryRunner();
+      await runner.connect();
+      await runner.startTransaction();
     } catch (error) {
-      throw new InternalServerErrorException(error.errmsg || error.message);
+      Logger.error(error);
+      throw new InternalServerErrorException(
+        `Postgres transaction couldn\'t create : ${error.errmsg ||
+          error.message}`,
+      );
     }
+    // Call service
+    let returnValue: any;
+    try {
+      returnValue = await onCallback(runner);
+      await runner.commitTransaction();
+    } catch (error) {
+      await runner.rollbackTransaction();
+      throw new InternalServerErrorException(
+        `Transaction Error,${error.errmsg || error.message}`,
+      );
+    } finally {
+      await runner.release();
+    }
+    return returnValue;
+    // } catch (error) {
+    //   throw new InternalServerErrorException(error.errmsg || error.message);
+    // }
   }
 }
 

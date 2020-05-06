@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as aws from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 
@@ -77,7 +77,7 @@ export class UploaderService {
     const fullPath = path ? `${path}/${uuid()}` : uuid();
     //
     const storage = s3Storage({
-      Key: (_, file, cb) => {
+      Key: (_, _file, cb) => {
         cb(null, fullPath);
       },
       s3: new aws.S3(),
@@ -119,7 +119,13 @@ export class UploaderService {
         });
       });
       //
-      const result = await onSuccess({ originalname, mimetype, files });
+      let result;
+      try {
+        result = await onSuccess({ originalname, mimetype, files });
+      } catch (error) {
+        // console.log('error', error);
+        return res.status(500).json(error.response);
+      }
       return res.status(200).json(result);
     });
   }
