@@ -20,7 +20,7 @@ export class CategoryFolderEntity {
   )
   category: CategoryEntity;
 
-  @PrimaryGeneratedColumn('rowid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ comment: 'ชื่อโฟล์เดอร์(ต้องไม่ซ้ำ)' })
