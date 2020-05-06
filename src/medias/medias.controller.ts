@@ -1,4 +1,11 @@
-import { Controller, Query, Post, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Post,
+  Req,
+  Res,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { Crud } from '@nestjsx/crud';
 import { MediasEntity } from 'src/entities/medias.entity';
@@ -14,13 +21,11 @@ export class MediasController {
   // Upload media file
   // @UseInterceptors(FilesInterceptor('files'))
   @Post('upload')
-  async uploadFile2(@Req() req, @Res() res, @Query() query) {
+  async uploadMedia(@Req() req, @Res() res, @Query() query) {
     try {
       return await this.service.uploadMedia(req, res, query);
     } catch (error) {
-      return res
-        .status(500)
-        .json(`Failed to upload image file: ${error.message}`);
+      throw new InternalServerErrorException('Media upload Error,');
     }
   }
 }

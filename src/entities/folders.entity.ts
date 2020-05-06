@@ -12,17 +12,15 @@ import { CategoriesEntity } from './categories.entity';
 const tname = 'folders';
 
 @Entity(tname)
-@Unique(`uc_${tname}_folder_name`, ['category', 'folder_name'])
+@Unique(`uc_${tname}_folder_name`, ['categoryId', 'folder_name'])
 export class FoldersEntity {
   @ManyToOne(
     type => CategoriesEntity,
     category => category.id,
   )
   category: CategoriesEntity;
-
-  // เพื่อให้ get แสดงค่า category.id
-  // @Column()
-  // categoryId: string;
+  @Column()
+  categoryId: string;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

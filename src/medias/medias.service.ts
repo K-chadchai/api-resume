@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { MediasEntity } from 'src/entities/medias.entity';
 import { ImagesEntity } from 'src/entities/images.entity';
@@ -19,21 +23,19 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
 
   // Upload file to media
   async uploadMedia(req, res, query, callback = null) {
+    const { folderId } = query;
+    if (!folderId) throw new BadRequestException('Invalid folderId');
+    //
     const uploaded = async uploaded => {
       return await this.appService.dbRunner(async runner => {
         const media = await this.uploadFile(runner, uploaded);
-        callback && (await callback(runner, media));
+        if (callback) {
+          await callback(runner, media);
+        }
         return media;
       });
     };
-    //
-    try {
-      return await this.uploaderService.uploadFile2(req, res, query, uploaded);
-    } catch (error) {
-      return res
-        .status(500)
-        .json(`Failed to upload image file: ${error.message}`);
-    }
+    return await this.uploaderService.uploadFile2(req, res, query, uploaded);
   }
 
   // Upload media file

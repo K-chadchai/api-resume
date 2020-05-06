@@ -14,13 +14,15 @@ import { ImagesEntity } from './images.entity';
 const tname = 'medias';
 
 @Entity(tname)
-@Unique(`uc_${tname}_folder_originalname`, ['folder', 'originalname'])
+@Unique(`uc_${tname}_folder_originalname`, ['folderId', 'originalname'])
 export class MediasEntity {
   @ManyToOne(
     type => FoldersEntity,
     folder => folder.id,
   )
   folder: FoldersEntity;
+  @Column()
+  folderId: string;
 
   @ManyToOne(
     type => ImagePostitionEntity,

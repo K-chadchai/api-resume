@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as aws from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 
@@ -62,8 +62,7 @@ export class UploaderService {
 
   // Upload single file only
   async uploadFile2(req, res, query, onSuccess) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { path, resize, folder } = query;
+    const { path, resize } = query;
     const isResize = resize === 'true';
     const sizes = isResize
       ? [
