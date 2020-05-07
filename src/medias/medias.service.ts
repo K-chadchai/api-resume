@@ -149,8 +149,14 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     if (!employee_id) throw new BadRequestException('Invalid employee_id');
     //
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
-      const media = new MediasEntity();
-      media.id = id;
+      const medias = await runner.manager.findByIds(MediasEntity, [id]);
+      if (medias.length == 0)
+        throw new BadRequestException('Not found id,' + id);
+      const media = medias[0];
+      if (media.media_status != 'N')
+        throw new BadRequestException(
+          'Can not delete, media_status=' + media.media_status,
+        );
       media.media_status = 'D';
       media.deleted_user = employee_id;
       media.deleted_time = new Date();
@@ -158,6 +164,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     });
   }
 
+  // getImageBody
   async getImage(mediaId, suffix = 'x') {
     const images = await getRepository(ImagesEntity).find({
       where: { mediaId: mediaId, suffix },
