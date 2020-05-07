@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { QueryRunner } from 'typeorm';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { QueryRunner, getRepository } from 'typeorm';
 import { MediasEntity } from 'src/entities/medias.entity';
 import { ImagesEntity } from 'src/entities/images.entity';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
@@ -152,5 +156,19 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       media.deleted_time = new Date();
       return await runner.manager.save(MediasEntity, media);
     });
+  }
+
+  async getImage(mediaId, suffix = 'x') {
+    const images = await getRepository(ImagesEntity).find({
+      where: { mediaId: mediaId, suffix },
+    });
+    if (images.length == 1) {
+      const s3key = images[0].s3key;
+      if (!s3key) throw new InternalServerErrorException('Not found s3key');
+      return await this.uploaderService.getImageBody(s3key);
+    }
+    throw new BadRequestException(
+      `Not found images.mediaId=${mediaId} and suffix=x`,
+    );
   }
 }

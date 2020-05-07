@@ -6,6 +6,7 @@ import {
   Res,
   Delete,
   Param,
+  Get,
 } from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { Crud } from '@nestjsx/crud';
@@ -29,5 +30,10 @@ export class MediasController {
   @Delete('upload/:id')
   async deleteUpload(@Param('id') id, @Query() query) {
     return await this.service.deleteUpload(id, query);
+  }
+
+  @Get('image/:id')
+  async getImage(@Param('id') id, @Query('suffix') suffix) {
+    return await this.service.getImage(id, suffix);
   }
 }

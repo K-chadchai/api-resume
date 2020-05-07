@@ -24,16 +24,16 @@ export class UploaderService {
   }
 
   //
-  async deleteFile(key) {
+  async deleteFile(s3key) {
     return await new aws.S3()
       .deleteObject({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: key,
+        Key: s3key,
       })
       .promise()
       .then(
         () => {
-          Logger.log('deleted:', key);
+          Logger.log('deleted:', s3key);
         },
         err => {
           console.error('delete, Error:', err);
@@ -109,7 +109,9 @@ export class UploaderService {
       // Video
       if (file.mimetype.startsWith('video/')) {
         const { size, Key } = file;
-        return res.status(200).json({ originalname, mimetype, size, key: Key });
+        return res
+          .status(200)
+          .json({ originalname, mimetype, size, s3key: Key });
       }
       // Image
       const files = [];
@@ -120,7 +122,7 @@ export class UploaderService {
           width,
           height,
           size,
-          key: Key,
+          s3key: Key,
         });
       });
       //
@@ -131,7 +133,7 @@ export class UploaderService {
         Logger.error(error);
         // delete file
         const runAsync = () =>
-          Promise.all(files.map(async item => await deleteFile(item.key)));
+          Promise.all(files.map(async item => await deleteFile(item.s3key)));
         runAsync();
         return res.status(500).json(error.response);
       }
@@ -140,14 +142,14 @@ export class UploaderService {
   }
 
   // Get image body [base64]
-  async getImageBody(key) {
-    if (!key) return null;
+  async getImageBody(s3key) {
+    if (!s3key) return null;
     try {
       const s3 = new aws.S3();
       const file = await s3
         .getObject({
           Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: key,
+          Key: s3key,
         })
         .promise();
       return file.Body.toString('base64');
