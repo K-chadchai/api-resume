@@ -4,8 +4,9 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploaderService } from 'src/services/uploader.service';
-import { QueryRunner } from 'typeorm';
+import { QueryRunner, Not } from 'typeorm';
 import { MediasService } from 'src/medias/medias.service';
+import { MediasEntity } from 'src/entities/medias.entity';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<UsersEntity> {
@@ -24,13 +25,25 @@ export class UsersService extends TypeOrmCrudService<UsersEntity> {
       // console.log('result', result);
       const key_new = result.files.filter(item => item.suffix === 'x')[0].key;
 
-      // console.log('key', key);
+      // Update image_key
       const user =
         (await this.repo.findOne({ employee_id })) || new UsersEntity();
       if (!user.employee_id) user.employee_id = employee_id;
       const key_old = user.image_key;
       user.image_key = key_new;
       await runner.manager.save(user);
+
+      // หา path=users ,media_status=N และเปลี่ยนสถานะเป็น R
+      const { id: replaceById } = result;
+      const oldMedia = await runner.manager.find(MediasEntity, {
+        where: { path: 'users', media_status: 'N', id: Not(replaceById) },
+      });
+      oldMedia.forEach(item => {
+        this.mediasService.updateReplace(runner, item, {
+          created_user: employee_id,
+          replaceById,
+        });
+      });
 
       // delete old file
       if (key_old) await this.uploaderService.deleteFile(key_old);

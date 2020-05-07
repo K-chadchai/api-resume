@@ -111,20 +111,31 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       const oldMedia = await runner.manager.findByIds(MediasEntity, [old_id]);
       if (oldMedia.length == 1) {
         const media = oldMedia[0];
-        if (media.media_status != 'N') {
-          throw new BadRequestException(
-            `สถานะไฟล์ที่ถูกแทนที่ไม่ปกติ(${media.media_status}) ,กรุณาตรวจสอบ`,
-          );
-        }
-        media.media_status = 'R';
-        media.deleted_user = created_user;
-        media.deleted_time = created_time;
-        media.replaceById = idNew;
-        await runner.manager.save(MediasEntity, media);
+        await this.updateReplace(runner, media, {
+          created_user,
+          created_time,
+          replaceById: idNew,
+        });
       }
     }
 
     return { ...value, id: media.id };
+  }
+
+  async updateReplace(runner, media: MediasEntity, value) {
+    const { created_user, created_time, replaceById } = value;
+    //
+    if (media.media_status != 'N') {
+      throw new BadRequestException(
+        `สถานะไฟล์ที่ถูกแทนที่ไม่ปกติ(${media.media_status}) ,กรุณาตรวจสอบ`,
+      );
+    }
+    //
+    media.media_status = 'R';
+    media.deleted_user = created_user;
+    media.deleted_time = created_time || new Date();
+    media.replaceById = replaceById;
+    await runner.manager.save(MediasEntity, media);
   }
 
   // ลบไฟล์( user กดลบ)
