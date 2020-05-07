@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -43,5 +43,6 @@ export class UsersService extends TypeOrmCrudService<UsersEntity> {
     const user = await this.repo.findOne({ employee_id });
     if (user?.image_key)
       return await this.uploaderService.getImageBody(user.image_key);
+    throw new InternalServerErrorException('Not found employee_id');
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import * as aws from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 
@@ -29,7 +33,7 @@ export class UploaderService {
       .promise()
       .then(
         () => {
-          console.log('deleted:', key);
+          Logger.log('deleted:', key);
         },
         err => {
           console.error('delete, Error:', err);
@@ -124,6 +128,7 @@ export class UploaderService {
       try {
         result = await onSuccess({ originalname, mimetype, files });
       } catch (error) {
+        Logger.error(error);
         // delete file
         const runAsync = () =>
           Promise.all(files.map(async item => await deleteFile(item.key)));
@@ -137,13 +142,18 @@ export class UploaderService {
   // Get image body [base64]
   async getImageBody(key) {
     if (!key) return null;
-    const s3 = new aws.S3();
-    const file = await s3
-      .getObject({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: key,
-      })
-      .promise();
-    return file.Body.toString('base64');
+    try {
+      const s3 = new aws.S3();
+      const file = await s3
+        .getObject({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: key,
+        })
+        .promise();
+      return file.Body.toString('base64');
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('ASW Not found image');
+    }
   }
 }

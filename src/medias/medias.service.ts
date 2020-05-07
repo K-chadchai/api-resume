@@ -60,13 +60,19 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       old_id,
     } = value;
     const { files }: { files: [] } = value;
+    if (!folderId && !path)
+      throw new BadRequestException('Invalid, folderId and path');
 
-    // สถานะปกติ(N) จะต้องไม่มีชื่อไฟล์เดียวกัน
-    const mediaValid = await runner.manager.find(MediasEntity, {
-      where: { media_status: 'N', originalname },
-    });
-    if (mediaValid.length > 0) {
-      if (old_id == mediaValid[0].id) {
+    // ใน folder เดียวกันจะต้องไม่มีชื่อไฟล์เดียวกัน ที่มีสถานะปกติ
+    const mediaNormal = folderId
+      ? await runner.manager.find(MediasEntity, {
+          where: { media_status: 'N', originalname, folderId },
+        })
+      : await runner.manager.find(MediasEntity, {
+          where: { media_status: 'N', originalname, path },
+        });
+    if (mediaNormal.length > 0) {
+      if (old_id == mediaNormal[0].id) {
       } else {
         throw new BadRequestException(`Duplicate file name [${originalname}]`);
       }

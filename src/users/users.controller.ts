@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Controller, Post, Res, Req, Query, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Res,
+  Req,
+  Query,
+  Get,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Crud } from '@nestjsx/crud';
 import { UsersEntity } from 'src/entities/users.entity';
@@ -33,6 +41,10 @@ export class UsersController {
   // Get uesr picture
   @Get('image')
   async getImage(@Query('employee_id') employee_id) {
-    return await this.service.getImage(employee_id);
+    try {
+      return await this.service.getImage(employee_id);
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
   }
 }
