@@ -24,7 +24,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
 
   // Upload file to media
   async uploadMedia(req, res, query, callback = null) {
-    const { folderId, employee_id, path, old_id } = query;
+    const { folderId, employee_id, path, old_id, isUserProfile } = query;
     if (!path) {
       if (!folderId) {
         throw new BadRequestException('Invalid folderId');
@@ -34,7 +34,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       throw new BadRequestException('Invalid employee_id');
     }
     //
-    const uploaded = async value => {
+    const uploadFileCallback = async value => {
       return await this.appService.dbRunner(async runner => {
         const media = await this.uploadMediaDB(runner, {
           ...value,
@@ -42,6 +42,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
           created_user: employee_id,
           path,
           old_id,
+          isUserProfile,
         });
         if (callback) {
           await callback(runner, media);
@@ -50,7 +51,12 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       });
     };
     // Upload file
-    return await this.uploaderService.uploadFile2(req, res, query, uploaded);
+    return await this.uploaderService.uploadFile2(
+      req,
+      res,
+      query,
+      uploadFileCallback,
+    );
   }
 
   // Upload media file
@@ -62,6 +68,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       created_user,
       path,
       old_id,
+      isUserProfile,
     } = value;
     const { files }: { files: [] } = value;
     if (!folderId && !path)
@@ -76,7 +83,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
           where: { media_status: 'N', originalname, path },
         });
     if (mediaNormal.length > 0) {
-      if (old_id == mediaNormal[0].id) {
+      if (old_id == mediaNormal[0].id || isUserProfile) {
       } else {
         throw new BadRequestException(`Duplicate file name [${originalname}]`);
       }
@@ -84,7 +91,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
 
     const created_time = new Date();
 
-    // Insert media
+    // Insert MediasEntity
     const media = new MediasEntity();
     media.originalname = originalname;
     media.mimetype = mimetype;
@@ -96,19 +103,19 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     await runner.manager.save(MediasEntity, media);
     const idNew = media.id;
 
-    // Insert media_files
-    const mediaFiles = files.map(item => {
-      const { suffix, width, height, size, key } = item;
+    // Insert ImagesEntity
+    const images = files.map(item => {
+      const { suffix, width, height, size, s3key } = item;
       const image = new ImagesEntity();
       image.suffix = suffix;
       image.width = width;
       image.height = height;
       image.size = size;
-      image.s3key = key;
+      image.s3key = s3key;
       image.media = media;
       return image;
     });
-    await runner.manager.save(ImagesEntity, mediaFiles);
+    await runner.manager.save(ImagesEntity, images);
 
     // Replace old file
     if (old_id) {
@@ -164,18 +171,34 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     });
   }
 
-  // getImageBody
+  // Return imageBody and MediaEntity
   async getImage(mediaId, suffix = 'x') {
+    // Find Media
+    const medias = await this.repo.findByIds([mediaId]);
+    if (medias.length == 0)
+      throw new BadRequestException(`Not found media.id=${mediaId}`);
+
+    // Find Image with suffix [Option]
+    let imageBody: string;
+    let s3key: string;
     const images = await getRepository(ImagesEntity).find({
-      where: { mediaId: mediaId, suffix },
+      where: { mediaId, suffix },
     });
     if (images.length == 1) {
-      const s3key = images[0].s3key;
-      if (!s3key) throw new InternalServerErrorException('Not found s3key');
-      return await this.uploaderService.getImageBody(s3key);
+      s3key = images[0].s3key;
+      if (s3key) {
+        imageBody = await this.uploaderService.getImageBody(s3key);
+      }
     }
-    throw new BadRequestException(
-      `Not found images.mediaId=${mediaId} and suffix=x`,
-    );
+    if (imageBody) {
+      imageBody = `data:${medias[0].mimetype};base64,${imageBody}`;
+    }
+
+    return { media: medias[0], s3key, imageBody };
+  }
+
+  async getDownload(s3key) {
+    if (!s3key) throw new BadRequestException(`Invalid s3key`);
+    return await this.uploaderService.getFileBody(s3key);
   }
 }

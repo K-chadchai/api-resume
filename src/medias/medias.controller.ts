@@ -7,6 +7,7 @@ import {
   Delete,
   Param,
   Get,
+  Header,
 } from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { Crud } from '@nestjsx/crud';
@@ -35,5 +36,12 @@ export class MediasController {
   @Get('image/:id')
   async getImage(@Param('id') id, @Query('suffix') suffix) {
     return await this.service.getImage(id, suffix);
+  }
+
+  @Header('Content-Disposition', 'attachment; filename=test.png')
+  @Header('Content-Type', 'image/png')
+  @Get('download')
+  async getDownload(@Query('s3key') s3key) {
+    return await this.service.getDownload(s3key);
   }
 }

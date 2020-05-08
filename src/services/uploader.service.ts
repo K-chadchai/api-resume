@@ -142,6 +142,7 @@ export class UploaderService {
   }
 
   // Get image body [base64]
+  // https://stackoverflow.com/questions/28450471/convert-inline-svg-to-base64-string
   async getImageBody(s3key) {
     if (!s3key) return null;
     try {
@@ -156,6 +157,25 @@ export class UploaderService {
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException('ASW Not found image');
+    }
+  }
+
+  async getFileBody(s3key): Promise<any> {
+    if (!s3key) return null;
+    try {
+      const s3 = new aws.S3();
+      const file = await s3
+        .getObject({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: s3key,
+        })
+        .promise();
+      return file;
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        `ASW, File not found s3key=${s3key}`,
+      );
     }
   }
 }
