@@ -5,7 +5,7 @@ import { UsersEntity } from 'src/entities/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploaderService } from 'src/services/uploader.service';
 import { QueryRunner, Not, getRepository } from 'typeorm';
-import { MediasService } from 'src/medias/medias.service';
+import { MediasService } from 'src/modules/medias/medias.service';
 import { MediasEntity } from 'src/entities/medias.entity';
 import { ImagesEntity } from 'src/entities/images.entity';
 

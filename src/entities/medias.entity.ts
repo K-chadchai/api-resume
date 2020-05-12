@@ -8,7 +8,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { ImagePostitionEntity } from './image-position.entity';
+import { ImagePostitionEntity } from './image_position.entity';
 import { FoldersEntity } from './folders.entity';
 import { ImagesEntity } from './images.entity';
 

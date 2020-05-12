@@ -9,7 +9,7 @@ import { MediasEntity } from 'src/entities/medias.entity';
 import { ImagesEntity } from 'src/entities/images.entity';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AppService } from 'src/app.service';
+import { AppService } from 'src/app/app.service';
 import { UploaderService } from 'src/services/uploader.service';
 
 @Injectable()
