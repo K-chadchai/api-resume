@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  Unique,
   OneToOne,
   JoinColumn,
 } from 'typeorm';
 import { ImagePostitionEntity } from './image_position.entity';
 import { FoldersEntity } from './folders.entity';
 import { ImagesEntity } from './images.entity';
+import { IMediasEntity } from 'src/interfaces/medias.interface';
 
 // รูปภาพและวิดีโอ ที่อัพโหลด
 const tname = 'medias';
 
 @Entity(tname)
 // @Unique(`uc_${tname}_folder_originalname`, ['folderId', 'originalname']) เช็คเฉพาะสถานะปกติ(N)
-export class MediasEntity {
+export class MediasEntity implements IMediasEntity {
   @ManyToOne(
-    type => FoldersEntity,
+    () => FoldersEntity,
     folder => folder.id,
   )
   folder: FoldersEntity;
@@ -33,7 +32,7 @@ export class MediasEntity {
   path: string;
 
   @ManyToOne(
-    type => ImagePostitionEntity,
+    () => ImagePostitionEntity,
     inv => inv.id,
   )
   imagePosition: ImagePostitionEntity;
@@ -77,7 +76,7 @@ export class MediasEntity {
   @Column({ nullable: true })
   deleted_time: Date;
 
-  @OneToOne(type => MediasEntity)
+  @OneToOne(() => MediasEntity)
   @JoinColumn()
   replaceBy: string;
   @Column({

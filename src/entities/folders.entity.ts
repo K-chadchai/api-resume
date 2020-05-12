@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -8,14 +7,15 @@ import {
 } from 'typeorm';
 import { MediasEntity } from './medias.entity';
 import { CategoriesEntity } from './categories.entity';
+import { IFoldersEntity } from 'src/interfaces/folders.interface';
 
 const tname = 'folders';
 
 @Entity(tname)
 @Unique(`uc_${tname}_folder_name`, ['categoryId', 'folder_name'])
-export class FoldersEntity {
+export class FoldersEntity implements IFoldersEntity {
   @ManyToOne(
-    type => CategoriesEntity,
+    () => CategoriesEntity,
     category => category.id,
   )
   category: CategoriesEntity;

@@ -1,11 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import { IImagePostitionEntity } from 'src/interfaces/image_position.interface';
 
 // ตำแหน่งที่ถ่ายภาพ
 const tname = 'image_position';
 
 @Entity(tname)
 @Unique(`uc_${tname}_position_name`, ['position_name'])
-export class ImagePostitionEntity {
+export class ImagePostitionEntity implements IImagePostitionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

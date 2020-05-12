@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,16 +6,17 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { MediasEntity } from './medias.entity';
+import { IImagesEntity } from 'src/interfaces/images.interface';
 
 const tname = 'images';
 
 @Entity(tname)
 @Unique(`uc_${tname}_suffix`, ['mediaId', 'suffix'])
 @Unique(`uc_${tname}_s3key`, ['mediaId', 's3key'])
-export class ImagesEntity {
+export class ImagesEntity implements IImagesEntity {
   @ManyToOne(
-    type => MediasEntity,
-    media => media.id,
+    () => MediasEntity,
+    col => col.id,
   )
   media: MediasEntity;
   @Column()
