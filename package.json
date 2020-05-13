@@ -37,6 +37,7 @@
     "multer-sharp-s3": "^0.2.0",
     "nest-router": "^1.0.9",
     "pg": "^8.0.3",
+    "potrace": "^2.1.6",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
