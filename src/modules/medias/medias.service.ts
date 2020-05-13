@@ -201,4 +201,19 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     if (!s3key) throw new BadRequestException(`Invalid s3key`);
     return await this.uploaderService.getFileBody(s3key);
   }
+
+  // รายชื่อ media พร้อม image
+  async getImages(folderId: string, suffix = 'x') {
+    if (!folderId) this.throwNotFoundException('Invalid folderId');
+    // Load meidas
+    const medias = await this.repo.find({
+      select: ['id'],
+      where: { folderId },
+    });
+    return Promise.all(
+      await medias.map(async item => {
+        return await this.getImage(item.id, suffix);
+      }),
+    );
+  }
 }

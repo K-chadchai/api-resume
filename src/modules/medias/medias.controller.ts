@@ -44,4 +44,9 @@ export class MediasController {
   async getDownload(@Query('s3key') s3key) {
     return await this.service.getDownload(s3key);
   }
+
+  @Get('images/:folderId')
+  async getImages(@Param('folderId') folderId, @Query('suffix') suffix) {
+    return await this.service.getImages(folderId, suffix);
+  }
 }
