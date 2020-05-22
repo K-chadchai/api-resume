@@ -20,6 +20,13 @@ import { UsersEntity } from 'src/entities/users.entity';
 export class UsersController {
   constructor(public service: UsersService) {}
 
+  @Get('login-token')
+  loginToken(@Req() req) {
+    // ถ้า user ถูก terminate ให้ userData = null
+    const userData = req.headers.authorization;
+    return { user: userData };
+  }
+
   // Login success
   @Post('login-succss')
   loginSuccess() {
