@@ -22,15 +22,12 @@ export class UsersController {
 
   @Get('login-token')
   loginToken(@Req() req) {
-    // ถ้า user ถูก terminate ให้ userData = null
-    const userData = req.headers.authorization;
-    return { user: userData };
-  }
-
-  // Login success
-  @Post('login-succss')
-  loginSuccess() {
-    return null;
+    // ถ้าถูก terminate ให้ user = null
+    // const authorization = req.headers.authorization; // Bearer
+    const user = {
+      asscessTime: Date.now(),
+    };
+    return { user };
   }
 
   // Upload user picture
