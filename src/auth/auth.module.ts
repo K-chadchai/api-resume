@@ -6,12 +6,13 @@ import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
+import * as constants from 'src/app/app.constants';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: process.env.APP_SECRET_KEY,
+      secret: constants.APP_SECRET_KEY,
       signOptions: { expiresIn: '12h' },
     }),
     UsersModule,
