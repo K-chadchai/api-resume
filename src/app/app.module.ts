@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { RouterModule } from 'nest-router';
 import { routes } from './app.routes';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,11 +8,12 @@ import { ImagePositionModule } from '../modules/image-position/image-position.mo
 import { CategoriesModule } from '../modules/categories/categories.module';
 import { FoldersModule } from '../modules/folders/folders.module';
 import { ImagesModule } from '../modules/images/images.module';
+import { EasyconfigModule } from 'nestjs-easyconfig';
 
 @Module({
   imports: [
+    EasyconfigModule.register({}),
     TypeOrmModule.forRoot(),
-    ConfigModule.forRoot({ envFilePath: '.env.development' }),
     RouterModule.forRoutes(routes),
     CategoriesModule,
     FoldersModule,
