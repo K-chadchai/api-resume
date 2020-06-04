@@ -1,11 +1,11 @@
-import { IMember } from "src/interfaces/member.interface";
+import { IMemberEntity } from "src/interfaces/member.interface";
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from "typeorm";
 
 const tname = 'member';
 
 @Entity(tname)
 @Unique(`uc_${tname}_membership_no`, ['membership_no'])
-export class Member implements IMember {
+export class MemberEntity implements IMemberEntity {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
