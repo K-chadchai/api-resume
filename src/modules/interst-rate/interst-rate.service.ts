@@ -31,13 +31,16 @@ export class InterstRateService extends TypeOrmCrudService<InterstRateEntity> {
             select: ["percent"],
             where: {
                 effect_date: Between(new Date(props.date_fr), new Date(props.date_to))
+            },
+            order: {
+                effect_date: "ASC"
             }
         }
         );
         if (InterstRate.length > 1) {
             console.log("มากกว่า 1")
             console.log(InterstRate.length)
-            return ""
+            return InterstRate
         } else {
             let obj: InterstRateEntity = InterstRate[0];
             console.log(obj.percent);
