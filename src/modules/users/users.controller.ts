@@ -21,7 +21,7 @@ export class UsersController {
   constructor(public service: UsersService) {}
 
   @Get('login-token')
-  loginToken(@Req() req) {
+  loginToken() {
     // ถ้าถูก terminate ให้ user = null
     // const authorization = req.headers.authorization; // Bearer
     const user = {
