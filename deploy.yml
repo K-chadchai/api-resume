@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-media
+spec:
+  selector:
+    matchLabels:
+      app: api-media
+  replicas: 1 
+  template:
+    metadata:  
+      labels:
+        app: api-media
+    spec:
+      containers:
+        - name: api-media
+          image: snikom1723/api-media:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: api-media
+spec:
+    selector:
+    app: api-media
+    ports:
+    - name: api-port
+        port: 4000 
+        nodePort: 34000
+    type: NodePort
