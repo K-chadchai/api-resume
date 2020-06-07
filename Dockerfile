@@ -1,6 +1,4 @@
-# docker image build -t api-media .
-# docker tag api-media:latest snikom1723/api-media:latest
-# docker push snikom1723/api-media:latest
+# docker build --no-cache -t api-media . && docker tag api-media:latest snikom1723/api-media:latest && docker push snikom1723/api-media:latest
 
 FROM node:13-alpine
 

@@ -1,7 +1,6 @@
 .git
 .gitignore
 .editorconfig
-.env.production
 node_modules
 build
 Dockerfile
