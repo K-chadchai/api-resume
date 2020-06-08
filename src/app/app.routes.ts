@@ -8,7 +8,7 @@ import { CategoriesModule } from '../modules/categories/categories.module';
 
 export const routes: Routes = [
   {
-    path: '/v1',
+    path: '/api/media/v1',
     children: [
       CategoriesModule,
       FoldersModule,
