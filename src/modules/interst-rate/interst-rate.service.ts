@@ -51,30 +51,98 @@ export class InterstRateService extends TypeOrmCrudService<InterstRateEntity> {
                 console.log(entry); // 1, "string", false
                 console.log('จำนวนรอบ :' + number); // 1, "string", false
                 const d = ((new Date(props.date_fr).getDate()));
-                // console.log('วันที่ ก่อนเปลี่ยนวัน' + new Date(props.date_to).getDate());
-                //console.log('เช็ควันที่  :' + (30 - d));
-                //รอบแรกจะใช้ date_fr เป็นตัวตั้งหาจำนวนวัน
-                if (number == 1) {
-                    console.log('num1')
-                    const sumday = ((31 - new Date(props.date_fr).getDate()));
+
+                if (obj.length > 1 && number < obj.length) {
+                    console.log('num' + number)
+                    //วันของรายการถัดไป
+                    let dateplus = obj[number].effect_date
+                    console.log('วันของรายการถัดไป :' + dateplus)
+                    //นำวันถัดไปมาลบกับวันที่จะหาผลลัพธ์ เพิ่ที่จะได้ค่าระหว่างวันที่จะต้องจ่าย
+                    //const sumday = dateplus.effect_date.getDate() - entry.effect_date.getDate();
+                    const startdate = dateplus;
+                    let todate = new Date(entry.effect_date);
+                    const diffTime = Math.abs(startdate.getTime() - todate.getTime());
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    console.log('diffday :' + diffDays)
+                    const sumday = diffDays;
+                    console.log('นำวันถัดไปมาลบกับวันที่จะหาผลลัพธ์ เพิ่ที่จะได้ค่าระหว่างวันที่จะต้องจ่าย :' + sumday)
                     const interest = ((Math.floor(sumday + 1)) * entry.percent / 100) * props.princ;
-                    console.log('date fr :' + new Date(props.date_fr).getDate())
-                    console.log('sumday :' + Math.floor(sumday + 1))
                     console.log('percen :' + entry.percent)
                     console.log('x1:' + interest)
                     sumXinterest.push(interest)
+                    // var start = new Date(props.date_fr);
+                    // console.log('วันสุดท้ายของเดือน :' + start)
+
+                    // //หาปี
+                    // var y = start.getFullYear();
+                    // console.log('ปี :' + y)
+                    // //หาเดือน
+                    // var m = (start.getMonth() + 1);
+                    // console.log('เดือน :' + m)
+
+                    // //หาวันสุดท้ายของเดือน
+                    // let sumday = ((new Date(y, m, 0)).getDate() - new Date(props.date_fr).getDate());
+                    // console.log('วันที่ที่ได้' + new Date(y, m, 0).getDate());
+
+                    // const interest = ((Math.floor(sumday + 1)) * entry.percent / 100) * props.princ;
+                    // console.log('date fr :' + new Date(props.date_fr).getDate())
+                    // console.log('sumday :' + Math.floor(sumday + 1))
+                    // console.log('percen :' + entry.percent)
+                    // console.log('x1:' + interest)
+                    // sumXinterest.push(interest)
                     //suminterest += interest
+                } else if (number == obj.length) {
+                    //todate = new Date(entry.effect_date);
+                    let dateplus;
+                    var endDate = new Date(entry.effect_date);
+                    console.log('วันสุดท้ายของเดือน :' + endDate)
+
+                    //หาปี
+                    var y = endDate.getFullYear();
+                    console.log('ปี :' + y)
+                    //หาเดือน
+                    var m = (endDate.getMonth() + 1);
+                    console.log('เดือน :' + m)
+
+                    //หาวันสุดท้ายของเดือน
+                    let sumday = ((new Date(y, m, 0)).getDate() - new Date(props.date_to).getDate());
+                    console.log('วันที่ที่ได้' + new Date(y, m, 0).getDate());
+                    console.log('วันที่ที่ได้ sumday :' + sumday);
+
+                    const interest = ((Math.floor(sumday + 1)) * entry.percent / 100) * props.princ;
+                    console.log('percen :' + entry.percent)
+                    console.log('x' + number + ' :' + interest)
+                    sumXinterest.push(interest)
                 }
                 //รอบต่อไปจะใช้ date_to เป็นตัวหาจำนวนวัน
                 else {
-                    const sumday = ((new Date(props.date_to).getDate()));
-                    const interest = ((sumday) * entry.percent / 100) * props.princ;
-                    console.log('date to :' + new Date(props.date_to).getDate())
-                    console.log('sumday :' + (sumday))
+
+                    console.log('num' + number)
+                    //วันของรายการถัดไป
+                    const dateplus = obj[number].effect_date
+                    console.log('วันของรายการถัดไป :' + dateplus)
+                    //นำวันถัดไปมาลบกับวันที่จะหาผลลัพธ์ เพิ่ที่จะได้ค่าระหว่างวันที่จะต้องจ่าย
+                    //const sumday = dateplus.effect_date.getDate() - entry.effect_date.getDate();
+                    const startdate = dateplus;
+                    const todate = new Date(entry.effect_date);
+                    const diffTime = Math.abs(startdate.getTime() - todate.getTime());
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    console.log('diffday :' + diffDays)
+                    const sumday = diffDays;
+                    console.log('นำวันถัดไปมาลบกับวันที่จะหาผลลัพธ์ เพิ่ที่จะได้ค่าระหว่างวันที่จะต้องจ่าย :' + sumday)
+                    const interest = ((Math.floor(sumday + 1)) * entry.percent / 100) * props.princ;
                     console.log('percen :' + entry.percent)
-                    console.log('x2:' + interest)
+                    console.log('x' + number + ' :' + interest)
                     sumXinterest.push(interest)
-                    //suminterest += interest
+
+                    //     const sumday = ((new Date(props.date_to).getDate()));
+                    //     const interest = ((sumday) * entry.percent / 100) * props.princ;
+                    //     console.log('date to :' + new Date(props.date_to).getDate())
+                    //     console.log('sumday :' + (sumday))
+                    //     console.log('percen :' + entry.percent)
+                    //     console.log('x2:' + interest)
+                    //     sumXinterest.push(interest)
+                    //     //suminterest += interest
                 }
             }
             console.log('โชว์ค่าที่เก็บใน array :' + sumXinterest)
