@@ -6,7 +6,13 @@ import { QueryFailedErrorFilter } from './app/app.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+    allowedHeaders:
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    credentials: false,
+  });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new QueryFailedErrorFilter());
 
