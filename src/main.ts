@@ -11,7 +11,6 @@ async function bootstrap() {
     methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
     allowedHeaders:
       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-    credentials: false,
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new QueryFailedErrorFilter());
