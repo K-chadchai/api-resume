@@ -64,8 +64,22 @@ export class InterstRateService extends TypeOrmCrudService<InterstRateEntity> {
                     const diffTime = Math.abs(startdate.getTime() - todate.getTime());
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     console.log('diffday :' + diffDays)
-                    const sumday = diffDays;
-                    console.log('นำวันถัดไปมาลบกับวันที่จะหาผลลัพธ์ เพิ่ที่จะได้ค่าระหว่างวันที่จะต้องจ่าย :' + sumday)
+
+
+                    //หาวันจาก datefrom เพื่อให้ได้วันที่คิดใน percen แรกที่ถูกต้อง
+                    let dayDate_fr;
+                    if (obj[0].effect_date) {
+                        let date_fr = new Date(props.date_fr);
+                        let todate = new Date(entry.effect_date);
+                        const diffTime = Math.abs(date_fr.getTime() - todate.getTime());
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        console.log('วันที่ที่ได้ sumday by Date_fr:' + diffDays);
+                        dayDate_fr = diffDays
+                    }
+                    console.log('diffday + diff_dayDate_fr :' + (Math.floor(diffDays + dayDate_fr)))
+                    const sumday = Math.floor(diffDays + dayDate_fr);
+                    console.log('นำวันถัดไปมาลบกับวันที่จะหาผลลัพธ์ เพิ่อที่จะได้ค่าระหว่างวันที่จะต้องจ่าย :' + sumday)
                     const interest = ((Math.floor(sumday + 1)) * entry.percent / 100) * props.princ;
                     console.log('percen :' + entry.percent)
                     console.log('x1:' + interest)
@@ -91,7 +105,7 @@ export class InterstRateService extends TypeOrmCrudService<InterstRateEntity> {
                     // console.log('x1:' + interest)
                     // sumXinterest.push(interest)
                     //suminterest += interest
-                } else if (number == obj.length) {
+                } else if (obj.length > 1 && number == obj.length) {
                     //todate = new Date(entry.effect_date);
                     let dateplus;
                     var endDate = new Date(entry.effect_date);
@@ -150,7 +164,10 @@ export class InterstRateService extends TypeOrmCrudService<InterstRateEntity> {
             console.log('โชว์ผลรวมของ 2 ค่า :' + sumXinterest.reduce(function (a, b) { return a + b; }, 0))
             //const Ckecksumday = ((new Date(props.date_to).getDate() - new Date(props.date_fr).getDate()));
 
-            return InterstRate
+            const Result = sumXinterest.reduce(function (a, b) { return a + b; }, 0);
+
+            //return InterstRate
+            return { Result }
         } else {
             let obj: InterstRateEntity = InterstRate[0];
             console.log(obj);
