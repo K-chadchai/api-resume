@@ -10,7 +10,7 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
     allowedHeaders:
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization, app-token',
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new QueryFailedErrorFilter());
