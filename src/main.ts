@@ -9,8 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
     methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-    allowedHeaders:
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization, app-token',
+    allowedHeaders: '*',
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new QueryFailedErrorFilter());
