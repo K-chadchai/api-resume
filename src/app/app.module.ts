@@ -9,6 +9,7 @@ import { CategoriesModule } from '../modules/categories/categories.module';
 import { FoldersModule } from '../modules/folders/folders.module';
 import { ImagesModule } from '../modules/images/images.module';
 import { EasyconfigModule } from 'nestjs-easyconfig';
+import { MediaSideModule } from 'src/modules/media-side/media-side.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { EasyconfigModule } from 'nestjs-easyconfig';
     ImagesModule,
     MediasModule,
     UsersModule,
+    MediaSideModule
   ],
 })
-export class AppModule {}
+export class AppModule { }

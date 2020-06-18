@@ -5,6 +5,7 @@ import { FoldersModule } from '../modules/folders/folders.module';
 import { ImagePositionModule } from '../modules/image-position/image-position.module';
 import { ImagesModule } from '../modules/images/images.module';
 import { CategoriesModule } from '../modules/categories/categories.module';
+import { MediaSideModule } from 'src/modules/media-side/media-side.module';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,7 @@ export const routes: Routes = [
       ImagesModule,
       MediasModule,
       UsersModule,
+      MediaSideModule
     ],
   },
 ];
