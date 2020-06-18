@@ -9,9 +9,7 @@ import { CategoriesModule } from '../modules/categories/categories.module';
 import { FoldersModule } from '../modules/folders/folders.module';
 import { ImagesModule } from '../modules/images/images.module';
 import { EasyconfigModule } from 'nestjs-easyconfig';
-import { MemberModule } from 'src/modules/member/member.module';
-import { FoodModule } from 'src/modules/food/food.module';
-import { InterstRateModule } from 'src/modules/interst-rate/interst-rate.module';
+import { MediaSideModule } from 'src/modules/media-side/media-side.module';
 
 @Module({
   imports: [
@@ -24,9 +22,7 @@ import { InterstRateModule } from 'src/modules/interst-rate/interst-rate.module'
     ImagesModule,
     MediasModule,
     UsersModule,
-    MemberModule,
-    FoodModule,
-    InterstRateModule
+    MediaSideModule
   ],
 })
 export class AppModule { }
