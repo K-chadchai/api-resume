@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {
-  Injectable,
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { QueryRunner, getRepository } from 'typeorm';
 import { MediasEntity } from 'src/entities/medias.entity';
 import { ImagesEntity } from 'src/entities/images.entity';
