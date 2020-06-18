@@ -1,16 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, createConnection } from 'typeorm';
+import { Like, QueryRunner } from 'typeorm';
+import { AppService } from 'src/app/app.service';
 
 interface IgetSides {
     paging: number,
     search: string
 }
-interface IgetSide {
-    id: number,
-}
+
 interface IEditSide {
     id: string,
     side_name: string,
@@ -24,8 +23,11 @@ interface IEditSide {
 @Injectable()
 export class MediaSideService extends TypeOrmCrudService<MediaSideEntity> {
 
-    constructor(@InjectRepository(MediaSideEntity) repo) {
-        super(repo)
+    constructor(
+        @InjectRepository(MediaSideEntity) repo,
+        private readonly appService: AppService,
+    ) {
+        super(repo);
     }
 
     //custom Api 
@@ -36,81 +38,130 @@ export class MediaSideService extends TypeOrmCrudService<MediaSideEntity> {
         console.log("skip" + skip)
 
         // Validate 
-        // if (!props.paging) {
-        //     this.throwBadRequestException('กรุณาตรวจสอบ paging')
-        // }
 
         //process
-        const Sides = MediaSideEntity;
-        if (props.search) {
-            console.log("ใส่ค้นหา")
-            console.log(props.search)
-            const Side = await this.repo.find({
-                where: {
-                    side_name: Like(`%${props.search}%`)
-                },
-                order: {
-                    created_time: 'ASC'
-                },
-                skip: skip,
-                take: 10
-            });
-            console.log(Side)
-            return { Side }
-        } else {
-            console.log("ไม่ใส่ค้นหา")
-            const Side = await this.repo.find({
-                order: {
-                    created_time: 'ASC'
-                },
-                skip: skip,
-                take: 10
-            });
-            console.log(Side)
-            return { Side }
-        }
-        return { Sides };
+        return await this.appService.dbRunner(async (runner: QueryRunner) => {
+
+            const Sides = MediaSideEntity;
+            if (props.search) {
+                console.log("ใส่ค้นหา")
+                console.log(props.search)
+                const Side = await runner.manager.find(MediaSideEntity, {
+                    where: {
+                        side_name: Like(`%${props.search}%`)
+                    },
+                    order: {
+                        created_time: 'ASC'
+                    },
+                    skip: skip,
+                    take: 10
+                });
+                console.log(Side)
+                return { Side }
+            } else {
+                console.log("ไม่ใส่ค้นหา")
+                const Side = await runner.manager.find(MediaSideEntity, {
+                    order: {
+                        created_time: 'ASC'
+                    },
+                    skip: skip,
+                    take: 10
+                });
+                console.log(Side)
+                return { Side }
+            }
+            return { Sides };
+        });
     }
 
-    async getSide(props: IgetSide) {
+    async getSide(id: string) {
 
         // Validate 
-        console.log(props.id)
-        if (!props.id) {
+        console.log(id)
+        if (!id) {
             this.throwBadRequestException('กรุณาตรวจสอบ id')
         }
-        const Side = await this.repo.find({
-            where: [
-                { id: props.id }
-            ]
+        return await this.appService.dbRunner(async (runner: QueryRunner) => {
+
+            const Side = await runner.manager.find(MediaSideEntity, {
+                where: [
+                    { id: id }
+                ]
+            });
+            return { Side };
         });
-        //console.log(Side)
-        return { Side };
     }
 
-    async EditSide(props: IEditSide) {
+    async EditSide(query: IEditSide) {
 
-        // Validate 
-        if (!props.id) {
-            this.throwBadRequestException('กรุณาตรวจสอบ id')
-        }
-        console.log(props.id)
+        console.log("id :" + query.id)
+        return await this.appService.dbRunner(async (runner: QueryRunner) => {
+            //
+            console.log("เข้าฟังชั่น อัพเดท", query)
+            const SideToUpdate: MediaSideEntity = await runner.manager.findOne(MediaSideEntity, {
+                where: [
+                    { id: query.id }
+                ]
+            })
+            console.log('SideToUpdate >>', SideToUpdate)
+            if (!SideToUpdate.id) {
+                throw new BadRequestException(
+                    `ไม่พบข้อมูล id :(${query.id}) ,กรุณาตรวจสอบ`,
+                );
+            }
+            //
+            SideToUpdate.side_name = query.side_name;
+            SideToUpdate.description = query.description;
+            SideToUpdate.last_edidor = query.last_edidor;
+            SideToUpdate.last_edited_time = query.last_edited_time;
 
-        /*...*/
-        let SideToUpdate: IEditSide = await this.repo.findOne({
-            where: [
-                { id: props.id }
-            ]
+            console.log("ค่า side_name" + query.side_name)
+            const Sides = await runner.manager.save(MediaSideEntity, SideToUpdate);
+            // this.throwBadRequestException("555");
+            return Sides;
         });
-
-        console.log("การค้นหา" + SideToUpdate)
-        if (SideToUpdate.id) {
-            SideToUpdate.side_name = props.side_name;
-            return await this.repo.save(SideToUpdate);
-        }
-
-        //console.log(Side)
-        return {};
     }
 
+    async DeleteSide(id: string) {
+
+        console.log("Delete id :" + id)
+        return await this.appService.dbRunner(async (runner: QueryRunner) => {
+            //
+            const SideToUpdate: MediaSideEntity = await runner.manager.findOne(MediaSideEntity, {
+                where: [
+                    { id: id }
+                ]
+            })
+            if (!SideToUpdate.id) {
+                throw new BadRequestException(
+                    `ไม่พบข้อมูล id :(${id}) ,กรุณาตรวจสอบ`,
+                );
+            }
+            //
+            console.log("ข้อมูลค้นหา :" + SideToUpdate.id)
+            const Sides = await runner.manager.remove(MediaSideEntity, SideToUpdate);
+            // this.throwBadRequestException("555");
+            return Sides;
+
+        });
+    }
+
+    async SaveSide(query: MediaSideEntity) {
+
+        console.log("id :" + query.id)
+        return await this.appService.dbRunner(async (runner: QueryRunner) => {
+            //
+            let side = new MediaSideEntity()
+            //
+            side.side_name = query.side_name;
+            side.description = query.description;
+            side.created_user = query.created_user;
+            side.created_time = new Date();
+            side.last_edidor = query.created_user;
+            side.last_edited_time = new Date();
+            const Sides = await runner.manager.save(MediaSideEntity, side);
+            // this.throwBadRequestException("555");
+            return Sides;
+        });
+    }
 }

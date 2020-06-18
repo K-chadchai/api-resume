@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Put, Body } from '@nestjs/common';
+import { Controller, Get, Query, Put, Body, Req, Res, Delete, Param, Post } from '@nestjs/common';
 import { Crud } from '@nestjsx/crud';
 import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { MediaSideService } from './media-side.service';
@@ -17,14 +17,24 @@ export class MediaSideController {
         return await this.service.getSides(query)
     }
 
-    @Get('side')
-    async getSide(@Query() query) {
-        return await this.service.getSide(query)
+    @Get('side/:id')
+    async getSide(@Param('id') id) {
+        return await this.service.getSide(id)
     }
 
     @Put('EditSide')
     async EditSide(@Body() query) {
         return await this.service.EditSide(query)
+    }
+
+    @Delete('DeleteSide/:id')
+    async DeleteSide(@Param('id') id) {
+        return await this.service.DeleteSide(id)
+    }
+
+    @Post('SaveSide')
+    async SaveSide(@Body() query) {
+        return await this.service.SaveSide(query)
     }
 
 
