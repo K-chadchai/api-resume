@@ -27,6 +27,7 @@
     "@nestjs/swagger": "^4.5.3",
     "@nestjs/typeorm": "^7.0.0",
     "@nestjsx/crud": "^4.5.0",
+    "@nestjsx/crud-request": "^4.6.2",
     "@nestjsx/crud-typeorm": "^4.5.0",
     "aws-sdk": "^2.666.0",
     "class-transformer": "^0.2.3",
