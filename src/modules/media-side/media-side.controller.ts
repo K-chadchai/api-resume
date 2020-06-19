@@ -7,35 +7,34 @@ import { MediaSideService } from './media-side.service';
     model: { type: MediaSideEntity },
     params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
-
 @Controller('media-side')
 export class MediaSideController {
     constructor(public service: MediaSideService) { }
 
-    @Get('sides')
-    async getSides(@Query() query) {
-        return await this.service.getSides(query)
-    }
+    // @Get('side')
+    // async getSides(@Query() query) {
+    //     return await this.service.getSides(query)
+    // }
 
-    @Get('side/:id')
-    async getSide(@Param('id') id) {
-        return await this.service.getSide(id)
-    }
+    // @Get('side/:id')
+    // async getSide(@Param('id') id) {
+    //     return await this.service.getSide(id)
+    // }
 
-    @Put('EditSide')
-    async EditSide(@Body() query) {
-        return await this.service.EditSide(query)
-    }
+    // @Put('side')
+    // async EditSide(@Body() query) {
+    //     return await this.service.EditSide(query)
+    // }
 
-    @Delete('DeleteSide/:id')
-    async DeleteSide(@Param('id') id) {
-        return await this.service.DeleteSide(id)
-    }
+    // @Delete('side/:id')
+    // async DeleteSide(@Param('id') id) {
+    //     return await this.service.DeleteSide(id)
+    // }
 
-    @Post('SaveSide')
-    async SaveSide(@Body() query) {
-        return await this.service.SaveSide(query)
-    }
+    // @Post('SaveSide')
+    // async SaveSide(@Body() query) {
+    //     return await this.service.SaveSide(query)
+    // }
 
 
 }

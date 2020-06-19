@@ -148,20 +148,20 @@ export class MediaSideService extends TypeOrmCrudService<MediaSideEntity> {
 
     async SaveSide(query: MediaSideEntity) {
 
-        console.log("id :" + query.id)
-        return await this.appService.dbRunner(async (runner: QueryRunner) => {
-            //
-            let side = new MediaSideEntity()
-            //
-            side.side_name = query.side_name;
-            side.description = query.description;
-            side.created_user = query.created_user;
-            side.created_time = new Date();
-            side.last_edidor = query.created_user;
-            side.last_edited_time = new Date();
-            const Sides = await runner.manager.save(MediaSideEntity, side);
-            // this.throwBadRequestException("555");
-            return Sides;
-        });
+        query.created_time = new Date();
+        query.last_edited_time = new Date();
+
+        return this.repo.save(query)
+
+        // console.log("id :" + query.id)
+        // return await this.appService.dbRunner(async (runner: QueryRunner) => {
+        //     //
+        //     //
+        //     const Sides = await runner.manager.save(MediaSideEntity, query);
+
+
+        //     // this.throwBadRequestException("555");
+        //     return Sides;
+        // });
     }
 }
