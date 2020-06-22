@@ -19,42 +19,42 @@ export class MediaFolderEntity implements IMediaFolderEntity {
     folder_name: string;
 
     @Column({
-        nullable: null,
+        nullable: true,
         length: 255
     })
     description: string;
 
     @Column({
-        nullable: null,
+        nullable: true,
         length: 15
     })
     reference: string;
 
     @Column({
-        nullable: null,
+        nullable: true,
         length: 20
     })
     folder_type: string;
 
     @Column({
-        nullable: null,
+        nullable: true,
         length: 15
     })
     creator: string;
 
     @Column({
-        nullable: null,
+        nullable: true,
     })
-    creator_time: Date;
+    created_time: Date;
 
     @Column({
-        nullable: null,
+        nullable: true,
         length: 15
     })
     last_editor: string;
 
     @Column({
-        nullable: null
+        nullable: true
     })
-    last_editor_time: Date;
+    last_edited_time: Date;
 }
