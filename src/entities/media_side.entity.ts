@@ -12,29 +12,37 @@ export class MediaSideEntity implements IMediaSideEntity {
     id: string;
 
     @Column({
+        nullable: null,
         length: 100
     })
     side_name: string;
 
     @Column({
+        nullable: null,
         length: 255
     })
     description: string;
 
     @Column({
+        nullable: null,
         length: 15
     })
     created_user: string
 
-    @Column()
+    @Column({
+        nullable: null
+    })
     created_time: Date
 
     @Column({
+        nullable: null,
         length: 15
     })
     last_edidor: string
 
-    @Column()
+    @Column({
+        nullable: null
+    })
     last_edited_time: Date
 
 }

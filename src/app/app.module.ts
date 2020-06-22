@@ -10,6 +10,7 @@ import { FoldersModule } from '../modules/folders/folders.module';
 import { ImagesModule } from '../modules/images/images.module';
 import { EasyconfigModule } from 'nestjs-easyconfig';
 import { MediaSideModule } from 'src/modules/media-side/media-side.module';
+import { MediaFolderModule } from 'src/modules/media-folder/media-folder.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { MediaSideModule } from 'src/modules/media-side/media-side.module';
     ImagesModule,
     MediasModule,
     UsersModule,
-    MediaSideModule
+    MediaSideModule,
+    MediaFolderModule
   ],
 })
 export class AppModule { }
