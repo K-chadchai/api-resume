@@ -59,7 +59,7 @@ pipeline {
 
       stage('Docker image prune repository') { 
          steps { 
-            sh 'docker image prune --force --filter "label=maintainer=dohome-2020" -a'
+            sh 'docker image prune --force --filter "label=maintainer=${SERVICE_NAME}" -a'
          }
       }
 
