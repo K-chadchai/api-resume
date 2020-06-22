@@ -45,12 +45,6 @@ pipeline {
           }
       }
 
-      stage('Docker image rm') {
-         steps {
-            sh 'docker image rm ${REPOSITORY_TAG}'
-         }
-      }
-
       stage('Docker image prune dangling') { 
          steps {
             sh 'docker image prune --force --filter "dangling=true"'
