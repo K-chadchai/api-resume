@@ -4,21 +4,17 @@ import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, QueryRunner } from 'typeorm';
 import { AppService } from 'src/app/app.service';
+import { async } from 'rxjs/internal/scheduler/async';
 
-interface IgetSides {
+interface IGetSides {
     page_no: number,
     search: string
 }
 
-interface IEditSide {
-    id: string,
-    side_name: string,
-    description: string,
-    created_user: string,
-    created_time: Date,
-    last_edidor: string,
-    last_edited_time: Date
+interface IPostBulk {
+    bulk: MediaSideEntity[]
 }
+
 
 @Injectable()
 export class MediaSideService extends TypeOrmCrudService<MediaSideEntity> {
@@ -31,7 +27,7 @@ export class MediaSideService extends TypeOrmCrudService<MediaSideEntity> {
     }
 
     // ค้นหาข้อมูล
-    async get(props: IgetSides) {
+    async get(props: IGetSides) {
         // console.log('props :>> ', props);
         return await this.repo.find({
             where: props.search ? {
@@ -85,6 +81,14 @@ export class MediaSideService extends TypeOrmCrudService<MediaSideEntity> {
     }
 
     async post(body: MediaSideEntity) {
-        return this.repo.save(body)
+        return await this.repo.save(body)
+    }
+
+    async postBulk(body: IPostBulk) {
+        const saved = []
+        for (let i = 0; i < body.bulk.length; i++) {
+            saved.push(await this.repo.save(body.bulk[i]))
+        }
+        return saved
     }
 }

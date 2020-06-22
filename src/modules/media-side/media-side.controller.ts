@@ -3,10 +3,10 @@ import { Crud } from '@nestjsx/crud';
 import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { MediaSideService } from './media-side.service';
 
-// @Crud({
-//     model: { type: MediaSideEntity },
-//     params: { id: { field: 'id', type: 'uuid', primary: true } },
-// })
+@Crud({
+    model: { type: MediaSideEntity },
+    params: { id: { field: 'id', type: 'uuid', primary: true } },
+})
 @Controller('media-side')
 export class MediaSideController {
     constructor(public service: MediaSideService) { }
@@ -34,6 +34,11 @@ export class MediaSideController {
     @Post()
     async post(@Body() body) {
         return await this.service.post(body)
+    }
+
+    @Post('/bulk')
+    async postBulk(@Body() body) {
+        return await this.service.postBulk(body)
     }
 
 
