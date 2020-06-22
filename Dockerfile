@@ -1,6 +1,7 @@
 # docker build --no-cache -t api-media . && docker tag api-media:latest snikom1723/api-media:latest && docker push snikom1723/api-media:latest
 
 FROM node:13-alpine
+LABEL maintainer="dohome-2020"
 
 # Set necessary environment variables.
 ENV NODE_ENV=production \

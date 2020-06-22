@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-media
+  name: ${SERVICE_NAME}
 spec:
   selector:
     matchLabels:
-      app: api-media
+      app: ${SERVICE_NAME}
   replicas: 1
   template:
     metadata:
       labels:
-        app: api-media
+        app: ${SERVICE_NAME}
     spec:
       imagePullSecrets:
         - name: regcred
@@ -18,18 +18,17 @@ spec:
         fsGroup: 1000
         runAsUser: 0
       containers:
-        - name: api-media
-          image: snikom1723/api-media:latest
+        - name: ${SERVICE_NAME}
+          image: ${REPOSITORY_TAG}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-media
+  name: ${SERVICE_NAME}
 spec:
   selector:
-    app: api-media
+    app: ${SERVICE_NAME}
   ports:
     - name: api-port
       port: 4000
-      nodePort: 30001
-  type: NodePort
+  type: ClusterIP
