@@ -4,7 +4,7 @@ import { PrimaryGeneratedColumn, Column, Entity, Unique } from "typeorm";
 const tname = 'media_image_share';
 
 @Entity(tname)
-@Unique(`uc_${tname}_obid_ft_re_url`, ['object_id', 'file_type', 'resolution', 'url'])
+@Unique(`uc_${tname}_oid_f_r_u`, ['object_id', 'file_type', 'resolution', 'url'])
 export class MediaImageShareEntity implements IMediaImageShareEntity {
 
     @PrimaryGeneratedColumn('uuid')

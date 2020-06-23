@@ -1,7 +1,7 @@
 import { IMediaObjectEntity } from "src/interfaces/media_object.interface";
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from "typeorm";
 
-const tname = 'media_folder';
+const tname = 'media_object';
 
 @Entity(tname)
 @Unique(`uc_${tname}_foid_objname_fitype`, ['folder_id', 'object_name', 'file_type'])
