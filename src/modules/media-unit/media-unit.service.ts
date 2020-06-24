@@ -12,8 +12,4 @@ export class MediaUnitService extends TypeOrmCrudService<MediaUnitEntity> {
     ) {
         super(repo);
     }
-
-    async post(body: MediaUnitEntity) {
-        return await this.repo.save(body);
-    }
 }

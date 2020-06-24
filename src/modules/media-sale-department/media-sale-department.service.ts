@@ -4,6 +4,10 @@ import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.en
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app/app.service';
 
+interface IPostBulk {
+    bulk: MediaSaleDepartmentEntity[]
+}
+
 @Injectable()
 export class MediaSaleDepartmentService extends TypeOrmCrudService<MediaSaleDepartmentEntity> {
     constructor(
@@ -11,9 +15,5 @@ export class MediaSaleDepartmentService extends TypeOrmCrudService<MediaSaleDepa
         private readonly appService: AppService,
     ) {
         super(repo);
-    }
-
-    async post(body: MediaSaleDepartmentEntity) {
-        return await this.repo.save(body);
     }
 }
