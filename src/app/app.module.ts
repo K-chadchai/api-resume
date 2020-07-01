@@ -20,7 +20,7 @@ import { MediaSideModule } from 'src/modules/media-side/media-side.module';
       port: 5432,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      database: 'postgres',
+      database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       logging: true,
@@ -32,7 +32,7 @@ import { MediaSideModule } from 'src/modules/media-side/media-side.module';
     ImagesModule,
     MediasModule,
     UsersModule,
-    MediaSideModule
+    MediaSideModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
