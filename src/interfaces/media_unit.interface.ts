@@ -1,9 +1,9 @@
-export interface IMediaSideEntity {
+export interface IMediaUnitEntity {
     id: string,
-    side_name: string,
+    code: string,
     description: string,
     creator: string,
     created_time: Date,
-    last_edidor: string,
+    last_editor: string,
     last_edited_time: Date
 }

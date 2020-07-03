@@ -10,6 +10,17 @@ import { FoldersModule } from '../modules/folders/folders.module';
 import { ImagesModule } from '../modules/images/images.module';
 import { EasyconfigModule } from 'nestjs-easyconfig';
 import { MediaSideModule } from 'src/modules/media-side/media-side.module';
+import { MediaFolderModule } from 'src/modules/media-folder/media-folder.module';
+import { MediaActivityLogModule } from 'src/modules/media-activity-log/media-activity-log.module';
+import { MediaArticleModule } from 'src/modules/media-article/media-article.module';
+import { MediaImageShareModule } from 'src/modules/media-image-share/media-image-share.module';
+import { MediaObjectRelationModule } from 'src/modules/media-object-relation/media-object-relation.module';
+import { MediaObjectModule } from 'src/modules/media-object/media-object.module';
+import { MediaPermissionModule } from 'src/modules/media-permission/media-permission.module';
+import { MediaRoleModule } from 'src/modules/media-role/media-role.module';
+import { MediaSaleDepartmentModule } from 'src/modules/media-sale-department/media-sale-department.module';
+import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
+import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-action.module';
 
 @Module({
   imports: [
@@ -33,6 +44,19 @@ import { MediaSideModule } from 'src/modules/media-side/media-side.module';
     MediasModule,
     UsersModule,
     MediaSideModule,
+    MediaFolderModule,
+    MediaActivityLogModule,
+    MediaArticleModule,
+    MediaFolderModule,
+    MediaImageShareModule,
+    MediaObjectRelationModule,
+    MediaObjectModule,
+    MediaPermissionModule,
+    MediaRoleModule,
+    MediaSaleDepartmentModule,
+    MediaSideModule,
+    MediaUnitModule,
+    MediaUserActionModule,
   ],
 })
 export class AppModule {}

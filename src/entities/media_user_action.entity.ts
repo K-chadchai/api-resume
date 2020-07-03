@@ -1,21 +1,20 @@
-import { IMediaSideEntity } from "src/interfaces/media_side.interface";
+import { IMediaUserActionEntity } from "src/interfaces/media_user_action.interface"
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from "typeorm";
 
-const tname = 'media_side';
+
+const tname = 'media_user_action';
 
 @Entity(tname)
-@Unique(`uc_${tname}_id`, ['id'])
-
-export class MediaSideEntity implements IMediaSideEntity {
+@Unique(`uc_${tname}_code`, ['code'])
+export class MediaUserActionEntity implements IMediaUserActionEntity {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({
-        nullable: true,
-        length: 100
+        length: 10
     })
-    side_name: string;
+    code: string;
 
     @Column({
         nullable: true,
@@ -27,22 +26,21 @@ export class MediaSideEntity implements IMediaSideEntity {
         nullable: true,
         length: 15
     })
-    creator: string
+    creator: string;
 
     @Column({
         nullable: true
     })
-    created_time: Date
+    created_time: Date;
 
     @Column({
         nullable: true,
         length: 15
     })
-    last_edidor: string
+    last_editor: string;
 
     @Column({
         nullable: true
     })
-    last_edited_time: Date
-
+    last_edited_time: Date;
 }
