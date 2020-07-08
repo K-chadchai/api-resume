@@ -16,6 +16,7 @@ import { MediaPermissionModule } from 'src/modules/media-permission/media-permis
 import { MediaRoleModule } from 'src/modules/media-role/media-role.module';
 import { MediaSaleDepartmentModule } from 'src/modules/media-sale-department/media-sale-department.module';
 import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-action.module';
+import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
 
 export const routes: Routes = [
   {
@@ -39,7 +40,8 @@ export const routes: Routes = [
       MediaSaleDepartmentModule,
       MediaSideModule,
       MediaUserActionModule,
-      MediaArticleModule
+      MediaArticleModule,
+      MediaUnitModule,
     ],
   },
 ];
