@@ -25,18 +25,31 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
 
   // ค้นหาข้อมูล
   async getPaging(props: IGetFolder) {
-    return await this.repo.find({
-      where: props.search
-        ? {
-            folder_name: Like(`%${props.search}%`),
-          }
-        : '',
-      order: {
-        folder_name: 'ASC',
-      },
-      skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
-      take: 10,
-    });
+    if (props.search === 'ROOT') {
+      return await this.repo.find({
+        where: {
+          parent_id: props.search,
+        },
+        order: {
+          folder_name: 'ASC',
+        },
+        skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+        take: 10,
+      });
+    } else {
+      return await this.repo.find({
+        where: props.search
+          ? {
+              folder_name: Like(`%${props.search}%`),
+            }
+          : '',
+        order: {
+          folder_name: 'ASC',
+        },
+        skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+        take: 10,
+      });
+    }
   }
 
   async postInit() {
