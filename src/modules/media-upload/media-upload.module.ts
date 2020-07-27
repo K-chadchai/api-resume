@@ -2,6 +2,7 @@ import { Module, HttpModule } from '@nestjs/common';
 import { MediaUploadController } from './media-upload.controller';
 import { MediaUploadService } from './media-upload.service';
 import { AppService } from 'src/app/app.service';
+import { UploaderService } from 'src/services/uploader.service';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { AppService } from 'src/app/app.service';
     }),
   ],
   controllers: [MediaUploadController],
-  providers: [MediaUploadService, AppService],
+  providers: [MediaUploadService, AppService, UploaderService],
 })
 export class MediaUploadModule {}

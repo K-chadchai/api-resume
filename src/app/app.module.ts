@@ -22,6 +22,7 @@ import { MediaSaleDepartmentModule } from 'src/modules/media-sale-department/med
 import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
 import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-action.module';
 import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module';
+import { MediaColorsModule } from 'src/modules/media-colors/media-colors.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module'
     MediaUnitModule,
     MediaUserActionModule,
     MediaUploadModule,
+    MediaColorsModule,
   ],
 })
 export class AppModule {}

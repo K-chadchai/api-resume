@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
+import { UploaderService } from 'src/services/uploader.service';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -18,6 +19,7 @@ export class MediaUploadService {
     private readonly appService: AppService,
     @InjectConnection('mssql')
     private readonly connection: Connection,
+    private readonly uploaderService: UploaderService,
   ) {}
 
   async getArticleInfo(props: IGetArticleInfo) {
@@ -34,5 +36,34 @@ export class MediaUploadService {
       ? (query = `select TOP (20) * from TBMaster_Seller where CODE like ('%${props.search}%') or MYNAME like ('%${props.search}%')`)
       : (query = 'select TOP (20) * from TBMaster_Seller');
     return this.connection.query(query);
+  }
+
+  // Upload file to media
+  async uploadMedia(req, res, query, callback = null) {
+    const { folderId, employee_id, path, old_id, isUserProfile } = query;
+    //Process
+    return await this.uploaderService.uploadFile2(req, res, query, () => {});
+  }
+
+  async shareImage(mediaId, suffix = 'x') {
+    // Find Media
+    // const medias = await this.repo.findByIds([mediaId]);
+    // if (medias.length == 0)
+    //   throw new BadRequestException(`Not found media.id=${mediaId}`);
+    // Find Image with suffix [Option]
+    let imageBody: string;
+    let s3key: string;
+
+    if (s3key) {
+      imageBody = await this.uploaderService.shareImage(s3key);
+    }
+
+    if (imageBody) {
+      // imageBody = `data:${medias[0].mimetype};base64,${imageBody}`;
+      imageBody = `data:${'Lname'};base64,${imageBody}`;
+    }
+
+    //return { media: medias[0], s3key, imageBody };
+    return { media: 'Lname', s3key, imageBody };
   }
 }
