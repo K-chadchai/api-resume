@@ -1,11 +1,11 @@
-import { IMediaColorsEntity } from 'src/interfaces/media_colors.interface';
-import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
+import { IMediaColorxEntity } from 'src/interfaces/media_colorx.interface';
+import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-const tname = 'media_colors';
+const tname = 'media_colerx';
 
 @Entity(tname)
 @Unique(`uc_${tname}_id`, ['id'])
-export class MediaColorsEntity implements IMediaColorsEntity {
+export class MediaColorxEntity implements IMediaColorxEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -13,7 +13,7 @@ export class MediaColorsEntity implements IMediaColorsEntity {
     nullable: true,
     length: 100,
   })
-  color_name: string;
+  colorx_name: string;
 
   @Column({
     nullable: true,
