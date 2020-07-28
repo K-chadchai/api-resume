@@ -19,6 +19,7 @@ import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-
 import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
 import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module';
 import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module';
+import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolution.module';
 
 export const routes: Routes = [
   {
@@ -46,6 +47,7 @@ export const routes: Routes = [
       MediaUnitModule,
       MediaUploadModule,
       MediaColorxModule,
+      MediaResolutionModule,
     ],
   },
 ];

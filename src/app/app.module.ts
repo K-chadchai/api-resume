@@ -23,6 +23,7 @@ import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
 import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-action.module';
 import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module';
 import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module';
+import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolution.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module'
     MediaUserActionModule,
     MediaUploadModule,
     MediaColorxModule,
+    MediaResolutionModule,
   ],
 })
 export class AppModule {}
