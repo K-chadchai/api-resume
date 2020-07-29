@@ -41,7 +41,6 @@ export class MediaObjectService extends TypeOrmCrudService<MediaObjectEntity> {
 
   // ค้นหาข้อมูล ByFolderId
   async getByFolderId(id: string) {
-    console.log('id', id);
     return await this.repo.find({
       where: [{ folder_id: id }],
     });
