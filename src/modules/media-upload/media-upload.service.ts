@@ -41,19 +41,25 @@ export class MediaUploadService {
   // Upload file to media
   async uploadMedia(req, res, query, callback = null) {
     const { folderId, employee_id, path, old_id, isUserProfile } = query;
+    const onCallback = (data: any) => {
+      //console.log('data :>> ', data);
+      const file = data.files[0];
+      if (file) {
+        const { s3key } = file;
+        return { s3key };
+      }
+    };
     //Process
-    return await this.uploaderService.uploadFile2(req, res, query, () => {});
+    return await this.uploaderService.uploadFile2(req, res, query, onCallback);
   }
 
-  async shareImage(mediaId, suffix = 'x') {
+  async shareImage(s3key, suffix = 'x') {
     // Find Media
     // const medias = await this.repo.findByIds([mediaId]);
     // if (medias.length == 0)
     //   throw new BadRequestException(`Not found media.id=${mediaId}`);
     // Find Image with suffix [Option]
     let imageBody: string;
-    let s3key: string;
-
     if (s3key) {
       imageBody = await this.uploaderService.shareImage(s3key);
     }

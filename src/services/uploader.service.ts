@@ -178,4 +178,24 @@ export class UploaderService {
       );
     }
   }
+
+  async shareImage(s3key) {
+    console.log('s3key', s3key);
+    console.log('====================');
+    if (!s3key) return null;
+    try {
+      const s3 = new aws.S3();
+      const file = await s3
+        .getObject({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: s3key,
+        })
+        .promise();
+      console.log('file', file.Body.toString('base64'));
+      return file.Body.toString('base64');
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('ASW Not found image');
+    }
+  }
 }
