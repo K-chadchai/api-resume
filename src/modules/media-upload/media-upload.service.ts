@@ -3,6 +3,7 @@ import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
+import { async } from 'rxjs/internal/scheduler/async';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -45,31 +46,47 @@ export class MediaUploadService {
       //console.log('data :>> ', data);
       const file = data.files[0];
       if (file) {
+        //console.log('file', file);
         const { s3key } = file;
-        return { s3key };
+        return file;
       }
     };
     //Process
     return await this.uploaderService.uploadFile2(req, res, query, onCallback);
   }
 
-  async shareImage(s3key, suffix = 'x') {
-    // Find Media
-    // const medias = await this.repo.findByIds([mediaId]);
-    // if (medias.length == 0)
-    //   throw new BadRequestException(`Not found media.id=${mediaId}`);
-    // Find Image with suffix [Option]
+  async getMediaImage(s3key, suffix = 'x') {
     let imageBody: string;
     if (s3key) {
-      imageBody = await this.uploaderService.shareImage(s3key);
+      imageBody = await this.uploaderService.getImageBody(s3key);
     }
-
     if (imageBody) {
-      // imageBody = `data:${medias[0].mimetype};base64,${imageBody}`;
       imageBody = `data:${'Lname'};base64,${imageBody}`;
     }
-
-    //return { media: medias[0], s3key, imageBody };
     return { media: 'Lname', s3key, imageBody };
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async shareImage(s3key, res) {
+    let retValue: any = null;
+    if (s3key) {
+      const onCallback = async (e: any) => {
+        retValue = { ...e };
+      };
+      await this.uploaderService.shareImage(s3key, res, onCallback);
+      // wait
+      while (retValue === null) {
+        await this.delay(300);
+        if (retValue !== null) {
+          return retValue;
+        }
+      }
+    }
+  }
+  throwBadRequestException(arg0: string) {
+    throw new Error('Method not implemented.');
   }
 }

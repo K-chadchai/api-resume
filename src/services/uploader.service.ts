@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 
 import multer = require('multer');
 import s3Storage = require('multer-sharp-s3');
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class UploaderService {
@@ -179,20 +180,28 @@ export class UploaderService {
     }
   }
 
-  async shareImage(s3key) {
-    console.log('s3key', s3key);
-    console.log('====================');
+  async shareImage(s3key, res, onSuccess?) {
     if (!s3key) return null;
     try {
       const s3 = new aws.S3();
-      const file = await s3
-        .getObject({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: s3key,
-        })
-        .promise();
-      console.log('file', file.Body.toString('base64'));
-      return file.Body.toString('base64');
+      const params = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME_PUBLIC, //'destinationbucket'
+        CopySource: `/${process.env.AWS_S3_BUCKET_NAME}/${s3key}`, //'/sourcebucket/HappyFacejpg',
+        Key: s3key, //'HappyFaceCopyjpg',
+      };
+      s3.copyObject(params, async (err, val: any) => {
+        if (err) {
+          console.error(err);
+          const ETag: string = '';
+          onSuccess({ ETag });
+          return res.status(500).json(err);
+          //throw new InternalServerErrorException('ไม่สามารถแชร์ไฟล์ได้');
+        } else {
+          const ETag: string = `${val.CopyObjectResult.ETag}`.replace(/"/g, '');
+          onSuccess({ s3key, ETag });
+          return res.status(200).json({ s3key, ETag });
+        }
+      });
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException('ASW Not found image');
