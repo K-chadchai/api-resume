@@ -1,5 +1,11 @@
 import { IMediaObjectRelationEntity } from 'src/interfaces/media_object_relation.interface';
-import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  Unique,
+  Generated,
+} from 'typeorm';
 
 const tname = 'media_object_relation';
 
@@ -17,8 +23,8 @@ export class MediaObjectRelationEntity implements IMediaObjectRelationEntity {
 
   @Column({
     nullable: true,
-    length: 36,
   })
+  @Generated('uuid')
   object_id: string;
 
   @Column({

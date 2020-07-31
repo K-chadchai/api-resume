@@ -39,9 +39,14 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
     } else {
       return await this.repo.find({
         where: props.search
-          ? {
-              parent_id: Like(`%${props.search}%`),
-            }
+          ? [
+              {
+                parent_id: Like(`%${props.search}%`),
+              },
+              {
+                folder_name: Like(`%${props.search}%`),
+              },
+            ]
           : '',
         order: {
           folder_name: 'ASC',

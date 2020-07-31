@@ -15,4 +15,9 @@ export class MediaResolutionController {
   async get(@Query() query) {
     return await this.service.getPaging(query);
   }
+
+  @Get('/article-depart-unit-side')
+  async getArticleDepartUnitSide(@Query() query) {
+    return await this.service.getArticleDepartUnitSide(query);
+  }
 }
