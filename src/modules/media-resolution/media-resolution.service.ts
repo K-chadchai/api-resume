@@ -39,19 +39,4 @@ export class MediaResolutionService extends TypeOrmCrudService<
       take: 10,
     });
   }
-
-  // ค้นหาข้อมูล
-  async getArticleDepartUnitSide(props: IGetResolution) {
-    const query = await getConnection()
-      .getRepository(MediaObjectRelationEntity)
-      .createQueryBuilder('media_object_relation')
-      .innerJoinAndSelect(
-        MediaObjectEntity,
-        'media_object',
-        'media_object.id = media_object_relation.object_id',
-      )
-      .getRawMany();
-
-    return query;
-  }
 }

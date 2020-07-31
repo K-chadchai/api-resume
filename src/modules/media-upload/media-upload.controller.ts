@@ -15,6 +15,11 @@ export class MediaUploadController {
     return await this.service.getSaleDepartment(query);
   }
 
+  @Get('/unitInfo')
+  async getUnitInfo(@Query() query) {
+    return await this.service.getUnitInfo(query);
+  }
+
   @Post('upload')
   async postUpload(@Req() req, @Res() res, @Query() query) {
     return await this.service.uploadMedia(req, res, query);

@@ -31,6 +31,16 @@ export class MediaUploadService {
     return this.connection.query(query);
   }
 
+  async getUnitInfo(props: IGetArticleInfo) {
+    let query = '';
+    if (!props.search) this.throwBadRequestException('กรุณาใส่ข้อมูล article');
+    query = `select * from TBMaster_Product_Unit where PRODUCTCODE = '${props.search}'`;
+    return this.connection.query(query);
+  }
+  throwBadRequestException(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
+
   async getSaleDepartment(props: IGetSaleDepartment) {
     let query = '';
     props.search
