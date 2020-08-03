@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
@@ -33,12 +37,12 @@ export class MediaUploadService {
 
   async getUnitInfo(props: IGetArticleInfo) {
     let query = '';
-    if (!props.search) this.throwBadRequestException('กรุณาใส่ข้อมูล article');
+
+    if (!props.search) {
+      throw new InternalServerErrorException('กรุณาใส่ข้อมูล article');
+    }
     query = `select * from TBMaster_Product_Unit where PRODUCTCODE = '${props.search}'`;
     return this.connection.query(query);
-  }
-  throwBadRequestException(arg0: string) {
-    throw new Error('Method not implemented.');
   }
 
   async getSaleDepartment(props: IGetSaleDepartment) {

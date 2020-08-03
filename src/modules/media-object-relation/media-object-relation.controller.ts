@@ -13,6 +13,6 @@ export class MediaObjectRelationController {
 
   @Get('/article-depart-unit-side')
   async getArticleDepartUnitSide(@Query() query) {
-    return await this.service.getArticleDepartUnitSide();
+    return await this.service.getArticleDepartUnitSide(query);
   }
 }
