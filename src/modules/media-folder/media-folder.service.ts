@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app/app.service';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Like, QueryRunner } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 interface IPostBulk {
   bulk: MediaFolderEntity[];
@@ -61,13 +62,15 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       let folder1 = new MediaFolderEntity();
       folder1.folder_name = 'ARTICLE';
-      folder1.parent_id = 'ROOT';
+      folder1.parent_id = uuid();
       folder1.folder_type = 'ARTICLE_ROOT';
+      folder1.is_root = true;
 
       let folder2 = new MediaFolderEntity();
       folder2.folder_name = 'Article Set';
-      folder2.parent_id = 'ROOT';
+      folder2.parent_id = uuid();
       folder2.folder_type = 'ARTICLE_SET_ROOT';
+      folder2.is_root = true;
 
       const sf1 = await runner.manager.save(MediaFolderEntity, folder1);
       const sf2 = await runner.manager.save(MediaFolderEntity, folder2);

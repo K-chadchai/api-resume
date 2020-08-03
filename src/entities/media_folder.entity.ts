@@ -64,4 +64,9 @@ export class MediaFolderEntity implements IMediaFolderEntity {
     nullable: true,
   })
   last_edited_time: Date;
+
+  @Column({
+    nullable: true,
+  })
+  is_root: boolean;
 }
