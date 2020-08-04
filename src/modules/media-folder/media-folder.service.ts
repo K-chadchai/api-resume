@@ -44,9 +44,9 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
               {
                 parent_id: `${props.search}`,
               },
-              {
+              /*{
                 folder_name: Like(`%${props.search}%`),
-              },
+              },*/
             ]
           : '',
         order: {
