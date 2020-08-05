@@ -14,6 +14,7 @@ interface IGetByArticleDepartUnitSide {
   article_unit_id: string;
   article_side_id: string;
   sale_depart_id: string;
+  last_edited: string;
 }
 
 @Injectable()
@@ -26,13 +27,15 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
   ) {
     super(repo);
   }
+
   // ค้นหาข้อมูล
   async getArticleDepartUnitSide(props: IGetByArticleDepartUnitSide) {
     if (
       !props.article_id &&
       !props.article_unit_id &&
       !props.article_unit_id &&
-      !props.sale_depart_id
+      !props.sale_depart_id &&
+      !props.last_edited
     )
       throw new InternalServerErrorException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
 
@@ -58,6 +61,11 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
           ? { sale_depart_id: props.sale_depart_id }
           : { sale_depart_id: '' },
       ])
+      .andWhere(
+        props.last_edited
+          ? `TO_CHAR(last_edited_time,'YYYY-DD-MM') = '${props.last_edited}'`
+          : `TO_CHAR(last_edited_time,'YYYY-DD-MM') = ''`,
+      )
       .getRawMany();
 
     const IGetMediaObjectdata = [];
@@ -70,8 +78,6 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
           : '',
       });
     });
-    //console.log('IGetMediaObjectdata', IGetMediaObjectdata);
-
     return IGetMediaObjectdata;
   }
 }

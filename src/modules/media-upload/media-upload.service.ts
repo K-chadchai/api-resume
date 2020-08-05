@@ -74,10 +74,12 @@ export class MediaUploadService {
       const file = data.files[0];
       if (file) {
         //console.log('file', file);
-        const { s3key } = file;
+        const { s3key, ContentType } = file;
+
         let imageBody: string = '';
         if (s3key) {
           imageBody = await this.uploaderService.getImageBody(s3key);
+          imageBody = `data:image/${ContentType};base64,${imageBody}`;
         }
         return { file, imageBody };
       }
