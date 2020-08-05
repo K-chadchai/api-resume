@@ -8,6 +8,7 @@ import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
 import { async } from 'rxjs/internal/scheduler/async';
+import { MediaObjectEntity } from 'src/entities/media_object.entity';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -16,6 +17,18 @@ interface IGetArticleInfo {
 interface IGetSaleDepartment {
   page_no: number;
   search: string;
+}
+
+interface DataUpload {
+  article_id: string;
+  article_unit_id: string;
+  article_side_id: string;
+  sale_depart_id: string;
+  s3key: string;
+}
+
+interface IPostDataUpload {
+  data: DataUpload[];
 }
 
 @Injectable()
@@ -56,13 +69,17 @@ export class MediaUploadService {
   // Upload file to media
   async uploadMedia(req, res, query, callback = null) {
     const { folderId, employee_id, path, old_id, isUserProfile } = query;
-    const onCallback = (data: any) => {
+    const onCallback = async (data: any) => {
       //console.log('data :>> ', data);
       const file = data.files[0];
       if (file) {
         //console.log('file', file);
         const { s3key } = file;
-        return file;
+        let imageBody: string = '';
+        if (s3key) {
+          imageBody = await this.uploaderService.getImageBody(s3key);
+        }
+        return { file, imageBody };
       }
     };
     //Process
@@ -99,5 +116,14 @@ export class MediaUploadService {
         }
       }
     }
+  }
+
+  async postDataUpload(body: IPostDataUpload) {
+    const saved = [];
+    for (let i = 0; i < body.data.length; i++) {
+      console.log('data', body.data);
+      //saved.push(await this.repo.save(body.bulk[i]));
+    }
+    return saved;
   }
 }

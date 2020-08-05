@@ -1,4 +1,13 @@
-import { Controller, Get, Query, Post, Req, Res, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Req,
+  Res,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { MediaUploadService } from './media-upload.service';
 
 @Controller('media-upload')
@@ -33,5 +42,10 @@ export class MediaUploadController {
   @Get('shareImage/:id')
   async shareImage(@Param('id') id, @Res() res) {
     return await this.service.shareImage(id, res);
+  }
+
+  @Post('/DataUpload')
+  async postDataUpload(@Body() body) {
+    return await this.service.postDataUpload(body);
   }
 }
