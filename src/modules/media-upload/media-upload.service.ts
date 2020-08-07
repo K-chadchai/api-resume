@@ -5,10 +5,17 @@ import {
 } from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
+import { Connection, getConnection, QueryRunner, getRepository } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
 import { async } from 'rxjs/internal/scheduler/async';
 import { MediaObjectEntity } from 'src/entities/media_object.entity';
+import { MediaFolderEntity } from 'src/entities/media_folder.entity';
+import { create } from 'domain';
+import { MediaArticleEntity } from 'src/entities/media_article.entity';
+import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.entity';
+import { MediaSideEntity } from 'src/entities/media_side.entity';
+import { MediaUnitEntity } from 'src/entities/media_unit.entity';
+import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.entity';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -20,11 +27,18 @@ interface IGetSaleDepartment {
 }
 
 interface DataUpload {
-  article_id: string;
-  article_unit_id: string;
+  article_code: string;
+  article_name: string;
+  article_unit_code: string;
   article_side_id: string;
-  sale_depart_id: string;
+  article_side_name: string;
+  sale_depart_code: string;
+  article_color_id: string;
+  article_color_name: string;
+  //article_unit: string;
+  ContentType: string;
   s3key: string;
+  resolution_id: string;
 }
 
 interface IPostDataUpload {
@@ -122,9 +136,245 @@ export class MediaUploadService {
 
   async postDataUpload(body: IPostDataUpload) {
     const saved = [];
+    const data = [];
+    let message: string = '';
     for (let i = 0; i < body.data.length; i++) {
-      console.log('data', body.data);
-      //saved.push(await this.repo.save(body.bulk[i]));
+      try {
+        //หา folder ROOT_ARTICLE เอา id
+        const fineFolder = await getConnection()
+          .getRepository(MediaFolderEntity)
+          .createQueryBuilder('media_folder')
+          .select(['media_folder.id'])
+          .where(
+            `media_folder.folder_type = 'ARTICLE_ROOT' AND media_folder.is_root = true`,
+          )
+          .getOne();
+
+        console.log('fineFolder.id ------>>>>>>>>>>>>>>>', fineFolder.id);
+        if (fineFolder === undefined) {
+          message = 'ไม่พบ id folder root article';
+          console.log('ไม่พบ fineFolder');
+          throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
+        }
+        //ค้นหา folder ถ้าไม่มีข้อมูลให้ insert ลง
+        const fineFolderByDepart = await getConnection()
+          .getRepository(MediaFolderEntity)
+          .createQueryBuilder('media_folder')
+          .select(['media_folder.id'])
+          .where(
+            `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.data[i].sale_depart_code}'`,
+          )
+          .getOne();
+
+        let folder;
+        let id_folder;
+        if (fineFolderByDepart === undefined) {
+          const repositoryFolder = getRepository(MediaFolderEntity);
+          folder = new MediaFolderEntity();
+          folder.folder_name = `${body.data[i].sale_depart_code}_${body.data[i].article_code}_${body.data[i].article_color_name}_${body.data[i].article_unit_code}_${body.data[i].article_side_name}`;
+          folder.parent_id = fineFolder.id;
+          folder.folder_type = 'FOLDER';
+          folder.reference = body.data[i].sale_depart_code;
+          folder.created_time = new Date();
+          folder.creator = '';
+          folder.description = '';
+          try {
+            const { id } = await repositoryFolder.save(folder);
+            id_folder = id;
+          } catch (err) {
+            message = 'บันทึกข้อมูล folder ไม่สำเร็จ';
+            console.log('บันทึกข้อมูล folder ไม่สำเร็จ' + err);
+          }
+        } else id_folder = fineFolderByDepart.id;
+
+        //ค้นหา article ถ้าไม่มีข้อมูลให้ insert ลง
+        const fineArticle = await getConnection()
+          .getRepository(MediaArticleEntity)
+          .createQueryBuilder('media_article')
+          .select(['media_article.id'])
+          .where(`media_article.code = '${body.data[i].article_code}'`)
+          .getOne();
+
+        let article;
+        let id_article;
+        if (fineArticle === undefined) {
+          const repositoryArticle = getRepository(MediaArticleEntity);
+          article = new MediaArticleEntity();
+          article.code = body.data[i].article_code;
+          article.description = '';
+          article.creator = '';
+          article.created_time = new Date();
+          try {
+            const { id } = await repositoryArticle.save(article);
+            id_article = id;
+          } catch (err) {
+            message = message + ' , ' + 'บันทึกข้อมูล article ไม่สำเร็จ';
+            console.log('บันทึกข้อมูล article ไม่สำเร็จ' + err);
+          }
+        } else id_article = fineArticle.id;
+
+        //ค้นหา unit ถ้าไม่มีข้อมูลให้ insert ลง
+        const fineUnit = await getConnection()
+          .getRepository(MediaUnitEntity)
+          .createQueryBuilder('media_unit')
+          .select(['media_unit.id'])
+          .where(`media_unit.code = '${body.data[i].article_unit_code}'`)
+          .getOne();
+
+        let unit;
+        let id_unit;
+        if (fineUnit === undefined) {
+          const repositoryUnit = getRepository(MediaUnitEntity);
+          unit = new MediaUnitEntity();
+          unit.code = body.data[i].article_unit_code;
+          unit.description = '';
+          unit.creator = '';
+          unit.created_time = new Date();
+          try {
+            const { id } = await repositoryUnit.save(unit);
+            id_unit = id;
+          } catch (err) {
+            message = message + ' , ' + 'บันทึกข้อมูล Unit ไม่สำเร็จ';
+            console.log('บันทึกข้อมูล Unit ไม่สำเร็จ');
+          }
+        } else id_unit = fineUnit.id;
+
+        //ค้นหา sale_depart ถ้าไม่มีข้อมูลให้ insert ลง
+        const fineSaleDepart = await getConnection()
+          .getRepository(MediaSaleDepartmentEntity)
+          .createQueryBuilder('media_sale')
+          .select(['media_sale.id'])
+          .where(`media_sale.code = '${body.data[i].sale_depart_code}'`)
+          .getOne();
+
+        let sale_depart;
+        let id_sale_depart;
+        if (fineSaleDepart === undefined) {
+          const repositorySaleDepartment = getRepository(
+            MediaSaleDepartmentEntity,
+          );
+          sale_depart = new MediaUnitEntity();
+          sale_depart.code = body.data[i].sale_depart_code;
+          sale_depart.description = '';
+          sale_depart.creator = '';
+          sale_depart.created_time = new Date();
+          try {
+            const { id } = await repositorySaleDepartment.save(sale_depart);
+            id_sale_depart = id;
+          } catch (err) {
+            message = message + ' , ' + 'บันทึกข้อมูล Sale Depart ไม่สำเร็จ';
+            console.log('บันทึกข้อมูล Sale Depart ไม่สำเร็จ');
+          }
+        } else id_sale_depart = fineSaleDepart.id;
+
+        console.log('ก่อนเชคเงื่อนไข');
+        console.log(
+          'เงื่อนไข',
+          body.data[i].ContentType,
+          body.data[i].s3key,
+          body.data[i].sale_depart_code,
+          id_article,
+          id_unit,
+          body.data[i].article_side_id,
+          body.data[i].article_color_id,
+        );
+
+        if (
+          body.data[i].ContentType &&
+          body.data[i].s3key &&
+          id_sale_depart !== undefined &&
+          id_article !== undefined &&
+          id_unit !== undefined &&
+          body.data[i].article_side_id &&
+          body.data[i].article_color_id &&
+          body.data[i].resolution_id
+        ) {
+          try {
+            await this.appService.dbRunner(async (runner: QueryRunner) => {
+              let media_object = new MediaObjectEntity();
+              media_object.folder_id = body.data[i].article_side_id;
+              media_object.object_name = `${body.data[i].article_code}_${body.data[i].article_color_name}_${body.data[i].article_unit_code}_${body.data[i].article_side_name}_${body.data[i].ContentType}`;
+              media_object.descripion = '';
+              media_object.file_type = body.data[i].ContentType;
+              media_object.file_group = '';
+              media_object.is_original = 0;
+              media_object.creator = '';
+              media_object.created_time = new Date();
+              media_object.s3key = body.data[i].s3key;
+
+              let sMedia_object;
+              try {
+                sMedia_object = await runner.manager.save(
+                  MediaObjectEntity,
+                  media_object,
+                );
+              } catch (err) {
+                message = err;
+                //throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
+              }
+              //เก็บ id ของ media object
+              const { id } = sMedia_object;
+              console.log('id media_object ----->>>>>>', id);
+              if (sMedia_object) {
+                let media_object_relation = new MediaObjectRelationEntity();
+                media_object_relation.object_id = id;
+                media_object_relation.sale_depart_id = id_sale_depart;
+                media_object_relation.article_id = id_article;
+                media_object_relation.article_unit_id = id_unit;
+                media_object_relation.article_side_id =
+                  body.data[i].article_side_id;
+                media_object_relation.color_id = body.data[i].article_color_id;
+                media_object_relation.resolution_id =
+                  body.data[i].resolution_id;
+
+                let sMedia_object_relation;
+                try {
+                  sMedia_object_relation = await runner.manager.save(
+                    MediaObjectRelationEntity,
+                    media_object_relation,
+                  );
+                } catch (err) {
+                  message = err;
+                }
+
+                if (sMedia_object_relation) {
+                  saved.push({
+                    data: sMedia_object_relation,
+                    message: '',
+                  });
+                } else {
+                  saved.push({
+                    data: body.data[i],
+                    message: message,
+                  });
+                }
+              } else {
+                saved.push({
+                  data: body.data[i],
+                  message: message,
+                });
+              }
+            });
+          } catch (err) {
+            saved.push({
+              data: body.data[i],
+              message: 'ไม่สามารถอัพโหลดไฟล์ได้' + ' , ' + message,
+            });
+          }
+        } else {
+          message = 'ข้อมูลไม่เป็นไปตามเงื่อนไขสร้างไฟล์';
+          console.log('ข้อมูลไม่เป็นไปตามเงื่อนไขสร้างไฟล์');
+          saved.push({
+            data: body.data[i],
+            message: message,
+          });
+        }
+        //const { id } = folder;
+      } catch (err) {
+        throw new InternalServerErrorException(
+          'ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err,
+        );
+      }
     }
     return saved;
   }
