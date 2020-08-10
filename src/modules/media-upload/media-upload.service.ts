@@ -117,22 +117,22 @@ export class MediaUploadService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async shareImage(s3key, res) {
-    let retValue: any = null;
-    if (s3key) {
-      const onCallback = async (e: any) => {
-        retValue = { ...e };
-      };
-      await this.uploaderService.shareImage(s3key, res, onCallback);
-      // wait
-      while (retValue === null) {
-        await this.delay(300);
-        if (retValue !== null) {
-          return retValue;
-        }
-      }
-    }
-  }
+  // async shareImage(s3key, res) {
+  //   let retValue: any = null;
+  //   if (s3key) {
+  //     const onCallback = async (e: any) => {
+  //       retValue = { ...e };
+  //     };
+  //     await this.uploaderService.shareImage(s3key, res, onCallback);
+  //     // wait
+  //     while (retValue === null) {
+  //       await this.delay(300);
+  //       if (retValue !== null) {
+  //         return retValue;
+  //       }
+  //     }
+  //   }
+  // }
 
   async postDataUpload(body: IPostDataUpload) {
     const saved = [];
