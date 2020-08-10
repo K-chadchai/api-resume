@@ -27,39 +27,21 @@ export class MediaObjectRelationEntity implements IMediaObjectRelationEntity {
   @Generated('uuid')
   object_id: string;
 
-  @Column({
-    nullable: true,
-    length: 36,
-  })
+  @Column('uuid')
   sale_depart_id: string;
 
-  @Column({
-    nullable: true,
-    length: 36,
-  })
+  @Column('uuid')
   article_id: string;
 
-  @Column({
-    nullable: true,
-    length: 36,
-  })
+  @Column('uuid')
   article_unit_id: string;
 
-  @Column({
-    nullable: true,
-    length: 36,
-  })
+  @Column('uuid')
   article_side_id: string;
 
-  @Column({
-    nullable: true,
-    length: 36,
-  })
+  @Column('uuid')
   color_id: string;
 
-  @Column({
-    nullable: true,
-    length: 36,
-  })
+  @Column('uuid')
   resolution_id: string;
 }
