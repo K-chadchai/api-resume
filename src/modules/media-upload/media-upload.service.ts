@@ -16,6 +16,7 @@ import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.en
 import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { MediaUnitEntity } from 'src/entities/media_unit.entity';
 import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.entity';
+import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -28,14 +29,10 @@ interface IGetSaleDepartment {
 
 interface DataUpload {
   article_code: string;
-  article_name: string;
   article_unit_code: string;
   article_side_id: string;
-  article_side_name: string;
   sale_depart_code: string;
   article_color_id: string;
-  article_color_name: string;
-  //article_unit: string;
   ContentType: string;
   s3key: string;
   resolution_id: string;
@@ -166,12 +163,40 @@ export class MediaUploadService {
           )
           .getOne();
 
+        let sideName;
+        //ค้นหา article Side
+        const fineSide = await getConnection()
+          .getRepository(MediaSideEntity)
+          .createQueryBuilder('media_side')
+          .select(['media_side.side_name'])
+          .where(`media_side.id = '${body.data[i].article_side_id}'`)
+          .getOne();
+
+        if (fineSide === undefined) {
+          message = message + ' , ' + 'ค้นหาข้อมูล side ไม่สำเร็จ';
+          console.log('ค้นหาข้อมูล side ไม่สำเร็จ');
+        } else sideName = fineSide.side_name;
+
+        let colorName;
+        //ค้นหา article Side
+        const fineColor = await getConnection()
+          .getRepository(MediaColorxEntity)
+          .createQueryBuilder('media_color')
+          .select(['media_color.colorx_name'])
+          .where(`media_color.id = '${body.data[i].article_color_id}'`)
+          .getOne();
+
+        if (fineColor === undefined) {
+          message = message + ' , ' + 'ค้นหาข้อมูล color ไม่สำเร็จ';
+          console.log('ค้นหาข้อมูล color ไม่สำเร็จ');
+        } else colorName = fineColor.colorx_name;
+
         let folder;
         let id_folder;
         if (fineFolderByDepart === undefined) {
           const repositoryFolder = getRepository(MediaFolderEntity);
           folder = new MediaFolderEntity();
-          folder.folder_name = `${body.data[i].sale_depart_code}_${body.data[i].article_code}_${body.data[i].article_color_name}_${body.data[i].article_unit_code}_${body.data[i].article_side_name}`;
+          folder.folder_name = `${body.data[i].sale_depart_code}_${body.data[i].article_code}_${colorName}_${body.data[i].article_unit_code}_${sideName}`;
           folder.parent_id = fineFolder.id;
           folder.folder_type = 'FOLDER';
           folder.reference = body.data[i].sale_depart_code;
@@ -182,7 +207,7 @@ export class MediaUploadService {
             const { id } = await repositoryFolder.save(folder);
             id_folder = id;
           } catch (err) {
-            message = 'บันทึกข้อมูล folder ไม่สำเร็จ';
+            message = message + ' , ' + 'บันทึกข้อมูล folder ไม่สำเร็จ';
             console.log('บันทึกข้อมูล folder ไม่สำเร็จ' + err);
           }
         } else id_folder = fineFolderByDepart.id;
@@ -285,6 +310,8 @@ export class MediaUploadService {
           id_sale_depart !== undefined &&
           id_article !== undefined &&
           id_unit !== undefined &&
+          sideName !== undefined &&
+          colorName !== undefined &&
           body.data[i].article_side_id &&
           body.data[i].article_color_id &&
           body.data[i].resolution_id
@@ -293,7 +320,7 @@ export class MediaUploadService {
             await this.appService.dbRunner(async (runner: QueryRunner) => {
               let media_object = new MediaObjectEntity();
               media_object.folder_id = body.data[i].article_side_id;
-              media_object.object_name = `${body.data[i].article_code}_${body.data[i].article_color_name}_${body.data[i].article_unit_code}_${body.data[i].article_side_name}_${body.data[i].ContentType}`;
+              media_object.object_name = `${body.data[i].article_code}_${colorName}_${body.data[i].article_unit_code}_${sideName}_${body.data[i].ContentType}`;
               media_object.descripion = '';
               media_object.file_type = body.data[i].ContentType;
               media_object.file_group = '';
