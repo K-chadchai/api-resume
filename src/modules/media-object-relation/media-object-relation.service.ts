@@ -14,7 +14,7 @@ interface IPostBulk {
   bulk: MediaObjectRelationEntity[];
 }
 interface IGetByArticleDepartUnitSide {
-  article: string;
+  searchAll: string;
   article_unit: string;
   article_side: string;
   sale_depart: string;
@@ -35,9 +35,9 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
   // ค้นหาข้อมูล
   async getArticleDepartUnitSide(props: IGetByArticleDepartUnitSide) {
     if (
-      !props.article &&
+      !props.searchAll &&
       !props.article_unit &&
-      !props.article_unit &&
+      !props.article_side &&
       !props.sale_depart &&
       !props.last_edited
     )
@@ -73,8 +73,15 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       )
       .where('media_object.id is not null')
       .orWhere(
-        props.article
-          ? `media_article.code like '%${props.article}%' or media_article.description like '%${props.article}%'`
+        props.searchAll
+          ? `media_article.code like '%${props.searchAll}%' 
+          or media_article.description like '%${props.searchAll}%' 
+          or media_unit.code like '%${props.searchAll}%' 
+          or media_unit.description like '%${props.searchAll}%'
+          or media_side.side_name like '%${props.searchAll}%'
+          or media_depart.code like '%${props.sale_depart}%' 
+          or media_depart.description like '%${props.sale_depart}%'
+          or TO_CHAR(media_object.last_edited_time,'YYYY-DD-MM') = '${props.searchAll}'`
           : `media_article.code = ''`,
       )
       .orWhere(
@@ -105,8 +112,7 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       IGetMediaObjectdata.push({
         Data: item,
         Link: media_object_s3key
-          ? //? `https://${process.env.AWS_S3_BUCKET_NAME}.s3-ap-southeast-1.amazonaws.com/${media_object_s3key}`
-            `http://localhost:4000/v1/media-upload/image/${media_object_s3key}`
+          ? `${process.env.API_GETIMAGE}/${media_object_s3key}`
           : '',
       });
     });
