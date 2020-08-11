@@ -147,7 +147,6 @@ export class MediaUploadService {
           )
           .getOne();
 
-        console.log('fineFolder.id ------>>>>>>>>>>>>>>>', fineFolder.id);
         if (fineFolder === undefined) {
           message = 'ไม่พบ id folder root article';
           console.log('ไม่พบ fineFolder');
