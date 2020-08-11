@@ -110,6 +110,17 @@ export class MediaUploadService {
     return { media: 'Lname', s3key, imageBody };
   }
 
+  async getMediaImageBase(s3key, suffix = 'x') {
+    let imageBody: string;
+    if (s3key) {
+      imageBody = await this.uploaderService.getImageBody(s3key);
+    }
+    if (imageBody) {
+      imageBody = `data:${'Lname'};base64,${imageBody}`;
+    }
+    return imageBody;
+  }
+
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }

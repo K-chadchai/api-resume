@@ -5,15 +5,19 @@ import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.en
 import { AppService } from 'src/app/app.service';
 import { getConnection } from 'typeorm';
 import { MediaObjectEntity } from 'src/entities/media_object.entity';
+import { MediaArticleEntity } from 'src/entities/media_article.entity';
+import { MediaUnitEntity } from 'src/entities/media_unit.entity';
+import { MediaSideEntity } from 'src/entities/media_side.entity';
+import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.entity';
 
 interface IPostBulk {
   bulk: MediaObjectRelationEntity[];
 }
 interface IGetByArticleDepartUnitSide {
-  article_id: string;
-  article_unit_id: string;
-  article_side_id: string;
-  sale_depart_id: string;
+  article: string;
+  article_unit: string;
+  article_side: string;
+  sale_depart: string;
   last_edited: string;
 }
 
@@ -31,10 +35,10 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
   // ค้นหาข้อมูล
   async getArticleDepartUnitSide(props: IGetByArticleDepartUnitSide) {
     if (
-      !props.article_id &&
-      !props.article_unit_id &&
-      !props.article_unit_id &&
-      !props.sale_depart_id &&
+      !props.article &&
+      !props.article_unit &&
+      !props.article_unit &&
+      !props.sale_depart &&
       !props.last_edited
     )
       throw new InternalServerErrorException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
@@ -47,24 +51,51 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
         'media_object',
         'media_object.id = media_object_relation.object_id',
       )
-      .where([
-        props.article_id
-          ? { article_id: props.article_id }
-          : { article_id: '' },
-        props.article_unit_id
-          ? { article_unit_id: props.article_unit_id }
-          : { article_unit_id: '' },
-        props.article_side_id
-          ? { article_side_id: props.article_side_id }
-          : { article_side_id: '' },
-        props.sale_depart_id
-          ? { sale_depart_id: props.sale_depart_id }
-          : { sale_depart_id: '' },
-      ])
-      .andWhere(
+      .leftJoinAndSelect(
+        MediaArticleEntity,
+        'media_article',
+        'media_article.id = media_object_relation.article_id',
+      )
+      .leftJoinAndSelect(
+        MediaUnitEntity,
+        'media_unit',
+        'media_unit.id = media_object_relation.article_unit_id',
+      )
+      .leftJoinAndSelect(
+        MediaSideEntity,
+        'media_side',
+        'media_side.id = media_object_relation.article_side_id',
+      )
+      .leftJoinAndSelect(
+        MediaSaleDepartmentEntity,
+        'media_depart',
+        'media_depart.id = media_object_relation.sale_depart_id',
+      )
+      .where('media_object.id is not null')
+      .orWhere(
+        props.article
+          ? `media_article.code like '%${props.article}%' or media_article.description like '%${props.article}%'`
+          : `media_article.code = ''`,
+      )
+      .orWhere(
+        props.article_unit
+          ? `media_unit.code like '%${props.article_unit}%' or media_unit.description like '%${props.article_unit}%'`
+          : `media_unit.code = 'is not null'`,
+      )
+      .orWhere(
+        props.article_side
+          ? `media_side.side_name like '%${props.article_side}%'`
+          : `media_side.side_name = 'is not null'`,
+      )
+      .orWhere(
+        props.sale_depart
+          ? `media_depart.code like '%${props.sale_depart}%' or media_depart.description like '%${props.sale_depart}%'`
+          : `media_depart.code = 'is not null'`,
+      )
+      .orWhere(
         props.last_edited
-          ? `TO_CHAR(last_edited_time,'YYYY-DD-MM') = '${props.last_edited}'`
-          : `TO_CHAR(last_edited_time,'YYYY-DD-MM') = ''`,
+          ? `TO_CHAR(media_object.last_edited_time,'YYYY-DD-MM') = '${props.last_edited}'`
+          : `TO_CHAR(media_object.last_edited_time,'YYYY-DD-MM') = ''`,
       )
       .getRawMany();
 
@@ -74,7 +105,8 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       IGetMediaObjectdata.push({
         Data: item,
         Link: media_object_s3key
-          ? `https://${process.env.AWS_S3_BUCKET_NAME}.s3-ap-southeast-1.amazonaws.com/${media_object_s3key}`
+          ? //? `https://${process.env.AWS_S3_BUCKET_NAME}.s3-ap-southeast-1.amazonaws.com/${media_object_s3key}`
+            `http://localhost:4000/v1/media-upload/image/${media_object_s3key}`
           : '',
       });
     });

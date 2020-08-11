@@ -39,6 +39,11 @@ export class MediaUploadController {
     return await this.service.getMediaImage(id, suffix);
   }
 
+  @Get('imageBase/:id')
+  async getMediaImageBase(@Param('id') id, @Query('suffix') suffix) {
+    return await this.service.getMediaImageBase(id, suffix);
+  }
+
   // @Get('shareImage/:id')
   // async shareImage(@Param('id') id, @Res() res) {
   //   return await this.service.shareImage(id, res);
