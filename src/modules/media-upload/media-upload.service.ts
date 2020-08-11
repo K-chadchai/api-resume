@@ -116,7 +116,7 @@ export class MediaUploadService {
       imageBody = await this.uploaderService.getImageBody(s3key);
     }
     if (imageBody) {
-      imageBody = `data:${'Lname'};base64,${imageBody}`;
+      imageBody = `base64,${imageBody}`;
     }
     return imageBody;
   }
