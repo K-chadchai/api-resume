@@ -74,7 +74,29 @@ export class MediaUploadService {
     if (!props.search) {
       throw new InternalServerErrorException('กรุณาใส่ข้อมูล article');
     }
-    query = `select * from TBMaster_Product_Unit where PRODUCTCODE = '${props.search}'`;
+    query = `SELECT TOP (1000) [PRODUCTCODE]
+    ,[UNITCODE]
+    ,un.[MYNAME]
+    ,[UNITRATE]
+    ,[UNITWEIGHT]
+    ,pu.[STATUS]
+    ,[UNIT_BUN_CODE]
+    ,[UNIT_OUN_CODE]
+    ,[UNIT_DI_CODE]
+    ,[UNIT_SUN_CODE]
+    ,[N_WEIGHT]
+    ,[G_WEIGHT]
+    ,[WEIGHT_UNIT]
+    ,[THICK]
+    ,[WIDTH]
+    ,[HIGH]
+    ,[UNIT_OF_SIZE]
+    ,[VOLUME]
+    ,[UNIT_OF_VOLUME]
+    ,pu.[LAST_UPDATE_DATE]
+    ,pu.[LAST_UPDATE_TIME]
+FROM [DBMASTER].[dbo].[TBMaster_Product_Unit] pu
+LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${props.search}'`;
     return this.connection.query(query);
   }
 
