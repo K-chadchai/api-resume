@@ -325,7 +325,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           .where(`media_sale.code = '${body.data[i].sale_depart_code}'`)
           .getOne();
 
-        let querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.data[i].article_code}'`;
+        let querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.data[i].sale_depart_code}'`;
         let SaleDepartData = await this.connection.query(querySaleDepart);
         const SaleDepartNameData: Array<IGetSaleDepart> = SaleDepartData;
         let SaleDepartName = SaleDepartNameData[0].MYNAME
