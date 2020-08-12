@@ -26,6 +26,15 @@ interface IGetSaleDepartment {
   page_no: number;
   search: string;
 }
+interface IGetArticle {
+  DescriptionTH: string;
+}
+interface IGetUnit {
+  MYNAME: string;
+}
+interface IGetSaleDepart {
+  MYNAME: string;
+}
 
 interface DataUpload {
   article_code: string;
@@ -230,13 +239,20 @@ export class MediaUploadService {
           .where(`media_article.code = '${body.data[i].article_code}'`)
           .getOne();
 
+        let queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.data[i].article_code}'`;
+        let articleData = await this.connection.query(queryArticle);
+        const DescriptionTHData: Array<IGetArticle> = articleData;
+        let descArticle = DescriptionTHData[0].DescriptionTH
+          ? DescriptionTHData[0].DescriptionTH
+          : '';
+
         let article;
         let id_article;
         if (fineArticle === undefined) {
           const repositoryArticle = getRepository(MediaArticleEntity);
           article = new MediaArticleEntity();
           article.code = body.data[i].article_code;
-          article.description = '';
+          article.description = descArticle;
           article.creator = '';
           article.created_time = new Date();
           try {
@@ -256,13 +272,18 @@ export class MediaUploadService {
           .where(`media_unit.code = '${body.data[i].article_unit_code}'`)
           .getOne();
 
+        let queryUnit = `select TOP (1) * from TBMaster_Unit where CODE = '${body.data[i].article_unit_code}'`;
+        let unitData = await this.connection.query(queryUnit);
+        const unitNameData: Array<IGetUnit> = unitData;
+        let unitName = unitNameData[0].MYNAME ? unitNameData[0].MYNAME : '';
+
         let unit;
         let id_unit;
         if (fineUnit === undefined) {
           const repositoryUnit = getRepository(MediaUnitEntity);
           unit = new MediaUnitEntity();
           unit.code = body.data[i].article_unit_code;
-          unit.description = '';
+          unit.description = unitName;
           unit.creator = '';
           unit.created_time = new Date();
           try {
@@ -282,6 +303,13 @@ export class MediaUploadService {
           .where(`media_sale.code = '${body.data[i].sale_depart_code}'`)
           .getOne();
 
+        let querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.data[i].article_code}'`;
+        let SaleDepartData = await this.connection.query(querySaleDepart);
+        const SaleDepartNameData: Array<IGetSaleDepart> = SaleDepartData;
+        let SaleDepartName = SaleDepartNameData[0].MYNAME
+          ? SaleDepartNameData[0].MYNAME
+          : '';
+
         let sale_depart;
         let id_sale_depart;
         if (fineSaleDepart === undefined) {
@@ -290,7 +318,7 @@ export class MediaUploadService {
           );
           sale_depart = new MediaUnitEntity();
           sale_depart.code = body.data[i].sale_depart_code;
-          sale_depart.description = '';
+          sale_depart.description = SaleDepartName;
           sale_depart.creator = '';
           sale_depart.created_time = new Date();
           try {

@@ -116,7 +116,7 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       IGetMediaObjectdata.push({
         Data: item,
         Link: media_object_s3key
-          ? `${process.env.API_GETIMAGE}/${media_object_s3key}`
+          ? `https://${process.env.AWS_S3_BUCKET_NAME}.s3-ap-southeast-1.amazonaws.com/${media_object_s3key}`
           : '',
       });
     });
