@@ -19,6 +19,7 @@ interface IGetByArticleDepartUnitSide {
   article_side: string;
   sale_depart: string;
   last_edited: string;
+  page_no: number;
 }
 
 @Injectable()
@@ -72,6 +73,9 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
         'media_depart.id = media_object_relation.sale_depart_id',
       )
       .where('media_object.id is not null')
+      .take(10)
+      .skip(props.page_no > 0 ? (props.page_no - 1) * 10 : 0)
+
       .orWhere(
         props.searchAll
           ? `media_article.code like '%${props.searchAll}%' 
@@ -87,17 +91,17 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       .orWhere(
         props.article_unit
           ? `media_unit.code like '%${props.article_unit}%' or media_unit.description like '%${props.article_unit}%'`
-          : `media_unit.code = 'is not null'`,
+          : `media_unit.code = ''`,
       )
       .orWhere(
         props.article_side
           ? `media_side.side_name like '%${props.article_side}%'`
-          : `media_side.side_name = 'is not null'`,
+          : `media_side.side_name = ''`,
       )
       .orWhere(
         props.sale_depart
           ? `media_depart.code like '%${props.sale_depart}%' or media_depart.description like '%${props.sale_depart}%'`
-          : `media_depart.code = 'is not null'`,
+          : `media_depart.code = ''`,
       )
       .orWhere(
         props.last_edited
