@@ -677,16 +677,11 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
             media_object.s3key = body.s3key;
 
             let sMedia_object;
-            try {
-              sMedia_object = await runner.manager.save(
-                MediaObjectEntity,
-                media_object,
-              );
-            } catch (err) {
-              throw new InternalServerErrorException(
-                'ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err,
-              );
-            }
+            sMedia_object = await runner.manager.save(
+              MediaObjectEntity,
+              media_object,
+            );
+
             //เก็บ id ของ media object
             const { id } = sMedia_object;
             if (sMedia_object) {
@@ -700,17 +695,12 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               media_object_relation.resolution_id = body.resolution_id;
 
               let sMedia_object_relation;
-              try {
-                sMedia_object_relation = await runner.manager.save(
-                  MediaObjectRelationEntity,
-                  media_object_relation,
-                );
-                return { sMedia_object_relation };
-              } catch (err) {
-                throw new InternalServerErrorException(
-                  'ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err,
-                );
-              }
+              sMedia_object_relation = await runner.manager.save(
+                MediaObjectRelationEntity,
+                media_object_relation,
+              );
+
+              return { sMedia_object_relation };
             } else {
               throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
             }
