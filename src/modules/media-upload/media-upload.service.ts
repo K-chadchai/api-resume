@@ -694,13 +694,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               media_object_relation.color_id = body.article_color_id;
               media_object_relation.resolution_id = body.resolution_id;
 
-              let sMedia_object_relation;
-              sMedia_object_relation = await runner.manager.save(
+              return await runner.manager.save(
                 MediaObjectRelationEntity,
                 media_object_relation,
               );
-
-              return { sMedia_object_relation };
             } else {
               throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
             }
