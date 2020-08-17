@@ -68,9 +68,6 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       depart +=
         `'` + value + `'` + (i >= props.sale_depart.length - 1 ? '' : ',');
     }
-    console.log('unit', unit);
-    console.log('side =======>>>>>>>', side);
-    console.log('depart ======>>>>>>>', depart);
 
     const query = await getConnection()
       .getRepository(MediaObjectRelationEntity)
