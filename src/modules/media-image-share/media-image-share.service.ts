@@ -3,7 +3,7 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app/app.service';
-import { Like } from 'typeorm';
+import { Like, getRepository } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
 
 interface IPostBulk {
@@ -60,5 +60,35 @@ export class MediaImageShareService extends TypeOrmCrudService<
         }
       }
     }
+  }
+
+  async postShareImage(body: MediaImageShareEntity) {
+    let postShareImage;
+    const repositoryShareImage = getRepository(MediaImageShareEntity);
+    postShareImage = new MediaImageShareEntity();
+    postShareImage.object_id = body.object_id;
+    postShareImage.file_type = body.file_type;
+    postShareImage.resolution = body.resolution;
+    postShareImage.url = body.url;
+    postShareImage.creator = '';
+    postShareImage.created_time = new Date();
+    postShareImage.s3key = body.s3key;
+    postShareImage.share_type = 'public';
+    return await repositoryShareImage.save(postShareImage);
+  }
+
+  async postShareImageDoload(body: MediaImageShareEntity) {
+    let postShareImage;
+    const repositoryShareImage = getRepository(MediaImageShareEntity);
+    postShareImage = new MediaImageShareEntity();
+    postShareImage.object_id = body.object_id;
+    postShareImage.file_type = body.file_type;
+    postShareImage.resolution = body.resolution;
+    postShareImage.url = body.url;
+    postShareImage.creator = '';
+    postShareImage.created_time = new Date();
+    postShareImage.s3key = body.s3key;
+    postShareImage.share_type = 'InHouse';
+    return await repositoryShareImage.save(postShareImage);
   }
 }

@@ -33,7 +33,7 @@ export class MediaFolderEntity implements IMediaFolderEntity {
 
   @Column({
     nullable: true,
-    length: 15,
+    length: 36,
   })
   reference: string;
 

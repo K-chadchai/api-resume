@@ -17,6 +17,8 @@ import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { MediaUnitEntity } from 'src/entities/media_unit.entity';
 import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.entity';
 import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
+import { throwError } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -42,6 +44,15 @@ interface DataUpload {
   article_side_id: string;
   sale_depart_code: string;
   article_color_id: string;
+  ContentType: string;
+  s3key: string;
+  resolution_id: string;
+}
+
+interface DataUploadArticleSet {
+  object_name: string;
+  id_folder_Side: string;
+  article_side_id: string;
   ContentType: string;
   s3key: string;
   resolution_id: string;
@@ -467,8 +478,6 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async postDataUpload(body: DataUpload) {
-    const saved = [];
-    const data = [];
     let message: string = '';
     try {
       //หา folder ROOT_ARTICLE เอา id
@@ -491,7 +500,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .createQueryBuilder('media_folder')
         .select(['media_folder.id'])
         .where(
-          `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.sale_depart_code}'`,
+          `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.sale_depart_code}' AND media_folder.parent_id = '${fineFolder.id}'`,
         )
         .getOne();
 
@@ -525,26 +534,131 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
       let folder;
       let id_folder;
+      let id_folder_Depart;
+      let id_folder_Article;
+      let id_folder_Color;
+      let id_folder_Unit;
+      let id_folder_Side;
+
       if (fineFolderByDepart === undefined) {
+        //folder depart
         const repositoryFolder = getRepository(MediaFolderEntity);
         folder = new MediaFolderEntity();
-        folder.folder_name = `${body.sale_depart_code}_${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}`;
+        folder.folder_name = `${body.sale_depart_code}`;
         folder.parent_id = fineFolder.id;
         folder.folder_type = 'FOLDER';
         folder.reference = body.sale_depart_code;
         folder.created_time = new Date();
         folder.creator = '';
         folder.description = '';
-        try {
-          const { id } = await repositoryFolder.save(folder);
-          id_folder = id;
-        } catch (err) {
-          console.log('บันทึกข้อมูล folder ไม่สำเร็จ' + err);
-          throw new InternalServerErrorException(
-            'บันทึกข้อมูล folder ไม่สำเร็จ' + ' , ' + err,
-          );
-        }
-      } else id_folder = fineFolderByDepart.id;
+        const { id } = await repositoryFolder.save(folder);
+        id_folder_Depart = id;
+      } else id_folder_Depart = fineFolderByDepart.id;
+
+      //folder.folder_name = `${body.sale_depart_code}_${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}`;
+      //folder Article
+      if (id_folder_Depart !== undefined) {
+        const fineRefArticle = await getConnection()
+          .getRepository(MediaFolderEntity)
+          .createQueryBuilder('media_folder')
+          .select(['media_folder.id'])
+          .where(
+            `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.article_code}' AND media_folder.parent_id = '${id_folder_Depart}' `,
+          )
+          .getOne();
+
+        if (fineRefArticle === undefined) {
+          const repositoryFolderArticle = getRepository(MediaFolderEntity);
+          folder = new MediaFolderEntity();
+          folder.folder_name = `${body.article_code}`;
+          folder.parent_id = id_folder_Depart;
+          folder.folder_type = 'FOLDER';
+          folder.reference = body.article_code;
+          folder.created_time = new Date();
+          folder.creator = '';
+          folder.description = '';
+          const { id } = await repositoryFolderArticle.save(folder);
+          id_folder_Article = id;
+        } else id_folder_Article = fineRefArticle.id;
+      }
+
+      //folder color
+      if (id_folder_Article !== undefined) {
+        const fineRefColor = await getConnection()
+          .getRepository(MediaFolderEntity)
+          .createQueryBuilder('media_folder')
+          .select(['media_folder.id'])
+          .where(
+            `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.article_color_id}' AND media_folder.parent_id = '${id_folder_Article}' `,
+          )
+          .getOne();
+
+        if (fineRefColor === undefined) {
+          const repositoryFolderColor = getRepository(MediaFolderEntity);
+          folder = new MediaFolderEntity();
+          folder.folder_name = `${colorName}`;
+          folder.parent_id = id_folder_Article;
+          folder.folder_type = 'FOLDER';
+          folder.reference = body.article_color_id;
+          folder.created_time = new Date();
+          folder.creator = '';
+          folder.description = '';
+          const { id } = await repositoryFolderColor.save(folder);
+          id_folder_Color = id;
+        } else id_folder_Color = fineRefColor.id;
+      }
+
+      //folder Unit
+      if (id_folder_Color !== undefined) {
+        const fineRefUnit = await getConnection()
+          .getRepository(MediaFolderEntity)
+          .createQueryBuilder('media_folder')
+          .select(['media_folder.id'])
+          .where(
+            `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.article_unit_code}' AND media_folder.parent_id = '${id_folder_Color}' `,
+          )
+          .getOne();
+
+        if (fineRefUnit === undefined) {
+          const repositoryFolderUnit = getRepository(MediaFolderEntity);
+          folder = new MediaFolderEntity();
+          folder.folder_name = `${body.article_unit_code}`;
+          folder.parent_id = id_folder_Color;
+          folder.folder_type = 'FOLDER';
+          folder.reference = body.article_unit_code;
+          folder.created_time = new Date();
+          folder.creator = '';
+          folder.description = '';
+          const { id } = await repositoryFolderUnit.save(folder);
+          id_folder_Unit = id;
+        } else id_folder_Unit = fineRefUnit.id;
+      }
+
+      //folder Side
+      if (id_folder_Unit !== undefined) {
+        const fineRefSide = await getConnection()
+          .getRepository(MediaFolderEntity)
+          .createQueryBuilder('media_folder')
+          .select(['media_folder.id'])
+          .where(
+            `media_folder.folder_type = 'FOLDER' AND media_folder.reference = '${body.article_side_id}' AND media_folder.parent_id = '${id_folder_Unit}' `,
+          )
+          .getOne();
+
+        if (fineRefSide === undefined) {
+          const repositoryFolderSide = getRepository(MediaFolderEntity);
+          folder = new MediaFolderEntity();
+          folder.folder_name = `${body.article_side_id}`;
+          folder.parent_id = id_folder_Unit;
+          folder.folder_type = 'FOLDER';
+          folder.reference = body.article_side_id;
+          folder.created_time = new Date();
+          folder.creator = '';
+          folder.description = '';
+          const { id } = await repositoryFolderSide.save(folder);
+          id_folder_Side = id;
+        } else id_folder_Side = fineRefSide.id;
+      }
 
       //ค้นหา article ถ้าไม่มีข้อมูลให้ insert ลง
       const fineArticle = await getConnection()
@@ -659,6 +773,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         id_unit !== undefined &&
         sideName !== undefined &&
         colorName !== undefined &&
+        id_folder_Side !== undefined &&
         body.article_side_id &&
         body.article_color_id &&
         body.resolution_id
@@ -666,42 +781,85 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         try {
           return await this.appService.dbRunner(async (runner: QueryRunner) => {
             let media_object = new MediaObjectEntity();
-            media_object.folder_id = body.article_side_id;
-            media_object.object_name = `${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}_${body.ContentType}`;
-            media_object.descripion = '';
-            media_object.file_type = body.ContentType;
-            media_object.file_group = '';
-            media_object.is_original = 0;
-            media_object.creator = '';
-            media_object.created_time = new Date();
-            media_object.s3key = body.s3key;
-
-            let sMedia_object;
-            sMedia_object = await runner.manager.save(
-              MediaObjectEntity,
-              media_object,
+            console.log(
+              body.sale_depart_code,
+              id_sale_depart,
+              body.article_color_id,
+              id_unit,
+              body.resolution_id,
+              body.article_side_id,
             );
+            const fineData = await getConnection()
+              .getRepository(MediaObjectRelationEntity)
+              .createQueryBuilder('media_object_relation')
+              .where(
+                `media_object_relation.article_id = '${id_article}' 
+                AND media_object_relation.sale_depart_id = '${id_sale_depart}'
+                AND media_object_relation.color_id = '${body.article_color_id}'
+                AND media_object_relation.article_unit_id = '${id_unit}'
+                AND media_object_relation.resolution_id = '${body.resolution_id}'
+                AND media_object_relation.article_side_id = '${body.article_side_id}'
+                `,
+              )
+              .getOne();
 
-            //เก็บ id ของ media object
-            const { id } = sMedia_object;
-            if (sMedia_object) {
-              let media_object_relation = new MediaObjectRelationEntity();
-              media_object_relation.object_id = id;
-              media_object_relation.sale_depart_id = id_sale_depart;
-              media_object_relation.article_id = id_article;
-              media_object_relation.article_unit_id = id_unit;
-              media_object_relation.article_side_id = body.article_side_id;
-              media_object_relation.color_id = body.article_color_id;
-              media_object_relation.resolution_id = body.resolution_id;
+            if (fineData === undefined) {
+              media_object.folder_id = id_folder_Side; ///////
+              media_object.object_name = `${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}_${body.ContentType}`;
+              media_object.descripion = '';
+              media_object.file_type = body.ContentType;
+              media_object.file_group = 'ARTICLE';
+              media_object.is_original = 0;
+              media_object.creator = '';
+              media_object.created_time = new Date();
+              media_object.s3key = body.s3key;
 
-              let sMedia_object_relation;
-              sMedia_object_relation = await runner.manager.save(
-                MediaObjectRelationEntity,
-                media_object_relation,
+              let sMedia_object;
+              sMedia_object = await runner.manager.save(
+                MediaObjectEntity,
+                media_object,
               );
-              return sMedia_object_relation;
+
+              //เก็บ id ของ media object
+              const { id } = sMedia_object;
+              if (sMedia_object) {
+                let media_object_relation = new MediaObjectRelationEntity();
+                media_object_relation.object_id = id;
+                media_object_relation.sale_depart_id = id_sale_depart;
+                media_object_relation.article_id = id_article;
+                media_object_relation.article_unit_id = id_unit;
+                media_object_relation.article_side_id = body.article_side_id;
+                media_object_relation.color_id = body.article_color_id;
+                media_object_relation.resolution_id = body.resolution_id;
+
+                let sMedia_object_relation;
+                sMedia_object_relation = await runner.manager.save(
+                  MediaObjectRelationEntity,
+                  media_object_relation,
+                );
+                return sMedia_object_relation;
+              } else {
+                throw new InternalServerErrorException(
+                  'ไม่สามารถอัพโหลดไฟล์ได้',
+                );
+              }
             } else {
-              throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
+              const fineDataObject: MediaObjectEntity = await runner.manager.findOne(
+                MediaObjectEntity,
+                {
+                  where: [{ id: fineData.object_id }],
+                },
+              );
+              if (fineDataObject !== undefined) {
+                fineDataObject.s3key = body.s3key;
+
+                let sMedia_object;
+                sMedia_object = await runner.manager.save(
+                  MediaObjectEntity,
+                  fineDataObject,
+                );
+                return sMedia_object;
+              }
             }
           });
         } catch (err) {
@@ -714,7 +872,81 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           'ข้อมูลไม่เป็นไปตามเงื่อนไขสร้างไฟล์',
         );
       }
+
       //const { id } = folder;
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err,
+      );
+    }
+  }
+
+  async getDownload(s3key) {
+    if (!s3key) throw new BadRequestException(`Invalid s3key`);
+    return await this.uploaderService.getFileBody(s3key);
+  }
+
+  async postDataUploadRelation(body: MediaObjectRelationEntity) {
+    let postDataUploadRelation;
+    const repositorypostObjectRelation = getRepository(
+      MediaObjectRelationEntity,
+    );
+    postDataUploadRelation = new MediaObjectRelationEntity();
+    postDataUploadRelation.object_id = body.object_id;
+    postDataUploadRelation.article_id = body.article_id;
+    postDataUploadRelation.article_unit_id = body.article_unit_id;
+    postDataUploadRelation.creator = '';
+    postDataUploadRelation.sale_depart_id = uuid();
+    postDataUploadRelation.article_side_id = uuid();
+    postDataUploadRelation.color_id = uuid();
+    postDataUploadRelation.object_id = uuid();
+    postDataUploadRelation.resolution_id = uuid();
+    postDataUploadRelation.created_time = new Date();
+    return await repositorypostObjectRelation.save(postDataUploadRelation);
+  }
+
+  async postDataUploadArticleSet(body: DataUploadArticleSet) {
+    try {
+      return await this.appService.dbRunner(async (runner: QueryRunner) => {
+        let media_object = new MediaObjectEntity();
+        media_object.folder_id = body.id_folder_Side; //body.article_side_id;
+        media_object.object_name = body.object_name; //`${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}_${body.ContentType}`;
+        media_object.descripion = '';
+        media_object.file_type = body.ContentType;
+        media_object.file_group = 'ARTICLE_SET';
+        media_object.is_original = 0;
+        media_object.creator = '';
+        media_object.created_time = new Date();
+        media_object.s3key = body.s3key;
+
+        let sMedia_object;
+        sMedia_object = await runner.manager.save(
+          MediaObjectEntity,
+          media_object,
+        );
+
+        //เก็บ id ของ media object
+        const { id } = sMedia_object;
+        if (sMedia_object) {
+          let media_object_relation = new MediaObjectRelationEntity();
+          media_object_relation.object_id = id;
+          media_object_relation.sale_depart_id = ''; //
+          media_object_relation.article_id = '';
+          media_object_relation.article_unit_id = '';
+          media_object_relation.article_side_id = ''; //
+          media_object_relation.color_id = ''; //
+          media_object_relation.resolution_id = body.resolution_id;
+
+          let sMedia_object_relation;
+          sMedia_object_relation = await runner.manager.save(
+            MediaObjectRelationEntity,
+            media_object_relation,
+          );
+          return sMedia_object_relation;
+        } else {
+          throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
+        }
+      });
     } catch (err) {
       throw new InternalServerErrorException(
         'ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err,

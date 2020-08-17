@@ -49,8 +49,23 @@ export class MediaUploadController {
   //   return await this.service.shareImage(id, res);
   // }
 
-  @Post('/DataUpload')
+  @Post('DataUpload')
   async postDataUpload(@Body() body) {
     return await this.service.postDataUpload(body);
+  }
+
+  @Get('download/:s3key')
+  async getDownload(@Param('s3key') s3key) {
+    return await this.service.getDownload(s3key);
+  }
+
+  @Post('DataUploadRelation')
+  async postDataUploadRelation(@Body() body) {
+    return await this.service.postDataUploadRelation(body);
+  }
+
+  @Post('DataUploadArticleSet')
+  async postDataUploadArticleSet(@Body() body) {
+    return await this.service.postDataUploadArticleSet(body);
   }
 }

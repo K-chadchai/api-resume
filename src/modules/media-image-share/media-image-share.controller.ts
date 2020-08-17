@@ -30,4 +30,13 @@ export class MediaImageShareController {
   async shareImage(@Param('id') id, @Res() res) {
     return await this.service.shareImages(id, res);
   }
+
+  @Post('postShareImage')
+  async postDataUpload(@Body() body) {
+    return await this.service.postShareImage(body);
+  }
+  @Post('postShareImageDoload')
+  async postShareImageDoload(@Body() body) {
+    return await this.service.postShareImageDoload(body);
+  }
 }

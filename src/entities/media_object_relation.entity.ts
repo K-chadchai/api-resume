@@ -21,9 +21,7 @@ export class MediaObjectRelationEntity implements IMediaObjectRelationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({
-    nullable: true,
-  })
+  @Column()
   @Generated('uuid')
   object_id: string;
 
@@ -44,4 +42,10 @@ export class MediaObjectRelationEntity implements IMediaObjectRelationEntity {
 
   @Column('uuid')
   resolution_id: string;
+
+  @Column({
+    nullable: true,
+    length: 15,
+  })
+  relation_type: string;
 }

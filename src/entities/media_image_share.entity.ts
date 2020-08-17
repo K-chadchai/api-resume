@@ -66,4 +66,10 @@ export class MediaImageShareEntity implements IMediaImageShareEntity {
     length: 255,
   })
   s3key: string;
+
+  @Column({
+    nullable: true,
+    length: 15,
+  })
+  share_type: string;
 }

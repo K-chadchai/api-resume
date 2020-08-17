@@ -7,4 +7,5 @@ export interface IMediaObjectRelationEntity {
   article_side_id: string;
   color_id: string;
   resolution_id: string;
+  relation_type: string;
 }
