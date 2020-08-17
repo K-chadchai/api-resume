@@ -35,8 +35,8 @@ export class MediaImageShareController {
   async postDataUpload(@Body() body) {
     return await this.service.postShareImage(body);
   }
-  @Post('postShareImageDoload')
+  @Post('postShareImageDownload')
   async postShareImageDoload(@Body() body) {
-    return await this.service.postShareImageDoload(body);
+    return await this.service.postShareImageDownload(body);
   }
 }

@@ -73,11 +73,11 @@ export class MediaImageShareService extends TypeOrmCrudService<
     postShareImage.creator = '';
     postShareImage.created_time = new Date();
     postShareImage.s3key = body.s3key;
-    postShareImage.share_type = 'public';
+    postShareImage.share_type = 'Public';
     return await repositoryShareImage.save(postShareImage);
   }
 
-  async postShareImageDoload(body: MediaImageShareEntity) {
+  async postShareImageDownload(body: MediaImageShareEntity) {
     let postShareImage;
     const repositoryShareImage = getRepository(MediaImageShareEntity);
     postShareImage = new MediaImageShareEntity();

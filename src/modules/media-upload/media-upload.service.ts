@@ -51,7 +51,7 @@ interface DataUpload {
 
 interface DataUploadArticleSet {
   object_name: string;
-  id_folder_Side: string;
+  folder_id: string;
   article_side_id: string;
   ContentType: string;
   s3key: string;
@@ -831,6 +831,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
                 media_object_relation.article_side_id = body.article_side_id;
                 media_object_relation.color_id = body.article_color_id;
                 media_object_relation.resolution_id = body.resolution_id;
+                media_object_relation.relation_type = 'ARTICLE';
 
                 let sMedia_object_relation;
                 sMedia_object_relation = await runner.manager.save(
@@ -902,6 +903,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     postDataUploadRelation.object_id = uuid();
     postDataUploadRelation.resolution_id = uuid();
     postDataUploadRelation.created_time = new Date();
+    postDataUploadRelation.relation_type = 'ARTICLE_SET';
+
     return await repositorypostObjectRelation.save(postDataUploadRelation);
   }
 
@@ -909,7 +912,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     try {
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
         let media_object = new MediaObjectEntity();
-        media_object.folder_id = body.id_folder_Side; //body.article_side_id;
+        media_object.folder_id = body.folder_id; //body.article_side_id;
         media_object.object_name = body.object_name; //`${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}_${body.ContentType}`;
         media_object.descripion = '';
         media_object.file_type = body.ContentType;
@@ -930,12 +933,13 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         if (sMedia_object) {
           let media_object_relation = new MediaObjectRelationEntity();
           media_object_relation.object_id = id;
-          media_object_relation.sale_depart_id = ''; //
-          media_object_relation.article_id = '';
-          media_object_relation.article_unit_id = '';
-          media_object_relation.article_side_id = ''; //
-          media_object_relation.color_id = ''; //
+          media_object_relation.sale_depart_id = uuid(); //
+          media_object_relation.article_id = uuid();
+          media_object_relation.article_unit_id = uuid();
+          media_object_relation.article_side_id = uuid(); //
+          media_object_relation.color_id = uuid(); //
           media_object_relation.resolution_id = body.resolution_id;
+          media_object_relation.relation_type = 'ARTICLE_SET';
 
           let sMedia_object_relation;
           sMedia_object_relation = await runner.manager.save(

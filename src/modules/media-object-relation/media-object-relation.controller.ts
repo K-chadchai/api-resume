@@ -11,8 +11,8 @@ import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.en
 export class MediaObjectRelationController {
   constructor(public service: MediaObjectRelationService) {}
 
-  @Get('/article-depart-unit-side')
-  async getArticleDepartUnitSide(@Query() query) {
-    return await this.service.getArticleDepartUnitSide(query);
+  @Post('/article-depart-unit-side')
+  async getArticleDepartUnitSide(@Body() body) {
+    return await this.service.getArticleDepartUnitSide(body);
   }
 }

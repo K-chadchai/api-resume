@@ -15,11 +15,15 @@ interface IPostBulk {
 }
 interface IGetByArticleDepartUnitSide {
   searchAll: string;
-  article_unit: string;
-  article_side: string;
-  sale_depart: string;
+  article_unit: dataOB[];
+  article_side: dataOB[];
+  sale_depart: dataOB[];
   last_edited: string;
   page_no: number;
+}
+interface dataOB {
+  text: string;
+  value: string;
 }
 
 @Injectable()
@@ -43,6 +47,30 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       !props.last_edited
     )
       throw new InternalServerErrorException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
+
+    let unit: string = '';
+    for (let i = 0; i < props.article_unit.length; i++) {
+      const { value } = props.article_unit[i];
+      unit +=
+        `'` + value + `'` + (i >= props.article_unit.length - 1 ? '' : ',');
+    }
+
+    let side: string = '';
+    for (let i = 0; i < props.article_side.length; i++) {
+      const { value } = props.article_side[i];
+      side +=
+        `'` + value + `'` + (i >= props.article_side.length - 1 ? '' : ',');
+    }
+
+    let depart: string = '';
+    for (let i = 0; i < props.sale_depart.length; i++) {
+      const { value } = props.sale_depart[i];
+      depart +=
+        `'` + value + `'` + (i >= props.sale_depart.length - 1 ? '' : ',');
+    }
+    console.log('unit', unit);
+    console.log('side =======>>>>>>>', side);
+    console.log('depart ======>>>>>>>', depart);
 
     const query = await getConnection()
       .getRepository(MediaObjectRelationEntity)
@@ -78,30 +106,22 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
 
       .orWhere(
         props.searchAll
-          ? `media_article.code like '%${props.searchAll}%' 
-          or media_article.description like '%${props.searchAll}%' 
-          or media_unit.code like '%${props.searchAll}%' 
+          ? `media_article.code like '%${props.searchAll}%'
+          or media_article.description like '%${props.searchAll}%'
+          or media_unit.code like '%${props.searchAll}%'
           or media_unit.description like '%${props.searchAll}%'
           or media_side.side_name like '%${props.searchAll}%'
-          or media_depart.code like '%${props.sale_depart}%' 
+          or media_depart.code like '%${props.sale_depart}%'
           or media_depart.description like '%${props.sale_depart}%'
           or TO_CHAR(media_object.last_edited_time,'YYYY-DD-MM') = '${props.searchAll}'`
           : `media_article.code = ''`,
       )
+      .orWhere(unit ? `media_unit.id in (${unit})` : `media_unit.code = ''`)
       .orWhere(
-        props.article_unit
-          ? `media_unit.code like '%${props.article_unit}%' or media_unit.description like '%${props.article_unit}%'`
-          : `media_unit.code = ''`,
+        side ? `media_side.id in (${side})` : `media_side.side_name = ''`,
       )
       .orWhere(
-        props.article_side
-          ? `media_side.side_name like '%${props.article_side}%'`
-          : `media_side.side_name = ''`,
-      )
-      .orWhere(
-        props.sale_depart
-          ? `media_depart.code like '%${props.sale_depart}%' or media_depart.description like '%${props.sale_depart}%'`
-          : `media_depart.code = ''`,
+        depart ? `media_depart.id in (${depart})` : `media_depart.code = ''`,
       )
       .orWhere(
         props.last_edited
