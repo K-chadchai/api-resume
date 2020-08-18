@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import {
   Injectable,
   BadRequestException,
@@ -19,6 +20,7 @@ import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.en
 import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
 import { throwError } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+import { count } from 'console';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -129,7 +131,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         //console.log('file', file);
         const { s3key, ContentType } = file;
 
-        let imageBody: string = '';
+        let imageBody = '';
         if (s3key) {
           imageBody = await this.uploaderService.getImageBody(s3key);
           imageBody = `data:image/${ContentType};base64,${imageBody}`;
@@ -187,7 +189,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   async postDataUploadList(body: IPostDataUpload) {
     const saved = [];
     const data = [];
-    let message: string = '';
+    let message = '';
     for (let i = 0; i < body.data.length; i++) {
       try {
         //หา folder ROOT_ARTICLE เอา id
@@ -272,10 +274,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           .where(`media_article.code = '${body.data[i].article_code}'`)
           .getOne();
 
-        let queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.data[i].article_code}'`;
-        let articleData = await this.connection.query(queryArticle);
+        const queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.data[i].article_code}'`;
+        const articleData = await this.connection.query(queryArticle);
         const DescriptionTHData: Array<IGetArticle> = articleData;
-        let descArticle = DescriptionTHData[0].DescriptionTH
+        const descArticle = DescriptionTHData[0].DescriptionTH
           ? DescriptionTHData[0].DescriptionTH
           : '';
 
@@ -305,10 +307,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           .where(`media_unit.code = '${body.data[i].article_unit_code}'`)
           .getOne();
 
-        let queryUnit = `select TOP (1) * from TBMaster_Unit where CODE = '${body.data[i].article_unit_code}'`;
-        let unitData = await this.connection.query(queryUnit);
+        const queryUnit = `select TOP (1) * from TBMaster_Unit where CODE = '${body.data[i].article_unit_code}'`;
+        const unitData = await this.connection.query(queryUnit);
         const unitNameData: Array<IGetUnit> = unitData;
-        let unitName = unitNameData[0].MYNAME ? unitNameData[0].MYNAME : '';
+        const unitName = unitNameData[0].MYNAME ? unitNameData[0].MYNAME : '';
 
         let unit;
         let id_unit;
@@ -336,10 +338,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           .where(`media_sale.code = '${body.data[i].sale_depart_code}'`)
           .getOne();
 
-        let querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.data[i].sale_depart_code}'`;
-        let SaleDepartData = await this.connection.query(querySaleDepart);
+        const querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.data[i].sale_depart_code}'`;
+        const SaleDepartData = await this.connection.query(querySaleDepart);
         const SaleDepartNameData: Array<IGetSaleDepart> = SaleDepartData;
-        let SaleDepartName = SaleDepartNameData[0].MYNAME
+        const SaleDepartName = SaleDepartNameData[0].MYNAME
           ? SaleDepartNameData[0].MYNAME
           : '';
 
@@ -389,7 +391,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         ) {
           try {
             await this.appService.dbRunner(async (runner: QueryRunner) => {
-              let media_object = new MediaObjectEntity();
+              const media_object = new MediaObjectEntity();
               media_object.folder_id = body.data[i].article_side_id;
               media_object.object_name = `${body.data[i].article_code}_${colorName}_${body.data[i].article_unit_code}_${sideName}_${body.data[i].ContentType}`;
               media_object.descripion = '';
@@ -414,7 +416,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               const { id } = sMedia_object;
               console.log('id media_object ----->>>>>>', id);
               if (sMedia_object) {
-                let media_object_relation = new MediaObjectRelationEntity();
+                const media_object_relation = new MediaObjectRelationEntity();
                 media_object_relation.object_id = id;
                 media_object_relation.sale_depart_id = id_sale_depart;
                 media_object_relation.article_id = id_article;
@@ -478,7 +480,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async postDataUpload(body: DataUpload) {
-    let message: string = '';
+    const message = '';
     try {
       //หา folder ROOT_ARTICLE เอา id
       const fineFolder = await getConnection()
@@ -668,10 +670,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .where(`media_article.code = '${body.article_code}'`)
         .getOne();
 
-      let queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.article_code}'`;
-      let articleData = await this.connection.query(queryArticle);
+      const queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.article_code}'`;
+      const articleData = await this.connection.query(queryArticle);
       const DescriptionTHData: Array<IGetArticle> = articleData;
-      let descArticle = DescriptionTHData[0].DescriptionTH
+      const descArticle = DescriptionTHData[0].DescriptionTH
         ? DescriptionTHData[0].DescriptionTH
         : '';
 
@@ -703,10 +705,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .where(`media_unit.code = '${body.article_unit_code}'`)
         .getOne();
 
-      let queryUnit = `select TOP (1) * from TBMaster_Unit where CODE = '${body.article_unit_code}'`;
-      let unitData = await this.connection.query(queryUnit);
+      const queryUnit = `select TOP (1) * from TBMaster_Unit where CODE = '${body.article_unit_code}'`;
+      const unitData = await this.connection.query(queryUnit);
       const unitNameData: Array<IGetUnit> = unitData;
-      let unitName = unitNameData[0].MYNAME ? unitNameData[0].MYNAME : '';
+      const unitName = unitNameData[0].MYNAME ? unitNameData[0].MYNAME : '';
 
       let unit;
       let id_unit;
@@ -736,10 +738,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .where(`media_sale.code = '${body.sale_depart_code}'`)
         .getOne();
 
-      let querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.sale_depart_code}'`;
-      let SaleDepartData = await this.connection.query(querySaleDepart);
+      const querySaleDepart = `select TOP (1) * from TBMaster_Seller where CODE = '${body.sale_depart_code}'`;
+      const SaleDepartData = await this.connection.query(querySaleDepart);
       const SaleDepartNameData: Array<IGetSaleDepart> = SaleDepartData;
-      let SaleDepartName = SaleDepartNameData[0].MYNAME
+      const SaleDepartName = SaleDepartNameData[0].MYNAME
         ? SaleDepartNameData[0].MYNAME
         : '';
 
@@ -780,7 +782,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       ) {
         try {
           return await this.appService.dbRunner(async (runner: QueryRunner) => {
-            let media_object = new MediaObjectEntity();
+            const media_object = new MediaObjectEntity();
             console.log(
               body.sale_depart_code,
               id_sale_depart,
@@ -814,8 +816,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               media_object.created_time = new Date();
               media_object.s3key = body.s3key;
 
-              let sMedia_object;
-              sMedia_object = await runner.manager.save(
+             const sMedia_object = await runner.manager.save(
                 MediaObjectEntity,
                 media_object,
               );
@@ -823,7 +824,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               //เก็บ id ของ media object
               const { id } = sMedia_object;
               if (sMedia_object) {
-                let media_object_relation = new MediaObjectRelationEntity();
+                const media_object_relation = new MediaObjectRelationEntity();
                 media_object_relation.object_id = id;
                 media_object_relation.sale_depart_id = id_sale_depart;
                 media_object_relation.article_id = id_article;
@@ -833,8 +834,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
                 media_object_relation.resolution_id = body.resolution_id;
                 media_object_relation.relation_type = 'ARTICLE';
 
-                let sMedia_object_relation;
-                sMedia_object_relation = await runner.manager.save(
+                const sMedia_object_relation = await runner.manager.save(
                   MediaObjectRelationEntity,
                   media_object_relation,
                 );
@@ -854,8 +854,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               if (fineDataObject !== undefined) {
                 fineDataObject.s3key = body.s3key;
 
-                let sMedia_object;
-                sMedia_object = await runner.manager.save(
+                const sMedia_object = await runner.manager.save(
                   MediaObjectEntity,
                   fineDataObject,
                 );
@@ -888,21 +887,21 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async postDataUploadRelation(body: MediaObjectRelationEntity) {
-    let postDataUploadRelation;
+    //let postDataUploadRelation;
     const repositorypostObjectRelation = getRepository(
       MediaObjectRelationEntity,
     );
-    postDataUploadRelation = new MediaObjectRelationEntity();
+    const postDataUploadRelation = new MediaObjectRelationEntity();
     postDataUploadRelation.object_id = body.object_id;
     postDataUploadRelation.article_id = body.article_id;
     postDataUploadRelation.article_unit_id = body.article_unit_id;
-    postDataUploadRelation.creator = '';
+    //postDataUploadRelation.creator = '';
     postDataUploadRelation.sale_depart_id = uuid();
     postDataUploadRelation.article_side_id = uuid();
     postDataUploadRelation.color_id = uuid();
     postDataUploadRelation.object_id = uuid();
     postDataUploadRelation.resolution_id = uuid();
-    postDataUploadRelation.created_time = new Date();
+    //postDataUploadRelation.created_time = new Date();
     postDataUploadRelation.relation_type = 'ARTICLE_SET';
 
     return await repositorypostObjectRelation.save(postDataUploadRelation);
@@ -911,7 +910,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   async postDataUploadArticleSet(body: DataUploadArticleSet) {
     try {
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
-        let media_object = new MediaObjectEntity();
+        const media_object = new MediaObjectEntity();
         media_object.folder_id = body.folder_id; //body.article_side_id;
         media_object.object_name = body.object_name; //`${body.article_code}_${colorName}_${body.article_unit_code}_${sideName}_${body.ContentType}`;
         media_object.descripion = '';
@@ -922,8 +921,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         media_object.created_time = new Date();
         media_object.s3key = body.s3key;
 
-        let sMedia_object;
-        sMedia_object = await runner.manager.save(
+        //let sMedia_object;
+       const sMedia_object = await runner.manager.save(
           MediaObjectEntity,
           media_object,
         );
@@ -931,7 +930,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         //เก็บ id ของ media object
         const { id } = sMedia_object;
         if (sMedia_object) {
-          let media_object_relation = new MediaObjectRelationEntity();
+          const media_object_relation = new MediaObjectRelationEntity();
           media_object_relation.object_id = id;
           media_object_relation.sale_depart_id = uuid(); //
           media_object_relation.article_id = uuid();
@@ -941,8 +940,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           media_object_relation.resolution_id = body.resolution_id;
           media_object_relation.relation_type = 'ARTICLE_SET';
 
-          let sMedia_object_relation;
-          sMedia_object_relation = await runner.manager.save(
+          //let sMedia_object_relation;
+         const sMedia_object_relation = await runner.manager.save(
             MediaObjectRelationEntity,
             media_object_relation,
           );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { MediaFolderEntity } from 'src/entities/media_folder.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -60,13 +61,13 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
 
   async postInit() {
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
-      let folder1 = new MediaFolderEntity();
+      const folder1 = new MediaFolderEntity();
       folder1.folder_name = 'ARTICLE';
       folder1.parent_id = uuid();
       folder1.folder_type = 'ARTICLE_ROOT';
       folder1.is_root = true;
 
-      let folder2 = new MediaFolderEntity();
+      const folder2 = new MediaFolderEntity();
       folder2.folder_name = 'Article Set';
       folder2.parent_id = uuid();
       folder2.folder_type = 'ARTICLE_SET_ROOT';

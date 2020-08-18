@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/class-name-casing */
+/* eslint-disable @typescript-eslint/camelcase */
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,21 +50,21 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
     )
       throw new InternalServerErrorException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
 
-    let unit: string = '';
+    let unit = '';
     for (let i = 0; i < props.article_unit.length; i++) {
       const { value } = props.article_unit[i];
       unit +=
         `'` + value + `'` + (i >= props.article_unit.length - 1 ? '' : ',');
     }
 
-    let side: string = '';
+    let side = '';
     for (let i = 0; i < props.article_side.length; i++) {
       const { value } = props.article_side[i];
       side +=
         `'` + value + `'` + (i >= props.article_side.length - 1 ? '' : ',');
     }
 
-    let depart: string = '';
+    let depart = '';
     for (let i = 0; i < props.sale_depart.length; i++) {
       const { value } = props.sale_depart[i];
       depart +=
@@ -101,15 +103,15 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
       .take(10)
       .skip(props.page_no > 0 ? (props.page_no - 1) * 10 : 0)
 
-      .orWhere(
+      .andWhere(
         props.searchAll
           ? `media_article.code like '%${props.searchAll}%'
           or media_article.description like '%${props.searchAll}%'
           or media_unit.code like '%${props.searchAll}%'
           or media_unit.description like '%${props.searchAll}%'
           or media_side.side_name like '%${props.searchAll}%'
-          or media_depart.code like '%${props.sale_depart}%'
-          or media_depart.description like '%${props.sale_depart}%'
+          or media_depart.code like '%${props.searchAll}%'
+          or media_depart.description like '%${props.searchAll}%'
           or TO_CHAR(media_object.last_edited_time,'YYYY-DD-MM') = '${props.searchAll}'`
           : `media_article.code = ''`,
       )

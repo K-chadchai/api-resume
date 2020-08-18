@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';
@@ -63,9 +64,9 @@ export class MediaImageShareService extends TypeOrmCrudService<
   }
 
   async postShareImage(body: MediaImageShareEntity) {
-    let postShareImage;
+   
     const repositoryShareImage = getRepository(MediaImageShareEntity);
-    postShareImage = new MediaImageShareEntity();
+    const postShareImage = new MediaImageShareEntity();
     postShareImage.object_id = body.object_id;
     postShareImage.file_type = body.file_type;
     postShareImage.resolution = body.resolution;
@@ -78,9 +79,9 @@ export class MediaImageShareService extends TypeOrmCrudService<
   }
 
   async postShareImageDownload(body: MediaImageShareEntity) {
-    let postShareImage;
+
     const repositoryShareImage = getRepository(MediaImageShareEntity);
-    postShareImage = new MediaImageShareEntity();
+    const postShareImage = new MediaImageShareEntity();
     postShareImage.object_id = body.object_id;
     postShareImage.file_type = body.file_type;
     postShareImage.resolution = body.resolution;
