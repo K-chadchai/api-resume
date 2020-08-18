@@ -16,11 +16,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req;
+    return req.user;
   }
 
-  @Post('getrole')
-  getValidate(@Body() body) {
-    return this.authService.getValidate(body);
+  @UseGuards(JwtAuthGuard)
+  @Post('userrole')
+  async userRole(@Request() req, @Body() body) {
+    return await this.authService.userRole(req.user, body);
   }
 }

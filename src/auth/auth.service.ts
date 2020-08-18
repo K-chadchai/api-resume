@@ -1,18 +1,20 @@
-import { Injectable, InternalServerErrorException, UseGuards } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { IEmployeeEntity } from 'src/interfaces/employees';
 import axios from 'axios';
-import { v4 as uuid } from 'uuid';
-import * as aws from 'aws-sdk';
-import * as constants from 'src/app/app.constants';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IGetPayload {
   username: string;
   password: string;
+}
+
+interface IUser {
+  userId: string;
+  userName: string;
+  uuid: string;
 }
 
 @Injectable()
@@ -24,13 +26,17 @@ export class AuthService {
     private readonly connection: Connection,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(username: string, passwordPlanText: string): Promise<any> {
+    //ค้าหา user จาก db
     const user = await this.usersService.findOne(username);
 
-    //call service Encrypt Password
-    const verifyUserPassword = await axios
-      .post(`${process.env.VERIFY_USERPASS}`, {
-        text: pass,
+    // หารหัสผ่านที่เข้ารหัสอยู่( อ่านค่ามาจาก db )
+    const passwordEncrypt: string = user.Secrets;
+
+    // เอาค่า passwordEncrypt มาถอดรหัส
+    const passwordDecrypt = await axios
+      .post(`${process.env.API_DECRYPT}`, {
+        text: passwordEncrypt.trim(),
         key: 'UW',
       })
       .then((response) => {
@@ -45,37 +51,44 @@ export class AuthService {
         throw new InternalServerErrorException('Not found username');
       });
 
-    const { Secrets } = user;
-    if (user && Secrets.trim() === verifyUserPassword) {
+    if (passwordDecrypt === passwordPlanText) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
+      const { Secrets, ...result } = user;
       return result;
     }
     return null;
   }
 
   async login(user: any) {
-    // User Verify
-    const payload = { uuid: uuid(), EmployeeId: user.EmployeeId, Fullname: user.Fullname };
+    //
+    const { EmployeeId: userId, Fullname: userName, ...rest } = user;
 
-    //Save to DynamoDB
+    // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
+    const uuid = uuidv4();
+
+    // Create payload
+    const payload = { userId, userName, uuid } as IUser;
 
     return {
       token: this.jwtService.sign(payload),
     };
   }
 
-  async getValidate(body) {
-    if (!body.token && !body.key) throw new InternalServerErrorException('กรุณาตรวจสอบข้อมูล');
+  // หา role ของ user
+  async userRole(user: IUser, body: any) {
+    const { uuid } = user || {};
 
-    //Check DynamoDB
-    //uuid find token and check date exp
+    // 1 - ตรวจสอบค่า uuid
+    if (!uuid) {
+      throw new NotFoundException('ไม่พบข้อมูล uuid');
+    }
 
-    //Decoded
-    var userObject = await this.JWTDecodeAuth(body.token);
+    // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
+    // 2.1 > ถ้าพบค่า role ให้คืน role เลย
+    // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
 
-    //Check DBAuther Get Role
-    let query = `Select
+    // 3(2.2) หาค่า role จาก mssql
+    const queryFindRole = `Select
     DISTINCT rl.Reference, ac.ActionCode ,
     Status
   from
@@ -89,17 +102,13 @@ export class AuthService {
       FROM
         Employees_Roles
     WHERE
-      Employees_EmployeeId = ${userObject.EmployeeId} )`;
+      Employees_EmployeeId = ${user.userId} )`;
+    const userRoles = await this.connection.query(queryFindRole);
+    // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
+    // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
 
-    //Save Role to DynamoDB
-
-    return this.connection.query(query);
-  }
-
-  async JWTDecodeAuth(token: string) {
-    var jwt = require('jsonwebtoken');
-    const secret = constants.APP_SECRET_KEY;
-    var decoded = jwt.verify(token, secret);
-    return decoded;
+    // 4(3.1) กรณีพบค่า role จะต้องแปลงข้อมูลเป็น json เพื่อเอาไปบันทึกที่ DynamoDB ได้
+    // 4.1 แปลงข้อมูลที่ได้จาก sql เป็น json
+    // 4.2 เอา json ไปบันทึกที่ DynamoDB
   }
 }

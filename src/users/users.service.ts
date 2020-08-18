@@ -7,33 +7,13 @@ export type User = any;
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[];
-
   constructor(
     @InjectConnection('mssql')
     private readonly connection: Connection,
-  ) {
-    this.users = [
-      {
-        userId: 1,
-        username: 'john',
-        password: 'changeme',
-      },
-      {
-        userId: 2,
-        username: 'chris',
-        password: 'secret',
-      },
-      {
-        userId: 3,
-        username: 'maria',
-        password: 'guess',
-      },
-    ];
-  }
+  ) {}
 
   async findOne(username: string): Promise<User | undefined> {
-    let queryEmployee = `SELECT TOP (1) em.[EmployeeId] as EmployeeId
+    const queryEmployee = `SELECT TOP (1) em.[EmployeeId] as EmployeeId
     ,em.[JobKeyId] as JobKeyId
     --,jk.[JobKeyName] as JobKeyName
     ,em.[PositionId] as PositionId
@@ -67,7 +47,9 @@ export class UsersService {
 
     const dataQuery = await this.connection.query(queryEmployee);
     const employee: Array<IEmployeeEntity> = dataQuery;
-    if (!employee || employee.length !== 1) throw new InternalServerErrorException('Not found username');
+    if (!employee || employee.length !== 1) {
+      throw new InternalServerErrorException('Not found username');
+    }
     return employee[0];
     //return this.users.find((user) => user.username === username);
   }
