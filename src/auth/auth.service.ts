@@ -104,6 +104,7 @@ export class AuthService {
     WHERE
       Employees_EmployeeId = ${user.userId} )`;
     const userRoles = await this.connection.query(queryFindRole);
+    console.log('userRoles :>> ', userRoles);
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
 
