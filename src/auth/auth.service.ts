@@ -5,7 +5,6 @@ import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { count } from 'console';
 
 interface IGetPayload {
   username: string;
@@ -21,7 +20,7 @@ interface IUser {
 interface IUserRole {
   Reference: string;
   ActionCode: string;
-  Status:string;
+  Status: string;
 }
 
 @Injectable()
@@ -82,7 +81,7 @@ export class AuthService {
   }
 
   // หา role ของ user
-  async userRole(user: IUser, body: any) {
+  async userRole(user: IUser, apiProgram: string) {
     const { uuid } = user || {};
 
     // 1 - ตรวจสอบค่า uuid
@@ -90,68 +89,52 @@ export class AuthService {
       throw new NotFoundException('ไม่พบข้อมูล uuid');
     }
 
-
     // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
+    const isFoundRoleByUuid = false;
     // 2.1 > ถ้าพบค่า role ให้คืน role เลย
+
     // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
-
     // 3(2.2) หาค่า role จาก mssql
-    const queryFindRole = `Select
-    DISTINCT rl.Reference, ac.ActionCode ,
-    Status
-  from
-    [Policy_Actions] ac
-    join [Roles] rl ON ac.RoleId = rl.RoleId
-  WHERE
-    ProgramKey = '${body.key}'
-    AND [Status] = 1
-    AND rl.RoleId IN (
-      SELECT
-        Roles_RoleId
-      FROM
-        Employees_Roles
-    WHERE
-      Employees_EmployeeId = ${user.userId} )`;
+    const queryFindRole = `select rl.Reference,
+    ac.ActionCode
+from Policy_Actions ac ,
+    Roles rl 
+where ac.RoleId  =  rl.RoleId
+--
+and ac.ProgramKey  =  '${apiProgram}'
+and ac.[Status]  =  1 
+and exists (
+    select null 
+    from Employees_Roles er 
+    where er.Employees_EmployeeId  =  '${user.userId}'
+    and rl.RoleId  =  er.Roles_RoleId
+)
+group by rl.Reference,
+    ac.ActionCode
+order by rl.Reference,
+    ac.ActionCode`;
+    const userRoles: IUserRole[] = await this.connection.query(queryFindRole);
+    if (!userRoles || userRoles.length == 0) {
+      return {};
+    }
 
-    const userRoles : Array<IUserRole> = await this.connection.query(queryFindRole);
-    
-
-    const object1 = {
-      a: 'somestring',
-      b: 42,
-      c: false
-    };
-    
-    console.log(Object.values(object1));
-
-
-    const data = [];
-    let keyRef : any;
-    userRoles.forEach(item => {
-      const {Reference} = item;
-      keyRef = Reference
-      //const dataRef: Array<IUserRole> = userRoles
-      //for(let i=0; i<= Reference.length; i++){
-        data.push({
-          keyRef:Reference
-      });
-      //}
-    });
-
-    console.log('userRoles', data)
-    console.log('aaaa ====>>>>>', {app:Object.values(data)})
- 
+    // แปลง userRoles เป็น json ในรูปแบบ
     // {
-    //   “app”:{
-      
     //   “BA”:[“aa”,”bb”],
     //   “PG”:[“aa”,”bb”]
-      
-    //     }
     //   }
-
-  
-    // console.log('IGetMediaObjectdata');
+    // console.log('userRoles :>> ', userRoles);
+    const jsonRoles: any = {};
+    userRoles.forEach((item) => {
+      const roleName = item['Reference'];
+      const actionCode = item['ActionCode'];
+      if (jsonRoles[roleName]) {
+        jsonRoles[roleName] = [...jsonRoles[roleName], actionCode];
+      } else {
+        jsonRoles[roleName] = [actionCode];
+      }
+    });
+    // console.log('jsonRoles :>> ', jsonRoles);
 
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
