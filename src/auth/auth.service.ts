@@ -5,6 +5,7 @@ import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { count } from 'console';
 
 interface IGetPayload {
   username: string;
@@ -15,6 +16,12 @@ interface IUser {
   userId: string;
   userName: string;
   uuid: string;
+}
+
+interface IUserRole {
+  Reference: string;
+  ActionCode: string;
+  Status:string;
 }
 
 @Injectable()
@@ -83,6 +90,7 @@ export class AuthService {
       throw new NotFoundException('ไม่พบข้อมูล uuid');
     }
 
+
     // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
     // 2.1 > ถ้าพบค่า role ให้คืน role เลย
     // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
@@ -96,6 +104,7 @@ export class AuthService {
     join [Roles] rl ON ac.RoleId = rl.RoleId
   WHERE
     ProgramKey = '${body.key}'
+    AND [Status] = 1
     AND rl.RoleId IN (
       SELECT
         Roles_RoleId
@@ -103,7 +112,47 @@ export class AuthService {
         Employees_Roles
     WHERE
       Employees_EmployeeId = ${user.userId} )`;
-    const userRoles = await this.connection.query(queryFindRole);
+
+    const userRoles : Array<IUserRole> = await this.connection.query(queryFindRole);
+    
+
+    const object1 = {
+      a: 'somestring',
+      b: 42,
+      c: false
+    };
+    
+    console.log(Object.values(object1));
+
+
+    const data = [];
+    let keyRef : any;
+    userRoles.forEach(item => {
+      const {Reference} = item;
+      keyRef = Reference
+      //const dataRef: Array<IUserRole> = userRoles
+      //for(let i=0; i<= Reference.length; i++){
+        data.push({
+          keyRef:Reference
+      });
+      //}
+    });
+
+    console.log('userRoles', data)
+    console.log('aaaa ====>>>>>', {app:Object.values(data)})
+ 
+    // {
+    //   “app”:{
+      
+    //   “BA”:[“aa”,”bb”],
+    //   “PG”:[“aa”,”bb”]
+      
+    //     }
+    //   }
+
+  
+    // console.log('IGetMediaObjectdata');
+
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
 
