@@ -1,4 +1,4 @@
-import { Controller, Request, Post, UseGuards, Get, Body } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Get, Body, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -20,8 +20,9 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('userrole')
-  async userRole(@Request() req, @Body() body) {
-    return await this.authService.userRole(req.user, body);
+  @Get('userrole')
+  async userRole(@Request() req, @Headers() headers) {
+    const apiProgram = headers['api-program'];
+    return await this.authService.userRole(req.user, apiProgram);
   }
 }

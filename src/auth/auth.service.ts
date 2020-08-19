@@ -81,8 +81,7 @@ export class AuthService {
   }
 
   // หา role ของ user
-  async userRole(user: IUser, body: any) {
-    const { ProgramKey } = body;
+  async userRole(user: IUser, apiProgram: string) {
     const { uuid } = user || {};
 
     // 1 - ตรวจสอบค่า uuid
@@ -91,44 +90,51 @@ export class AuthService {
     }
 
     // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
+    const isFoundRoleByUuid = false;
     // 2.1 > ถ้าพบค่า role ให้คืน role เลย
-    // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
 
+    // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
     // 3(2.2) หาค่า role จาก mssql
     const queryFindRole = `select rl.Reference,
-    ac.ActionCode,
-    ac.[Status]
+    ac.ActionCode
 from Policy_Actions ac ,
     Roles rl 
 where ac.RoleId  =  rl.RoleId
 --
-and ac.ProgramKey  =  ${ProgramKey}
+and ac.ProgramKey  =  '${apiProgram}'
 and ac.[Status]  =  1 
 and exists (
     select null 
     from Employees_Roles er 
-    where er.Employees_EmployeeId  =  ${user.userId}
+    where er.Employees_EmployeeId  =  '${user.userId}'
     and rl.RoleId  =  er.Roles_RoleId
 )
 group by rl.Reference,
-    ac.ActionCode,
-    ac.[Status]
+    ac.ActionCode
 order by rl.Reference,
-    ac.ActionCode,
-    ac.[Status]`;
+    ac.ActionCode`;
     const userRoles: IUserRole[] = await this.connection.query(queryFindRole);
-    console.log('userRoles :>> ', userRoles);
+    if (!userRoles || userRoles.length == 0) {
+      return {};
+    }
 
+    // แปลง userRoles เป็น json ในรูปแบบ
     // {
-    //   “app”:{
-
     //   “BA”:[“aa”,”bb”],
     //   “PG”:[“aa”,”bb”]
-
-    //     }
     //   }
-
-    // console.log('IGetMediaObjectdata');
+    // console.log('userRoles :>> ', userRoles);
+    const jsonRoles: any = {};
+    userRoles.forEach((item) => {
+      const roleName = item['Reference'];
+      const actionCode = item['ActionCode'];
+      if (jsonRoles[roleName]) {
+        jsonRoles[roleName] = [...jsonRoles[roleName], actionCode];
+      } else {
+        jsonRoles[roleName] = [actionCode];
+      }
+    });
+    // console.log('jsonRoles :>> ', jsonRoles);
 
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
