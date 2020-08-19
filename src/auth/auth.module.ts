@@ -13,7 +13,7 @@ import * as constants from 'src/app/app.constants';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: constants.APP_SECRET_KEY,
-      signOptions: { expiresIn: '12h' },
+      signOptions: { expiresIn: '1m' },
     }),
     UsersModule,
   ],

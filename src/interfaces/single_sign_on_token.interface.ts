@@ -3,5 +3,6 @@ export interface ISingleSignOnTokenEntity {
     token: string;
     login_time: Date;
     expire_date: Date;
+    action_user:string;
   }
   
