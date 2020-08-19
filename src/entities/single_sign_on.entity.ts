@@ -24,4 +24,10 @@ export class SingleSignOnTokenEntity implements ISingleSignOnTokenEntity {
     nullable: true,
   })
   expire_date: Date;
+
+  @Column({
+    nullable: true,
+    length:20,
+  })
+  action_user:string
 }
