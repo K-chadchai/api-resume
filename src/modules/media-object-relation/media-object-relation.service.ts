@@ -112,6 +112,7 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
           or media_side.side_name like '%${props.searchAll}%'
           or media_depart.code like '%${props.searchAll}%'
           or media_depart.description like '%${props.searchAll}%'
+          or media_object.object_name like '%${props.searchAll}%'
           or TO_CHAR(media_object.last_edited_time,'YYYY-DD-MM') = '${props.searchAll}'`
           : `media_article.code = ''`,
       )
