@@ -4,11 +4,12 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
-import { Connection, getConnection, getRepository } from 'typeorm';
+import { Connection, getConnection, getRepository, QueryRunner } from 'typeorm';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { SingleSignOnTokenEntity } from 'src/entities/single_sign_on.entity';
 import { UserRoleEntity } from 'src/entities/user_role.entity';
+import { AppService } from 'src/app/app.service';
 
 interface IGetPayload {
   username: string;
@@ -34,6 +35,7 @@ export class AuthService {
     private jwtService: JwtService,
     @InjectConnection('mssql')
     private readonly connection: Connection,
+    private appService: AppService,
   ) {}
 
   async validateUser(username: string, passwordPlanText: string): Promise<any> {
@@ -73,16 +75,20 @@ export class AuthService {
     //
     const { EmployeeId: userId, Fullname: userName, ...rest } = user;
 
-    // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
-    const repositoryToken = getRepository(SingleSignOnTokenEntity);
-    const toKenEntity = new SingleSignOnTokenEntity();
-    toKenEntity.action_user = userId;
-    toKenEntity.token = '';
-    const { id } = await repositoryToken.save(toKenEntity);
-    const uuid = id
+    return this.appService.dbRunner((runner: QueryRunner) => {
+      // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
+      const toKenEntity = new SingleSignOnTokenEntity();
+      toKenEntity.action_user = userId;
+      runner.manager.save(SingleSignOnTokenEntity, toKenEntity);
+
+      return null;
+    });
+
+    // const { id } = await repositoryToken.save(toKenEntity);
+    // const uuid = id;
 
     // Create payload
-    const payload = { userId, userName, uuid } as IUser;
+    const payload = { userId, userName, uuid: '123' } as IUser;
 
     return {
       token: this.jwtService.sign(payload),
@@ -101,13 +107,11 @@ export class AuthService {
     // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
     //const isFoundRoleByUuid = false;
     // 2.1 > ถ้าพบค่า role ให้คืน role เลย
-    const isFoundRoleByUuid :any = await this.getRolebyId(
-      user.uuid,
-    );
-    console.log('isFoundRoleByUuid ===>>>>>>', isFoundRoleByUuid)
-    if(isFoundRoleByUuid !== undefined){
-      console.log('isFoundRoleByUuid ====>>>', isFoundRoleByUuid)
-      return {isFoundRoleByUuid}
+    const isFoundRoleByUuid: any = await this.getRolebyId(user.uuid);
+    console.log('isFoundRoleByUuid ===>>>>>>', isFoundRoleByUuid);
+    if (isFoundRoleByUuid !== undefined) {
+      console.log('isFoundRoleByUuid ====>>>', isFoundRoleByUuid);
+      return { isFoundRoleByUuid };
     }
 
     // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
@@ -130,7 +134,7 @@ group by rl.Reference,
     ac.ActionCode
 order by rl.Reference,
     ac.ActionCode`;
-    
+
     const userRoles: IUserRole[] = await this.connection.query(queryFindRole);
     if (!userRoles || userRoles.length == 0) {
       return {};
@@ -151,7 +155,7 @@ order by rl.Reference,
         jsonRoles[roleName] = [actionCode];
       }
     });
-     console.log('jsonRoles :>> ', jsonRoles);
+    console.log('jsonRoles :>> ', jsonRoles);
 
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     const repositoryUserRole = getRepository(UserRoleEntity);
@@ -160,8 +164,8 @@ order by rl.Reference,
     userRoleEntity.app = apiProgram;
     userRoleEntity.role = jsonRoles;
     const { id } = await repositoryUserRole.save(userRoleEntity);
-    if(id !== undefined){
-     return {jsonRoles}
+    if (id !== undefined) {
+      return { jsonRoles };
     }
 
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
@@ -172,14 +176,14 @@ order by rl.Reference,
 
   async getRolebyId(uuid: string) {
     const fineSaleDepart = await getConnection()
-    .getRepository(UserRoleEntity)
-    .createQueryBuilder('user_role')
-    .select(['user_role.role'])
-    .where(`user_role.reference = '${uuid}'`)
-    .getOne();
+      .getRepository(UserRoleEntity)
+      .createQueryBuilder('user_role')
+      .select(['user_role.role'])
+      .where(`user_role.reference = '${uuid}'`)
+      .getOne();
 
     const role = fineSaleDepart;
-    console.log('fineSaleDepart ===>>>>', fineSaleDepart)
+    console.log('fineSaleDepart ===>>>>', fineSaleDepart);
     return role;
   }
 }

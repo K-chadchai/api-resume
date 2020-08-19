@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
-import { ISingleSignOnTokenEntity } from 'src/interfaces/single_sign_on_token.interface';
+import { ISingleSignOnTokenEntity } from 'src/interfaces/login_activity.interface';
 
 const tname = 'single_sign_on_token';
 
@@ -27,7 +27,7 @@ export class SingleSignOnTokenEntity implements ISingleSignOnTokenEntity {
 
   @Column({
     nullable: true,
-    length:20,
+    length: 20,
   })
-  action_user:string
+  action_user: string;
 }
