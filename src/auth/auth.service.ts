@@ -17,6 +17,12 @@ interface IUser {
   uuid: string;
 }
 
+interface IUserRole {
+  Reference: string;
+  ActionCode: string;
+  Status: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -76,6 +82,7 @@ export class AuthService {
 
   // หา role ของ user
   async userRole(user: IUser, body: any) {
+    const { ProgramKey } = body;
     const { uuid } = user || {};
 
     // 1 - ตรวจสอบค่า uuid
@@ -88,23 +95,41 @@ export class AuthService {
     // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
 
     // 3(2.2) หาค่า role จาก mssql
-    const queryFindRole = `Select
-    DISTINCT rl.Reference, ac.ActionCode ,
-    Status
-  from
-    [Policy_Actions] ac
-    join [Roles] rl ON ac.RoleId = rl.RoleId
-  WHERE
-    ProgramKey = '${body.key}'
-    AND rl.RoleId IN (
-      SELECT
-        Roles_RoleId
-      FROM
-        Employees_Roles
-    WHERE
-      Employees_EmployeeId = ${user.userId} )`;
-    const userRoles = await this.connection.query(queryFindRole);
+    const queryFindRole = `select rl.Reference,
+    ac.ActionCode,
+    ac.[Status]
+from Policy_Actions ac ,
+    Roles rl 
+where ac.RoleId  =  rl.RoleId
+--
+and ac.ProgramKey  =  ${ProgramKey}
+and ac.[Status]  =  1 
+and exists (
+    select null 
+    from Employees_Roles er 
+    where er.Employees_EmployeeId  =  ${user.userId}
+    and rl.RoleId  =  er.Roles_RoleId
+)
+group by rl.Reference,
+    ac.ActionCode,
+    ac.[Status]
+order by rl.Reference,
+    ac.ActionCode,
+    ac.[Status]`;
+    const userRoles: IUserRole[] = await this.connection.query(queryFindRole);
     console.log('userRoles :>> ', userRoles);
+
+    // {
+    //   “app”:{
+
+    //   “BA”:[“aa”,”bb”],
+    //   “PG”:[“aa”,”bb”]
+
+    //     }
+    //   }
+
+    // console.log('IGetMediaObjectdata');
+
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
 
