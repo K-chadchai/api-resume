@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
@@ -9,9 +9,13 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { UserRoleEntity } from 'src/entities/user_role.entity';
 import { AppService } from 'src/app/app.service';
-import { async } from 'rxjs/internal/scheduler/async';
 import { LoginGuardEntity } from 'src/entities/login_guard.entity';
 import { LoginActivityEntity } from 'src/entities/login_activity.entity';
+import { LoginLockEntity } from 'src/entities/login_lock.entity';
+import { LoginConstantEntity } from 'src/entities/login_constant.entity';
+import { ILoginConstant } from 'src/interfaces/login_constant.interface';
+import { ILoginLock } from 'src/interfaces/login_lock.interface';
+import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 
 interface IGetPayload {
   username: string;
@@ -40,51 +44,31 @@ export class AuthService {
     private appService: AppService,
   ) {}
 
-  async validateUser(username: string, passwordPlanText: string): Promise<any> {
+  async validateUser(userId: string, passwordPlanText: string): Promise<any> {
+    // เวลาที่ทำรายการ
+    const time_now = new Date();
+    let time_end_lock: Date;
+
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       //ค้นหา user ว่ามีการล็อคอยู่ไหม
-
-      const fineUserlock = await getConnection()
-        .getRepository(LoginGuardEntity)
-        .createQueryBuilder('login_guard')
-        .where(`login_guard.user_id = '${username}'`)
-        .getOne();
-
-      if (fineUserlock === undefined) {
-        //ถ้าไม่มีให้ไปเช็ค LoginActivity ว่ามีการ loging ติดต่อกันภายในช่วงเวลาติดต่อกันตามที่กำหนดหรือไม่
-        const fineUserActivity = await getConnection()
-          .getRepository(LoginActivityEntity)
-          .createQueryBuilder('login_activity')
-          .where(`login_activity.user_id = '${username}' and login_activity.login_success = 0`)
-          .getOne();
-        if (fineUserActivity !== undefined) {
-          //ถ้ามี LoginActivity ว่ามีการ loging ติดต่อกันภายในช่วงเวลาติดต่อกันตามที่กำหนดหรือไม่
-          const fineUserActivity = await getConnection()
-            .getRepository(LoginActivityEntity)
-            .createQueryBuilder('login_activity')
-            .where(`login_activity.user_id = '${username}' and login_activity.login_success = 0`);
-        } else {
-          // return await this.appService.dbRunner(async (runner: QueryRunner) => {
-          //   const loginActivityEntity = new LoginActivityEntity();
-          //   loginActivityEntity.user_id = username;
-          //   loginActivityEntity.login_time = new Date();
-          //   loginActivityEntity.login_success = '';
-          //   const sloginActivity_object = await runner.manager.save(
-          //     LoginActivityEntity,
-          //     loginActivityEntity,
-          //   );
-          //   const { id } = sloginActivity_object;
-          //   if (id !== undefined) {
-          //     return {};
-          //   }
-          // });
+      const findLoginGuard =
+        (await runner.manager.find(LoginGuardEntity, { where: { userId }, take: 1 }))[0] || ({} as ILoginGuard);
+      if (findLoginGuard.login_lock_id) {
+        // หา login_lock.id = login_lock_id
+        const findLoginLock = ((await runner.manager.findOne(LoginLockEntity, findLoginGuard.login_lock_id)) ||
+          {}) as ILoginLock;
+        // // ถ้าเวลาปัจจุบันอยู่ระหว่าง time_begin และ time_end แสดงว่าล็อคอยู่
+        const { time_begin, time_end } = findLoginLock;
+        const isLocked = time_begin <= time_now && (!time_end || time_now <= time_end);
+        if (isLocked) {
+          throw new UnauthorizedException('Unauthorized : User Locked , กรุณาติดต่อผู้ดูแลระบบ');
         }
-      } else {
-        return null;
+        time_end_lock = time_end;
       }
-      /////////////////////////////////////////////////----Process เดิม--------///////////////////////////////////////////////////////////
+      //> User ไม่ได้ถุกล็อค > ตรวจสอบรหัสผ่าน
+
       //ค้าหา user จาก db
-      const user = await this.usersService.findOne(username);
+      const user = await this.usersService.findOne(userId);
 
       // หารหัสผ่านที่เข้ารหัสอยู่( อ่านค่ามาจาก db )
       const passwordEncrypt: string = user.Secrets;
@@ -96,31 +80,100 @@ export class AuthService {
           key: 'UW',
         })
         .then((response) => {
-          if (response.data) {
-            return response.data;
-          } else {
-            throw new InternalServerErrorException('Not found username');
-          }
+          if (response.data) return response.data;
+          throw new NotFoundException(`Not found ,response.data`);
         })
         .catch((err) => {
           console.error(err);
-          throw new InternalServerErrorException('Not found username');
+          throw new InternalServerErrorException(`Error : Cannot Descrypt password , ${err}`);
         });
 
-      if (passwordDecrypt === passwordPlanText) {
+      // ตรวจสอบรหัสผ่าน
+      const isSuccess = passwordDecrypt === passwordPlanText;
+
+      // เก็บ login_activity
+      const saveLoginActivity = await runner.manager.save(LoginActivityEntity, {
+        user_id: userId,
+        login_success: isSuccess ? '1' : '0',
+        login_time: time_now,
+      } as LoginActivityEntity);
+
+      // ถ้าล็อคอินสำเร็จ ให้คืนค่าที่ได้
+      if (isSuccess) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { Secrets, ...result } = user;
         return result;
-      } else {
-        return null;
       }
+
+      //> ล็อคอินไม่สำเร็จ > ให้นับว่าไม่สำเร็จครบเงื่อนไข เพื่อจะ Lock หรือไม่
+      // หา login_constant
+      const { failure_count, failure_intime, lock_time_period } =
+        (
+          await runner.manager.find(LoginConstantEntity, {
+            take: 1,
+          })
+        )[0] || ({} as ILoginConstant);
+
+      // มีการกำหนดเงื่อนไขการ Lock User
+      if (failure_count > 0 && failure_intime > 0 /*&& lock_time_period > 0*/) {
+        // หา login_activity ที่ผ่านมา
+        let findLoginActivity = await runner.manager.find(LoginActivityEntity, {
+          where: { user_id: userId },
+          order: { login_time: 'DESC' },
+          take: failure_count,
+        });
+
+        // ถ้ามีเวลาที่ล็อคล่าสุด ให้มองต่อจากเวลานี้
+        if (time_end_lock) {
+          findLoginActivity = findLoginActivity.filter((item) => item.login_time > time_end_lock);
+        }
+
+        if (findLoginActivity.length === failure_count) {
+          // หาว่ามีรายการที่ success มั้ย ถ้ามีแสดงว่าไม่ต้อง Lock
+          const findLoginActivitySuccess = findLoginActivity.find((item) => item.login_success === '1');
+          if (!findLoginActivitySuccess) {
+            //> เป็นรายการ failure ท้ังหมด
+            // หาเวลา login_time_first , login_time_last
+            const login_time_first = findLoginActivity[0].login_time;
+            const login_time_last = findLoginActivity[findLoginActivity.length - 1].login_time;
+            const diffTime = this.appService.diffTime(login_time_first, login_time_last);
+            if (diffTime.diffMinutes <= failure_intime) {
+              //> ใส่รหัสผ่านผิดภายในเวลาที่กำหนด = Lock
+              // คำนวณระยะเวลาที่ user จะถูกล็อค
+              let time_lock: Date = null;
+              if (lock_time_period > 0) {
+                time_lock = new Date(time_now);
+                time_lock.setMinutes(time_lock.getMinutes() + lock_time_period);
+              } else {
+                // time_lock = null คือล็อคตลอดชาติ (ให้ติดต่อ Admin ปลดล็อคให้)
+              }
+
+              // บันทึกลง table : login_lock
+              const saveLoginLock = await runner.manager.save(LoginLockEntity, {
+                user_id: userId,
+                time_begin: time_now,
+                time_end: time_lock,
+                login_activity_id: saveLoginActivity.id,
+              } as LoginLockEntity);
+
+              // เอา id จาก login_lock ไประบุที่ login_guard.login_lock_id
+              findLoginGuard.user_id = userId;
+              findLoginGuard.login_lock_id = saveLoginLock.id;
+              await runner.manager.save(LoginGuardEntity, findLoginGuard);
+            }
+          }
+        }
+      }
+
+      // ล็อคอินไม่สำเร็จ
+      return null;
     });
-    //return null;
   }
 
-  async login(user: any) {
+  // ผ่านการ validateUser แล้ว (ล็อคอินสำเร็จแล้ว)
+  async loginSuccessed(user: any) {
     //
-    const { EmployeeId: userId, Fullname: userName, ...rest } = user;
+    const { EmployeeId: userId, Fullname: userName, EmployeeLevel: employeeLevel } = user;
 
     // return this.appService.dbRunner((runner: QueryRunner) => {
     //   // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
@@ -134,7 +187,7 @@ export class AuthService {
     const uuid = uuidv4();
 
     // Create payload
-    const payload = { userId, userName, uuid: uuid } as IUser;
+    const payload = { userId, userName, uuid, employeeLevel } as IUser;
 
     return {
       token: this.jwtService.sign(payload),

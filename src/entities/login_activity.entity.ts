@@ -15,6 +15,7 @@ export class LoginActivityEntity implements ILoginActivity {
   })
   user_id: string;
 
+  @Column()
   login_time: Date; // วันเวลาที่กด login ( อาจจะผ่านหรือไม่ผ่าน ก็ได้ )
 
   @Column({
