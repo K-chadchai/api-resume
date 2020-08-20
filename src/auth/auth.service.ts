@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
@@ -16,6 +22,8 @@ import { LoginConstantEntity } from 'src/entities/login_constant.entity';
 import { ILoginConstant } from 'src/interfaces/login_constant.interface';
 import { ILoginLock } from 'src/interfaces/login_lock.interface';
 import { ILoginGuard } from 'src/interfaces/login_guard.interface';
+import { JWT_TIMEOUT } from 'src/app/app.constants';
+import { ILoginActivity } from 'src/interfaces/login_activity.interface';
 
 interface IGetPayload {
   username: string;
@@ -44,7 +52,7 @@ export class AuthService {
     private appService: AppService,
   ) {}
 
-  async validateUser(userId: string, passwordPlanText: string): Promise<any> {
+  async validateLocalStrategy(userId: string, passwordPlanText: string): Promise<any> {
     // เวลาที่ทำรายการ
     const time_now = new Date();
     let time_end_lock: Date;
@@ -92,17 +100,20 @@ export class AuthService {
       const isSuccess = passwordDecrypt === passwordPlanText;
 
       // เก็บ login_activity
+      const time_expire = new Date(time_now);
+      time_expire.setSeconds(time_expire.getSeconds() + JWT_TIMEOUT);
       const saveLoginActivity = await runner.manager.save(LoginActivityEntity, {
         user_id: userId,
         login_success: isSuccess ? '1' : '0',
         login_time: time_now,
+        time_expire,
       } as LoginActivityEntity);
 
       // ถ้าล็อคอินสำเร็จ ให้คืนค่าที่ได้
       if (isSuccess) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { Secrets, ...result } = user;
-        return result;
+        return { ...result, LoginActivityId: saveLoginActivity.id };
       }
 
       //> ล็อคอินไม่สำเร็จ > ให้นับว่าไม่สำเร็จครบเงื่อนไข เพื่อจะ Lock หรือไม่
@@ -166,32 +177,54 @@ export class AuthService {
       }
 
       // ล็อคอินไม่สำเร็จ
-      return null;
+      return;
     });
   }
 
   // ผ่านการ validateUser แล้ว (ล็อคอินสำเร็จแล้ว)
   async loginSuccessed(user: any) {
     //
-    const { EmployeeId: userId, Fullname: userName, EmployeeLevel: employeeLevel } = user;
-
-    // return this.appService.dbRunner((runner: QueryRunner) => {
-    //   // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
-    //   // const toKenEntity = new SingleSignOnTokenEntity();
-    //   // toKenEntity.action_user = userId;
-    //   // runner.manager.save(SingleSignOnTokenEntity, toKenEntity);
-    //   return null;
-    // });
-
-    // const { id } = await repositoryToken.save(toKenEntity);
-    const uuid = uuidv4();
+    const { EmployeeId: userId, Fullname: userName, EmployeeLevel: employeeLevel, LoginActivityId: uuid } = user;
 
     // Create payload
     const payload = { userId, userName, uuid, employeeLevel } as IUser;
 
-    return {
-      token: this.jwtService.sign(payload),
-    };
+    // Create token JWT
+    const token = this.jwtService.sign(payload);
+
+    // แปลงเป็น JWT
+    return { token };
+  }
+
+  // ตรวจสอบ JWT
+  validateJwtStrategy(payload: any) {
+    const { userId, userName, uuid, employeeLevel } = payload;
+
+    // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
+    return this.appService.dbRunner(async (runner: QueryRunner) => {
+      //
+      const { kill_status } = await runner.manager.findOne(LoginActivityEntity, uuid);
+      if (kill_status === '1') {
+        throw new UnauthorizedException();
+      }
+
+      //
+      return { userId, userName, uuid, employeeLevel };
+    });
+  }
+
+  // เมื่อต้องการ kill jwt
+  killLoginActive(userId: string, uuid: string) {
+    // หารายการที่ login สำเร็จและยังไม่หมดอายุ
+    return this.appService.dbRunner(async (runner: QueryRunner) => {
+      return await runner.manager.query(`update login_activity 
+      set kill_status = '1'
+      where user_id = '${userId}'
+      and login_success = '1'
+      and id != '${uuid}'
+      and now() < time_expire 
+      and (kill_status is null or kill_status = '0')`);
+    });
   }
 
   // หา role ของ user

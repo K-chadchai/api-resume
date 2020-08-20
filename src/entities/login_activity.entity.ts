@@ -22,4 +22,10 @@ export class LoginActivityEntity implements ILoginActivity {
     length: 2,
   })
   login_success: string; // 1=สำเร็จ, 0=ไม่สำเร็จ
+
+  @Column({ nullable: true })
+  time_expire: Date;
+
+  @Column({ nullable: true })
+  kill_status: string;
 }
