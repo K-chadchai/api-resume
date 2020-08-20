@@ -15,27 +15,11 @@ export class UsersService {
   async findOne(username: string): Promise<User | undefined> {
     const queryEmployee = `SELECT TOP (1) em.[EmployeeId] as EmployeeId
     ,em.[JobKeyId] as JobKeyId
-    --,jk.[JobKeyName] as JobKeyName
     ,em.[PositionId] as PositionId
-    --,ps.[PositionName] as PositionName
     ,em.[DepartmentId] as DepartmentId
-    --,dp.[NAME] as DepartmentName
     ,em.[DivisionId] as DivisionId
-    --,ou.[OrganizationUnitId] as DivisionName
     ,em.[PersonnelAreaId] as PersonnelAreaId
-    --,pa.[PersonnelAreaText] as PersonnelAreaName
-    --,[ManagerId] as ManagerId
     ,[Fullname] as Fullname
-    ,[Nickname] as Nickname
-    ,[Email] as Email
-    ,[Telephone] as Telephone
-    --,em.[BeginDate] as BeginDate
-    --,em.[EndDate] as EndDate
-    --,[Status] as Status
-    --,[CreatedDate] as CreatedDate
-    --,[ModifiedDate] as ModifiedDate
-    --,[Operated] as Operated
-    ,[FullnameEN] as FullnameEn
     ,sc.[Password] as Secrets
     FROM [DBAUTHOR].[dbo].[Employees] em
     LEFT JOIN JobKeys jk ON em.JobKeyId = jk.JobKeyId

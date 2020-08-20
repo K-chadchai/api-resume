@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection, getConnection, getRepository, QueryRunner } from 'typeorm';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { SingleSignOnTokenEntity } from 'src/entities/single_sign_on.entity';
 import { UserRoleEntity } from 'src/entities/user_role.entity';
 import { AppService } from 'src/app/app.service';
+import { async } from 'rxjs/internal/scheduler/async';
+import { LoginGuardEntity } from 'src/entities/login_guard.entity';
+import { LoginActivityEntity } from 'src/entities/login_activity.entity';
 
 interface IGetPayload {
   username: string;
@@ -39,56 +45,104 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, passwordPlanText: string): Promise<any> {
-    //ค้าหา user จาก db
-    const user = await this.usersService.findOne(username);
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      //ค้นหา user ว่ามีการล็อคอยู่ไหม
 
-    // หารหัสผ่านที่เข้ารหัสอยู่( อ่านค่ามาจาก db )
-    const passwordEncrypt: string = user.Secrets;
+      const fineUserlock = await getConnection()
+        .getRepository(LoginGuardEntity)
+        .createQueryBuilder('login_guard')
+        .where(`login_guard.user_id = '${username}'`)
+        .getOne();
 
-    // เอาค่า passwordEncrypt มาถอดรหัส
-    const passwordDecrypt = await axios
-      .post(`${process.env.API_DECRYPT}`, {
-        text: passwordEncrypt.trim(),
-        key: 'UW',
-      })
-      .then((response) => {
-        if (response.data) {
-          return response.data;
+      if (fineUserlock === undefined) {
+        //ถ้าไม่มีให้ไปเช็ค LoginActivity ว่ามีการ loging ติดต่อกันภายในช่วงเวลาติดต่อกันตามที่กำหนดหรือไม่
+        const fineUserActivity = await getConnection()
+          .getRepository(LoginActivityEntity)
+          .createQueryBuilder('login_activity')
+          .where(
+            `login_activity.user_id = '${username}' and login_activity.login_success = 0`,
+          )
+          .getOne();
+        if (fineUserActivity !== undefined) {
+          //ถ้ามี LoginActivity ว่ามีการ loging ติดต่อกันภายในช่วงเวลาติดต่อกันตามที่กำหนดหรือไม่
+          const fineUserActivity = await getConnection()
+            .getRepository(LoginActivityEntity)
+            .createQueryBuilder('login_activity')
+            .where(
+              `login_activity.user_id = '${username}' and login_activity.login_success = 0`,
+            );
         } else {
-          throw new InternalServerErrorException('Not found username');
+          // return await this.appService.dbRunner(async (runner: QueryRunner) => {
+          //   const loginActivityEntity = new LoginActivityEntity();
+          //   loginActivityEntity.user_id = username;
+          //   loginActivityEntity.login_time = new Date();
+          //   loginActivityEntity.login_success = '';
+          //   const sloginActivity_object = await runner.manager.save(
+          //     LoginActivityEntity,
+          //     loginActivityEntity,
+          //   );
+          //   const { id } = sloginActivity_object;
+          //   if (id !== undefined) {
+          //     return {};
+          //   }
+          // });
         }
-      })
-      .catch((err) => {
-        console.error(err);
-        throw new InternalServerErrorException('Not found username');
-      });
+      } else {
+        return null;
+      }
+      /////////////////////////////////////////////////----Process เดิม--------///////////////////////////////////////////////////////////
+      //ค้าหา user จาก db
+      const user = await this.usersService.findOne(username);
 
-    if (passwordDecrypt === passwordPlanText) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { Secrets, ...result } = user;
-      return result;
-    }
-    return null;
+      // หารหัสผ่านที่เข้ารหัสอยู่( อ่านค่ามาจาก db )
+      const passwordEncrypt: string = user.Secrets;
+
+      // เอาค่า passwordEncrypt มาถอดรหัส
+      const passwordDecrypt = await axios
+        .post(`${process.env.API_DECRYPT}`, {
+          text: passwordEncrypt.trim(),
+          key: 'UW',
+        })
+        .then(response => {
+          if (response.data) {
+            return response.data;
+          } else {
+            throw new InternalServerErrorException('Not found username');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          throw new InternalServerErrorException('Not found username');
+        });
+
+      if (passwordDecrypt === passwordPlanText) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { Secrets, ...result } = user;
+        return result;
+      } else {
+        return null;
+      }
+    });
+    //return null;
   }
 
   async login(user: any) {
     //
     const { EmployeeId: userId, Fullname: userName, ...rest } = user;
 
-    return this.appService.dbRunner((runner: QueryRunner) => {
-      // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
-      const toKenEntity = new SingleSignOnTokenEntity();
-      toKenEntity.action_user = userId;
-      runner.manager.save(SingleSignOnTokenEntity, toKenEntity);
-
-      return null;
-    });
+    // return this.appService.dbRunner((runner: QueryRunner) => {
+    //   // ส่ง rest ไปบันทึกที่ DynamoDB แล้วก็จะได้ค่า uuid (id) คืนมา
+    //   // const toKenEntity = new SingleSignOnTokenEntity();
+    //   // toKenEntity.action_user = userId;
+    //   // runner.manager.save(SingleSignOnTokenEntity, toKenEntity);
+    //   return null;
+    // });
 
     // const { id } = await repositoryToken.save(toKenEntity);
-    // const uuid = id;
+    const uuid = uuidv4();
 
     // Create payload
-    const payload = { userId, userName, uuid: '123' } as IUser;
+    const payload = { userId, userName, uuid: uuid } as IUser;
 
     return {
       token: this.jwtService.sign(payload),
@@ -110,8 +164,9 @@ export class AuthService {
     const isFoundRoleByUuid: any = await this.getRolebyId(user.uuid);
     console.log('isFoundRoleByUuid ===>>>>>>', isFoundRoleByUuid);
     if (isFoundRoleByUuid !== undefined) {
-      console.log('isFoundRoleByUuid ====>>>', isFoundRoleByUuid);
-      return { isFoundRoleByUuid };
+      const role = JSON.stringify(isFoundRoleByUuid);
+      console.log('isFoundRoleByUuidstringify ====>>>', role);
+      return isFoundRoleByUuid;
     }
 
     // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
@@ -146,7 +201,7 @@ order by rl.Reference,
     //   }
     // console.log('userRoles :>> ', userRoles);
     const jsonRoles: any = {};
-    userRoles.forEach((item) => {
+    userRoles.forEach(item => {
       const roleName = item['Reference'];
       const actionCode = item['ActionCode'];
       if (jsonRoles[roleName]) {
@@ -158,15 +213,21 @@ order by rl.Reference,
     console.log('jsonRoles :>> ', jsonRoles);
 
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
-    const repositoryUserRole = getRepository(UserRoleEntity);
-    const userRoleEntity = new UserRoleEntity();
-    userRoleEntity.reference = user.uuid;
-    userRoleEntity.app = apiProgram;
-    userRoleEntity.role = jsonRoles;
-    const { id } = await repositoryUserRole.save(userRoleEntity);
-    if (id !== undefined) {
-      return { jsonRoles };
-    }
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      const userRoleEntity = new UserRoleEntity();
+      userRoleEntity.reference = user.uuid;
+      userRoleEntity.app = apiProgram;
+      userRoleEntity.role = jsonRoles;
+
+      const sUserRole_object = await runner.manager.save(
+        UserRoleEntity,
+        userRoleEntity,
+      );
+      const { id } = sUserRole_object;
+      if (id !== undefined) {
+        return { role: jsonRoles };
+      }
+    });
 
     // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
     // 4(3.1) กรณีพบค่า role จะต้องแปลงข้อมูลเป็น json เพื่อเอาไปบันทึกที่ DynamoDB ได้
