@@ -1,12 +1,11 @@
-import { Entity, Unique, PrimaryGeneratedColumn, Column } from "typeorm";
-import { ILoginConstant } from "src/interfaces/login_constant.interface";
+import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ILoginConstant } from 'src/interfaces/login_constant.interface';
 
 const tname = 'login_constant';
 
 @Entity(tname)
 @Unique(`uc_${tname}_id`, ['id'])
 export class LoginConstantEntity implements ILoginConstant {
-  
   @PrimaryGeneratedColumn('uuid')
   id: string;
   failure_count: number; // จำนวนครั้งที่นับสะสมกรณีที่ไม่สำเร็จ ( เพื่อจะล็อค )

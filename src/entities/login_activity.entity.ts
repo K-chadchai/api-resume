@@ -1,25 +1,24 @@
-import { Entity, Unique, PrimaryGeneratedColumn, Column } from "typeorm";
-import { ILoginActivity } from "src/interfaces/login_activity.interface";
+import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ILoginActivity } from 'src/interfaces/login_activity.interface';
 
 const tname = 'login_activity';
 
 @Entity(tname)
 @Unique(`uc_${tname}_id`, ['id'])
 export class LoginActivityEntity implements ILoginActivity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({
-        nullable: true,
-        length: 20,
-    })
-    user_id: string;
+  @Column({
+    nullable: true,
+    length: 20,
+  })
+  user_id: string;
 
-    login_time: Date; // วันเวลาที่กด login ( อาจจะผ่านหรือไม่ผ่าน ก็ได้ )
+  login_time: Date; // วันเวลาที่กด login ( อาจจะผ่านหรือไม่ผ่าน ก็ได้ )
 
-    @Column({
+  @Column({
     length: 2,
-   })
-    login_success: string; // 1=สำเร็จ, 0=ไม่สำเร็จ
-
+  })
+  login_success: string; // 1=สำเร็จ, 0=ไม่สำเร็จ
 }

@@ -1,5 +1,5 @@
-import { Entity, Unique, PrimaryGeneratedColumn, Column } from "typeorm";
-import { ILoginGuard } from "src/interfaces/login_guard.interface";
+import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 
 const tname = 'login_guard';
 
@@ -14,7 +14,7 @@ export class LoginGuardEntity implements ILoginGuard {
     length: 20,
   })
   user_id: string; // UC
-  
+
   @Column({
     nullable: true,
     length: 36,

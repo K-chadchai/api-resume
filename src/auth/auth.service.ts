@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
@@ -59,18 +55,14 @@ export class AuthService {
         const fineUserActivity = await getConnection()
           .getRepository(LoginActivityEntity)
           .createQueryBuilder('login_activity')
-          .where(
-            `login_activity.user_id = '${username}' and login_activity.login_success = 0`,
-          )
+          .where(`login_activity.user_id = '${username}' and login_activity.login_success = 0`)
           .getOne();
         if (fineUserActivity !== undefined) {
           //ถ้ามี LoginActivity ว่ามีการ loging ติดต่อกันภายในช่วงเวลาติดต่อกันตามที่กำหนดหรือไม่
           const fineUserActivity = await getConnection()
             .getRepository(LoginActivityEntity)
             .createQueryBuilder('login_activity')
-            .where(
-              `login_activity.user_id = '${username}' and login_activity.login_success = 0`,
-            );
+            .where(`login_activity.user_id = '${username}' and login_activity.login_success = 0`);
         } else {
           // return await this.appService.dbRunner(async (runner: QueryRunner) => {
           //   const loginActivityEntity = new LoginActivityEntity();
@@ -103,14 +95,14 @@ export class AuthService {
           text: passwordEncrypt.trim(),
           key: 'UW',
         })
-        .then(response => {
+        .then((response) => {
           if (response.data) {
             return response.data;
           } else {
             throw new InternalServerErrorException('Not found username');
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           throw new InternalServerErrorException('Not found username');
         });
@@ -201,7 +193,7 @@ order by rl.Reference,
     //   }
     // console.log('userRoles :>> ', userRoles);
     const jsonRoles: any = {};
-    userRoles.forEach(item => {
+    userRoles.forEach((item) => {
       const roleName = item['Reference'];
       const actionCode = item['ActionCode'];
       if (jsonRoles[roleName]) {
@@ -219,10 +211,7 @@ order by rl.Reference,
       userRoleEntity.app = apiProgram;
       userRoleEntity.role = jsonRoles;
 
-      const sUserRole_object = await runner.manager.save(
-        UserRoleEntity,
-        userRoleEntity,
-      );
+      const sUserRole_object = await runner.manager.save(UserRoleEntity, userRoleEntity);
       const { id } = sUserRole_object;
       if (id !== undefined) {
         return { role: jsonRoles };
