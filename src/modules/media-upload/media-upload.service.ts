@@ -650,7 +650,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         if (fineRefSide === undefined) {
           const repositoryFolderSide = getRepository(MediaFolderEntity);
           folder = new MediaFolderEntity();
-          folder.folder_name = `${body.article_side_id}`;
+          folder.folder_name = sideName;
           folder.parent_id = id_folder_Unit;
           folder.folder_type = 'SIDE_FOLDER';
           folder.reference = body.article_side_id;
