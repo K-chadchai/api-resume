@@ -11,6 +11,7 @@ import { MediaArticleEntity } from 'src/entities/media_article.entity';
 import { MediaUnitEntity } from 'src/entities/media_unit.entity';
 import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.entity';
+import { MediaResolutionEntity } from 'src/entities/media_resolution.entity';
 
 interface IPostBulk {
   bulk: MediaObjectRelationEntity[];
@@ -98,6 +99,11 @@ export class MediaObjectRelationService extends TypeOrmCrudService<
         MediaSaleDepartmentEntity,
         'media_depart',
         'media_depart.id = media_object_relation.sale_depart_id',
+      )
+      .leftJoinAndSelect(
+        MediaResolutionEntity,
+        'media_resorution',
+        'media_resorution.id = media_object_relation.resolution_id',
       )
       .where('media_object.id is not null')
       .take(10)
