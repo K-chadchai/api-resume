@@ -34,9 +34,10 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
         },
         order: {
           folder_name: 'ASC',
-        },
-        skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
-        take: 10,
+        }
+        //,
+        //skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+        //take: 10,
       });
     } else {
       return await this.repo.find({
@@ -52,9 +53,10 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
           : '',
         order: {
           folder_name: 'ASC',
-        },
-        skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
-        take: 10,
+        }
+        //,
+        //skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+        //take: 10,
       });
     }
   }
