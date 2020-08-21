@@ -652,7 +652,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           folder = new MediaFolderEntity();
           folder.folder_name = `${body.article_side_id}`;
           folder.parent_id = id_folder_Unit;
-          folder.folder_type = 'FOLDER';
+          folder.folder_type = 'SIDE_FOLDER';
           folder.reference = body.article_side_id;
           folder.created_time = new Date();
           folder.creator = '';
