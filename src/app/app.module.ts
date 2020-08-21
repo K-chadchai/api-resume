@@ -29,6 +29,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: process.env.DB_MSSQL_PASSWORD,
       database: 'DBAUTHOR',
       entities: ['dist/**/*.entity{.ts,.js}'],
+      options: { enableArithAbort: true },
       // synchronize: true,
     }),
   ],

@@ -24,6 +24,8 @@ import { ILoginLock } from 'src/interfaces/login_lock.interface';
 import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 import { JWT_TIMEOUT } from 'src/app/app.constants';
 import { ILoginActivity } from 'src/interfaces/login_activity.interface';
+import { RoleActivityEntity } from 'src/entities/role_activity.entity';
+import { IRoleActivity } from 'src/interfaces/role_activity.interface';
 
 interface IGetPayload {
   username: string;
@@ -198,18 +200,69 @@ export class AuthService {
 
   // ตรวจสอบ JWT
   validateJwtStrategy(payload: any) {
-    const { userId, userName, uuid, employeeLevel } = payload;
+    const { userId, userName, uuid: login_activity_id, employeeLevel } = payload;
 
     // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
     return this.appService.dbRunner(async (runner: QueryRunner) => {
       //
-      const { kill_status } = await runner.manager.findOne(LoginActivityEntity, uuid);
-      if (kill_status === '1') {
+      // 1 - ตรวจสอบค่า uuid
+      const { kill_status, id: login_activity_id_tpm } =
+        (await runner.manager.findOne(LoginActivityEntity, login_activity_id)) || {};
+      if (kill_status === '1' || !login_activity_id_tpm) {
         throw new UnauthorizedException();
       }
 
-      //
-      return { userId, userName, uuid, employeeLevel };
+      // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
+      const findRoleActivity = await runner.manager.findOne(RoleActivityEntity, login_activity_id);
+
+      // 2.1 > ถ้าพบค่า role ให้คืน role เลย
+      if (findRoleActivity && findRoleActivity.id) {
+        return JSON.parse(findRoleActivity.roles_json);
+      }
+
+      // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
+      // 3(2.2) หาค่า role จาก mssql
+      const userRoles: any[] = await this.connection.query(`SELECT R.Reference AS RoleCode, PA.ActionCode
+      FROM  [dbo].[Policy_Actions]  PA ,
+          [dbo].[Actions] A,
+          [dbo].[Roles] R
+      WHERE PA.ActionCode = A.ActionCode
+      AND PA.RoleId = R.RoleId
+      AND PA.ProgramKey = 'ERPDOHOME'
+      AND PA.[Status] = '1'
+      AND EXISTS (
+          SELECT NULL FROM Employees_Roles
+          WHERE Employees_Roles.Employees_EmployeeId = '1036349'
+          AND Employees_Roles.Roles_RoleId = PA.RoleId
+      )
+      GROUP BY R.Reference, PA.ActionCode
+      ORDER BY R.Reference, PA.ActionCode`);
+
+      /* เปลี่ยนให้เป็น json
+        ['action1','action2']
+      */
+      const jsonRoles: string[] = [];
+      userRoles.forEach((item) => {
+        // const roleName = item['RoleCode'];
+        const actionCode = item['ActionCode'];
+        if (!jsonRoles.includes(actionCode)) {
+          jsonRoles.push(actionCode);
+        }
+        // if (jsonRoles[roleName]) {
+        //   jsonRoles[roleName] = [...jsonRoles[roleName], actionCode];
+        // } else {
+        //   jsonRoles[roleName] = [actionCode];
+        // }
+      });
+
+      // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
+      await runner.manager.save(RoleActivityEntity, {
+        id: login_activity_id,
+        user_id: userId,
+        roles_json: JSON.stringify([...jsonRoles]),
+      } as IRoleActivity);
+
+      return { actionsCode: [...jsonRoles] };
     });
   }
 
@@ -217,13 +270,16 @@ export class AuthService {
   killLoginActive(userId: string, uuid: string) {
     // หารายการที่ login สำเร็จและยังไม่หมดอายุ
     return this.appService.dbRunner(async (runner: QueryRunner) => {
-      return await runner.manager.query(`update login_activity 
+      //
+      const rc: any[] = await runner.manager.query(`update login_activity 
       set kill_status = '1'
       where user_id = '${userId}'
       and login_success = '1'
       and id != '${uuid}'
       and now() < time_expire 
       and (kill_status is null or kill_status = '0')`);
+      //
+      return { rowsEffect: rc[1] };
     });
   }
 
@@ -272,6 +328,7 @@ order by rl.Reference,
     if (!userRoles || userRoles.length == 0) {
       return {};
     }
+
     // แปลง userRoles เป็น json ในรูปแบบ
     // {
     //   “BA”:[“aa”,”bb”],
@@ -292,12 +349,13 @@ order by rl.Reference,
 
     // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      //
       const userRoleEntity = new UserRoleEntity();
       userRoleEntity.reference = user.uuid;
       userRoleEntity.app = apiProgram;
       userRoleEntity.role = jsonRoles;
-
       const sUserRole_object = await runner.manager.save(UserRoleEntity, userRoleEntity);
+      //
       const { id } = sUserRole_object;
       if (id !== undefined) {
         return { role: jsonRoles };

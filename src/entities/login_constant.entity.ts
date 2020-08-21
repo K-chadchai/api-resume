@@ -1,10 +1,9 @@
-import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ILoginConstant } from 'src/interfaces/login_constant.interface';
 
 const tname = 'login_constant';
 
 @Entity(tname)
-@Unique(`uc_${tname}_id`, ['id'])
 export class LoginConstantEntity implements ILoginConstant {
   @PrimaryGeneratedColumn('uuid')
   id: string;

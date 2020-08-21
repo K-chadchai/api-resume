@@ -1,10 +1,9 @@
-import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ILoginActivity } from 'src/interfaces/login_activity.interface';
 
 const tname = 'login_activity';
 
 @Entity(tname)
-@Unique(`uc_${tname}_id`, ['id'])
 export class LoginActivityEntity implements ILoginActivity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

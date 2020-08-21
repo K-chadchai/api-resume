@@ -4,7 +4,7 @@ import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 const tname = 'login_guard';
 
 @Entity(tname)
-@Unique(`uc_${tname}_id`, ['id'])
+@Unique(`uc_${tname}_user_id`, ['user_id'])
 export class LoginGuardEntity implements ILoginGuard {
   @PrimaryGeneratedColumn('uuid')
   id: string;
