@@ -1,3 +1,4 @@
+#
 # docker build -t api-authen .
 # docker tag api-authen:latest snikom1723/dohome-api-authen:latest
 # docker push snikom1723/dohome-api-authen:latest
