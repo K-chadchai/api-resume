@@ -218,7 +218,7 @@ export class AuthService {
 
       // 2.1 > ถ้าพบค่า role ให้คืน role เลย
       if (findRoleActivity && findRoleActivity.id) {
-        return JSON.parse(findRoleActivity.roles_json);
+        return { actionsCode: JSON.parse(findRoleActivity.roles_json) };
       }
 
       // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
