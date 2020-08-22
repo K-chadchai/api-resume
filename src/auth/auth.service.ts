@@ -63,7 +63,6 @@ export class AuthService {
       //ค้นหา user ว่ามีการล็อคอยู่ไหม
       const findLoginGuard =
         (await runner.manager.find(LoginGuardEntity, { where: { userId }, take: 1 }))[0] || ({} as ILoginGuard);
-      console.log('findLoginGuard :>> ', findLoginGuard);
       if (findLoginGuard.login_lock_id) {
         // หา login_lock.id = login_lock_id
         const findLoginLock = ((await runner.manager.findOne(LoginLockEntity, findLoginGuard.login_lock_id)) ||
