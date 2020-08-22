@@ -201,7 +201,7 @@ export class AuthService {
 
   // ตรวจสอบ JWT
   validateJwtStrategy(payload: any) {
-    const { userId, userName, uuid: login_activity_id, employeeLevel } = payload;
+    const { userId, uuid: login_activity_id } = payload;
 
     // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
     return this.appService.dbRunner(async (runner: QueryRunner) => {
