@@ -63,15 +63,17 @@ export class AuthService {
       //ค้นหา user ว่ามีการล็อคอยู่ไหม
       const findLoginGuard =
         (await runner.manager.find(LoginGuardEntity, { where: { userId }, take: 1 }))[0] || ({} as ILoginGuard);
+      console.log('findLoginGuard :>> ', findLoginGuard);
       if (findLoginGuard.login_lock_id) {
         // หา login_lock.id = login_lock_id
         const findLoginLock = ((await runner.manager.findOne(LoginLockEntity, findLoginGuard.login_lock_id)) ||
           {}) as ILoginLock;
-        // // ถ้าเวลาปัจจุบันอยู่ระหว่าง time_begin และ time_end แสดงว่าล็อคอยู่
+
+        // ถ้าเวลาปัจจุบันอยู่ระหว่าง time_begin และ time_end แสดงว่าล็อคอยู่
         const { time_begin, time_end } = findLoginLock;
         const isLocked = time_begin <= time_now && (!time_end || time_now <= time_end);
         if (isLocked) {
-          throw new UnauthorizedException('Unauthorized : User Locked , กรุณาติดต่อผู้ดูแลระบบ');
+          throw new UnauthorizedException('รหัสผู้ใช้ถูกระงับการใช้งาน, กรุณาติดต่อผู้ดูแลระบบ');
         }
         time_end_lock = time_end;
       }
