@@ -52,6 +52,7 @@
     "typeorm": "^0.2.24"
   },
   "devDependencies": {
+    "@dohome/api-common": "../api-common",
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
