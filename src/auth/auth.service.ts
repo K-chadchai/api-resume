@@ -1,18 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
-import { Connection, getConnection, getRepository, QueryRunner } from 'typeorm';
+import { Connection, getConnection, QueryRunner } from 'typeorm';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
 import { UserRoleEntity } from 'src/entities/user_role.entity';
 import { AppService } from 'src/app/app.service';
 import { LoginGuardEntity } from 'src/entities/login_guard.entity';
@@ -23,9 +15,9 @@ import { ILoginConstant } from 'src/interfaces/login_constant.interface';
 import { ILoginLock } from 'src/interfaces/login_lock.interface';
 import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 import { JWT_TIMEOUT } from 'src/app/app.constants';
-import { ILoginActivity } from 'src/interfaces/login_activity.interface';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
+import { comUtility } from '@dohome/api-common';
 
 interface IGetPayload {
   username: string;
@@ -150,7 +142,7 @@ export class AuthService {
             // หาเวลา login_time_first , login_time_last
             const login_time_first = findLoginActivity[0].login_time;
             const login_time_last = findLoginActivity[findLoginActivity.length - 1].login_time;
-            const diffTime = this.appService.diffTime(login_time_first, login_time_last);
+            const diffTime = comUtility.getTimeDiff(login_time_first, login_time_last);
             if (diffTime.diffMinutes <= failure_intime) {
               //> ใส่รหัสผ่านผิดภายในเวลาที่กำหนด = Lock
               // คำนวณระยะเวลาที่ user จะถูกล็อค
