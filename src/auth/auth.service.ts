@@ -14,10 +14,9 @@ import { LoginConstantEntity } from 'src/entities/login_constant.entity';
 import { ILoginConstant } from 'src/interfaces/login_constant.interface';
 import { ILoginLock } from 'src/interfaces/login_lock.interface';
 import { ILoginGuard } from 'src/interfaces/login_guard.interface';
-import { JWT_TIMEOUT } from 'src/app/app.constants';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
-import { comUtility } from '@dohome/api-common';
+import { comUtility, JWT_TIMEOUT } from '@dohome/api-common';
 
 interface IGetPayload {
   username: string;
