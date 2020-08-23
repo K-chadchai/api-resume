@@ -2,7 +2,6 @@ import { Controller, Request, Post, UseGuards, Get, Headers } from '@nestjs/comm
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { getHello } from '@dohome/com-library';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +23,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return getHello();
     return req.user;
   }
 

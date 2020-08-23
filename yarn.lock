@@ -346,9 +346,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@dohome/com-library@../com-library":
-  version "1.0.0"
-
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"
