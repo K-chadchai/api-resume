@@ -21,8 +21,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@dohome/api-common": "../api-common",
     "@nestjs/common": "^7.0.13",
     "@nestjs/core": "^7.0.13",
+    "@nestjs/passport": "^7.1.0",
     "@nestjs/platform-express": "^7.0.9",
     "@nestjs/swagger": "^4.5.3",
     "@nestjs/typeorm": "^7.0.0",
@@ -37,6 +39,8 @@
     "multer-sharp-s3": "^0.2.0",
     "nest-router": "^1.0.9",
     "nestjs-easyconfig": "^1.9.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
     "pg": "^8.0.3",
     "potrace": "^2.1.6",
     "reflect-metadata": "^0.1.13",
