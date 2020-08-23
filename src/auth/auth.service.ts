@@ -41,8 +41,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    @InjectConnection('mssql')
-    private readonly connection: Connection,
+    @InjectConnection('mssql') private connection: Connection,
     private appService: AppService,
   ) {}
 
