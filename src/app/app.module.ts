@@ -34,7 +34,7 @@ import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolu
       port: 5432,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      database: 'postgres',
+      database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       logging: true,
@@ -47,6 +47,7 @@ import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolu
       password: process.env.DB_MSSQL_PASSWORD,
       database: 'DBMASTER',
       entities: ['dist/**/*.entity{.ts,.js}'],
+      options: { enableArithAbort: true },
       // synchronize: true,
     }),
 

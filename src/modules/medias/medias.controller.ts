@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Query,
-  Post,
-  Req,
-  Res,
-  Delete,
-  Param,
-  Get,
-  Header,
-} from '@nestjs/common';
+import { Controller, Query, Post, Req, Res, Delete, Param, Get, Header } from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { Crud } from '@nestjsx/crud';
 import { MediasEntity } from 'src/entities/medias.entity';
