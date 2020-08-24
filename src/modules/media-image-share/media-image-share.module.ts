@@ -4,10 +4,11 @@ import { MediaImageShareController } from './media-image-share.controller';
 import { AppService } from 'src/app/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';
+import { UploaderService } from 'src/services/uploader.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MediaImageShareEntity])],
-  providers: [MediaImageShareService, AppService],
-  controllers: [MediaImageShareController]
+  providers: [MediaImageShareService, AppService, UploaderService],
+  controllers: [MediaImageShareController],
 })
-export class MediaImageShareModule { }
+export class MediaImageShareModule {}

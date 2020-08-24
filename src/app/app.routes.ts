@@ -17,6 +17,9 @@ import { MediaRoleModule } from 'src/modules/media-role/media-role.module';
 import { MediaSaleDepartmentModule } from 'src/modules/media-sale-department/media-sale-department.module';
 import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-action.module';
 import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
+import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module';
+import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module';
+import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolution.module';
 
 export const routes: Routes = [
   {
@@ -42,6 +45,9 @@ export const routes: Routes = [
       MediaUserActionModule,
       MediaArticleModule,
       MediaUnitModule,
+      MediaUploadModule,
+      MediaColorxModule,
+      MediaResolutionModule,
     ],
   },
 ];

@@ -1,49 +1,39 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { MediaObjectEntity } from 'src/entities/media_object.entity';
-import { AppService } from 'src/app/app.service';
+import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AppService } from 'src/app/app.service';
 import { Like } from 'typeorm';
 
-interface IPostBulk {
-  bulk: MediaObjectEntity[];
-}
-
-interface IGetObjectService {
+interface IGetColorx {
   page_no: number;
   search: string;
 }
 
 @Injectable()
-export class MediaObjectService extends TypeOrmCrudService<MediaObjectEntity> {
+export class MediaColorxService extends TypeOrmCrudService<MediaColorxEntity> {
   constructor(
-    @InjectRepository(MediaObjectEntity) repo,
+    @InjectRepository(MediaColorxEntity) repo,
     private readonly appService: AppService,
   ) {
     super(repo);
   }
 
   // ค้นหาข้อมูล
-  async getPaging(props: IGetObjectService) {
+  async getPaging(props: IGetColorx) {
+    // console.log('props :>> ', props);
     return await this.repo.find({
       where: props.search
         ? {
-            object_name: Like(`%${props.search}%`),
+            colorx_name: Like(`%${props.search}%`),
           }
         : '',
       order: {
-        object_name: 'ASC',
+        colorx_name: 'ASC',
       },
       skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
       take: 10,
-    });
-  }
-
-  // ค้นหาข้อมูล ByFolderId
-  async getByFolderId(id: string) {
-    return await this.repo.find({
-      where: [{ folder_id: id }],
     });
   }
 }

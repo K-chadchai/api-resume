@@ -21,6 +21,9 @@ import { MediaRoleModule } from 'src/modules/media-role/media-role.module';
 import { MediaSaleDepartmentModule } from 'src/modules/media-sale-department/media-sale-department.module';
 import { MediaUnitModule } from 'src/modules/media-unit/media-unit.module';
 import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-action.module';
+import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module';
+import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module';
+import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolution.module';
 
 @Module({
   imports: [
@@ -36,6 +39,17 @@ import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-
       synchronize: true,
       logging: true,
     }),
+    TypeOrmModule.forRoot({
+      type: 'mssql',
+      name: 'mssql',
+      host: process.env.DB_MSSQL_HOST,
+      username: process.env.DB_MSSQL_USERNAME,
+      password: process.env.DB_MSSQL_PASSWORD,
+      database: 'DBMASTER',
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      // synchronize: true,
+    }),
+
     RouterModule.forRoutes(routes),
     CategoriesModule,
     FoldersModule,
@@ -57,6 +71,9 @@ import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-
     MediaSideModule,
     MediaUnitModule,
     MediaUserActionModule,
+    MediaUploadModule,
+    MediaColorxModule,
+    MediaResolutionModule,
   ],
 })
 export class AppModule {}

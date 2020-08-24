@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import {
   Injectable,
   InternalServerErrorException,
@@ -8,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 
 import multer = require('multer');
 import s3Storage = require('multer-sharp-s3');
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class UploaderService {
@@ -104,7 +106,7 @@ export class UploaderService {
       }
       //
       const file = req.files[0];
-      // console.log('file', file);
+      //console.log('file', file);
       const { originalname, mimetype } = file;
       // Video
       if (file.mimetype.startsWith('video/')) {
@@ -116,13 +118,14 @@ export class UploaderService {
       // Image
       const files = [];
       sizes.forEach(item => {
-        const { width, height, size, Key } = file[item.suffix];
+        const { width, height, size, Key, ContentType } = file[item.suffix];
         files.push({
           suffix: item.suffix,
           width,
           height,
           size,
           s3key: Key,
+          ContentType: ContentType,
         });
       });
       //
@@ -176,6 +179,36 @@ export class UploaderService {
       throw new InternalServerErrorException(
         `ASW, File not found s3key=${s3key}`,
       );
+    }
+  }
+
+  async shareImage(s3key, res, onSuccess?) {
+    if (!s3key) return null;
+    try {
+      const s3 = new aws.S3();
+      const params = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME_PUBLIC, //'destinationbucket'
+        CopySource: `/${process.env.AWS_S3_BUCKET_NAME}/${s3key}`, //'/sourcebucket/HappyFacejpg',
+        Key: s3key, //'HappyFaceCopyjpg',
+        ACL: 'public-read-write',
+      };
+      s3.copyObject(params, async (err, val: any) => {
+        if (err) {
+          console.error(err);
+          const ETag: string = '';
+          onSuccess({ ETag });
+          return res.status(500).json(err);
+          //throw new InternalServerErrorException('ไม่สามารถแชร์ไฟล์ได้');
+        } else {
+          const ETag: string = `${val.CopyObjectResult.ETag}`.replace(/"/g, '');
+          const Link: string = `https://${process.env.AWS_S3_BUCKET_NAME_PUBLIC}.s3-ap-southeast-1.amazonaws.com/${s3key}`;
+          onSuccess({ s3key, ETag, Link });
+          return res.status(200).json({ s3key, ETag, Link });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('ASW Not found image');
     }
   }
 }
