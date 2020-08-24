@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // return await this.authService.jwtValidate(token);
     return await axios
       .post(
-        `${ComSpec.authen.jwtValidate}`,
+        `${process.env.API_AUTHEN_HOST}${ComSpec.authen.jwtValidate}`,
         { token },
         {
           headers: {
@@ -32,8 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         throw new NotFoundException(`jwtValidate : Not found ,response.data`);
       })
       .catch((err) => {
-        console.error(err);
-        throw new InternalServerErrorException(`jwtValidate : ${err}`);
+        throw new InternalServerErrorException(`jwtValidate : API Error, ${err}`);
       });
   }
 }
