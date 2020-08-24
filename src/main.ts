@@ -1,11 +1,16 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 // import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { QueryFailedErrorFilter } from './app/app.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
+
   app.enableCors({
     origin: '*',
     allowedHeaders: '*',
