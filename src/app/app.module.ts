@@ -23,7 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      name: 'mssql',
+      name: 'DBAUTHOR',
       host: process.env.DB_MSSQL_HOST,
       username: process.env.DB_MSSQL_USERNAME,
       password: process.env.DB_MSSQL_PASSWORD,

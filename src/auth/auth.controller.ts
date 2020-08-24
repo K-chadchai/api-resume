@@ -36,7 +36,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('userroles')
+  @Get('user-roles')
   async userRole(@Headers('api-module-id') moduleId, @Request() req) {
     return await this.authService.getUserRoles(moduleId, req.user);
   }

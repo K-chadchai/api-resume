@@ -33,7 +33,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    @InjectConnection('mssql') private connection: Connection,
+    @InjectConnection('DBAUTHOR') private connection: Connection,
     private appService: AppService,
   ) {}
 
