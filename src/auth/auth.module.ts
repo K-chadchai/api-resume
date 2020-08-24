@@ -6,7 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AppService } from 'src/app/app.service';
-import { JWT_SECRET_KEY, JWT_TIMEOUT } from '@dohome/api-common';
+import { JWT_SECRET_KEY, JWT_TIMEOUT } from '@nikom.san/api-common';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({

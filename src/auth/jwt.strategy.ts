@@ -2,7 +2,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { JWT_SECRET_KEY, IToken } from '@dohome/api-common';
+import { JWT_SECRET_KEY, IToken } from '@nikom.san/api-common';
 import { AuthService } from './auth.service';
 
 @Injectable()

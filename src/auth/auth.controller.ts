@@ -2,7 +2,7 @@ import { Controller, Request, Post, UseGuards, Get, Headers, Body, UnauthorizedE
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { JWT_VALIDATE_KEY } from '@dohome/api-common';
+import { JWT_VALIDATE_KEY } from '@nikom.san/api-common';
 
 @Controller('auth')
 export class AuthController {

@@ -21,7 +21,7 @@ import { ILoginLock } from 'src/interfaces/login_lock.interface';
 import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
-import { ComUtility, JWT_TIMEOUT, IToken } from '@dohome/api-common';
+import { ComUtility, JWT_TIMEOUT, IToken } from '@nikom.san/api-common';
 
 interface IUserRole {
   RoleCode: string;

@@ -21,7 +21,6 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@dohome/api-common": "../api-common",
     "@nestjs/common": "^7.0.13",
     "@nestjs/core": "^7.0.13",
     "@nestjs/jwt": "^7.0.0",
@@ -32,6 +31,7 @@
     "@nestjs/typeorm": "^7.1.0",
     "@nestjsx/crud": "^4.6.2",
     "@nestjsx/crud-typeorm": "^4.5.0",
+    "@nikom.san/api-common": "^1.0.0",
     "axios": "^0.20.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
@@ -64,6 +64,7 @@
     "@types/jest": "25.1.4",
     "@types/multer": "^1.4.3",
     "@types/node": "^13.9.1",
+    "@types/passport-jwt": "^3.0.3",
     "@types/supertest": "^2.0.8",
     "@types/uuid": "^7.0.3",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
