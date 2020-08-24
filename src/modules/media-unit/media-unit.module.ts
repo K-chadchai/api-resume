@@ -8,6 +8,6 @@ import { MediaUnitEntity } from 'src/entities/media_unit.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([MediaUnitEntity])],
   providers: [MediaUnitService, AppService],
-  controllers: [MediaUnitController]
+  controllers: [MediaUnitController],
 })
-export class MediaUnitModule { }
+export class MediaUnitModule {}

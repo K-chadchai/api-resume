@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Unique,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne } from 'typeorm';
 import { MediasEntity } from './medias.entity';
 import { IImagesEntity } from 'src/interfaces/images.interface';
 
@@ -14,10 +8,7 @@ const tname = 'images';
 @Unique(`uc_${tname}_suffix`, ['mediaId', 'suffix'])
 @Unique(`uc_${tname}_s3key`, ['mediaId', 's3key'])
 export class ImagesEntity implements IImagesEntity {
-  @ManyToOne(
-    () => MediasEntity,
-    col => col.id,
-  )
+  @ManyToOne(() => MediasEntity, (col) => col.id)
   media: MediasEntity;
   @Column()
   mediaId: string;

@@ -30,8 +30,8 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       throw new BadRequestException('Invalid employee_id');
     }
     //
-    const uploadFileCallback = async value => {
-      return await this.appService.dbRunner(async runner => {
+    const uploadFileCallback = async (value) => {
+      return await this.appService.dbRunner(async (runner) => {
         const media = await this.uploadMediaDB(runner, {
           ...value,
           folderId,
@@ -47,28 +47,14 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       });
     };
     // Upload file
-    return await this.uploaderService.uploadFile2(
-      req,
-      res,
-      query,
-      uploadFileCallback,
-    );
+    return await this.uploaderService.uploadFile2(req, res, query, uploadFileCallback);
   }
 
   // Upload media file
   async uploadMediaDB(runner: QueryRunner, value) {
-    const {
-      originalname,
-      mimetype,
-      folderId,
-      created_user,
-      path,
-      old_id,
-      isUserProfile,
-    } = value;
+    const { originalname, mimetype, folderId, created_user, path, old_id, isUserProfile } = value;
     const { files }: { files: [] } = value;
-    if (!folderId && !path)
-      throw new BadRequestException('Invalid, folderId and path');
+    if (!folderId && !path) throw new BadRequestException('Invalid, folderId and path');
 
     // ใน folder เดียวกันจะต้องไม่มีชื่อไฟล์เดียวกัน ที่มีสถานะปกติ
     const mediaNormal = folderId
@@ -100,7 +86,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     const idNew = media.id;
 
     // Insert ImagesEntity
-    const images = files.map(item => {
+    const images = files.map((item) => {
       const { suffix, width, height, size, s3key } = item;
       const image = new ImagesEntity();
       image.suffix = suffix;
@@ -133,9 +119,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     const { created_user, created_time, replaceById } = value;
     //
     if (media.media_status != 'N') {
-      throw new BadRequestException(
-        `สถานะไฟล์ที่ถูกแทนที่ไม่ปกติ(${media.media_status}) ,กรุณาตรวจสอบ`,
-      );
+      throw new BadRequestException(`สถานะไฟล์ที่ถูกแทนที่ไม่ปกติ(${media.media_status}) ,กรุณาตรวจสอบ`);
     }
     //
     media.media_status = 'R';
@@ -153,13 +137,10 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
     //
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       const medias = await runner.manager.findByIds(MediasEntity, [id]);
-      if (medias.length == 0)
-        throw new BadRequestException('Not found id,' + id);
+      if (medias.length == 0) throw new BadRequestException('Not found id,' + id);
       const media = medias[0];
       if (media.media_status != 'N')
-        throw new BadRequestException(
-          'Can not delete, media_status=' + media.media_status,
-        );
+        throw new BadRequestException('Can not delete, media_status=' + media.media_status);
       media.media_status = 'D';
       media.deleted_user = employee_id;
       media.deleted_time = new Date();
@@ -171,8 +152,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
   async getImage(mediaId, suffix = 'x') {
     // Find Media
     const medias = await this.repo.findByIds([mediaId]);
-    if (medias.length == 0)
-      throw new BadRequestException(`Not found media.id=${mediaId}`);
+    if (medias.length == 0) throw new BadRequestException(`Not found media.id=${mediaId}`);
 
     // Find Image with suffix [Option]
     let imageBody: string;
@@ -207,7 +187,7 @@ export class MediasService extends TypeOrmCrudService<MediasEntity> {
       where: { folderId },
     });
     return Promise.all(
-      await medias.map(async item => {
+      await medias.map(async (item) => {
         return await this.getImage(item.id, suffix);
       }),
     );

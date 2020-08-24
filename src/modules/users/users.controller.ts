@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {
-  Controller,
-  Post,
-  Res,
-  Req,
-  Query,
-  Get,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, Post, Res, Req, Query, Get, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Crud } from '@nestjsx/crud';
 import { UsersEntity } from 'src/entities/users.entity';
@@ -36,9 +28,7 @@ export class UsersController {
     try {
       return await this.service.postImage(req, res, query);
     } catch (error) {
-      return res
-        .status(500)
-        .json(`Failed to upload user image : ${error.message}`);
+      return res.status(500).json(`Failed to upload user image : ${error.message}`);
     }
   }
 

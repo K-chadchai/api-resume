@@ -8,6 +8,6 @@ import { MediaUserActionEntity } from 'src/entities/media_user_action.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([MediaUserActionEntity])],
   providers: [MediaUserActionService, AppService],
-  controllers: [MediaUserActionController]
+  controllers: [MediaUserActionController],
 })
-export class MediaUserActionModule { }
+export class MediaUserActionModule {}

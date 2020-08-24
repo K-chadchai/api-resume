@@ -1,20 +1,10 @@
 import { IMediaObjectEntity } from 'src/interfaces/media_object.interface';
-import {
-  PrimaryGeneratedColumn,
-  Column,
-  Entity,
-  Unique,
-  Generated,
-} from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, Unique, Generated } from 'typeorm';
 
 const tname = 'media_object';
 
 @Entity(tname)
-@Unique(`uc_${tname}_foid_objname_fitype`, [
-  'folder_id',
-  'object_name',
-  'file_type',
-])
+@Unique(`uc_${tname}_foid_objname_fitype`, ['folder_id', 'object_name', 'file_type'])
 export class MediaObjectEntity implements IMediaObjectEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

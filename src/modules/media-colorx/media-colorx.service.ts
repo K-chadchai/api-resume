@@ -13,10 +13,7 @@ interface IGetColorx {
 
 @Injectable()
 export class MediaColorxService extends TypeOrmCrudService<MediaColorxEntity> {
-  constructor(
-    @InjectRepository(MediaColorxEntity) repo,
-    private readonly appService: AppService,
-  ) {
+  constructor(@InjectRepository(MediaColorxEntity) repo, private readonly appService: AppService) {
     super(repo);
   }
 

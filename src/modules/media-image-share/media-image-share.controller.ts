@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Param,
-  Put,
-  Body,
-  Delete,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Query, Param, Put, Body, Delete, Post, Res } from '@nestjs/common';
 import { MediaImageShareService } from './media-image-share.service';
 import { Crud } from '@nestjsx/crud';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';

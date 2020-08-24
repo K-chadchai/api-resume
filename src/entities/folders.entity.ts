@@ -1,10 +1,4 @@
-import {
-  PrimaryGeneratedColumn,
-  Column,
-  Entity,
-  ManyToOne,
-  Unique,
-} from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { MediasEntity } from './medias.entity';
 import { CategoriesEntity } from './categories.entity';
 import { IFoldersEntity } from 'src/interfaces/folders.interface';
@@ -14,10 +8,7 @@ const tname = 'folders';
 @Entity(tname)
 @Unique(`uc_${tname}_folder_name`, ['categoryId', 'folder_name'])
 export class FoldersEntity implements IFoldersEntity {
-  @ManyToOne(
-    () => CategoriesEntity,
-    category => category.id,
-  )
+  @ManyToOne(() => CategoriesEntity, (category) => category.id)
   category: CategoriesEntity;
   @Column()
   categoryId: string;

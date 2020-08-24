@@ -17,9 +17,7 @@ interface IGetImageShare {
 }
 
 @Injectable()
-export class MediaImageShareService extends TypeOrmCrudService<
-  MediaImageShareEntity
-> {
+export class MediaImageShareService extends TypeOrmCrudService<MediaImageShareEntity> {
   constructor(
     @InjectRepository(MediaImageShareEntity) repo,
     private readonly appService: AppService,
@@ -44,7 +42,7 @@ export class MediaImageShareService extends TypeOrmCrudService<
     });
   }
   delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
   async shareImages(s3key, res) {
     let retValue: any = null;
@@ -64,7 +62,6 @@ export class MediaImageShareService extends TypeOrmCrudService<
   }
 
   async postShareImage(body: MediaImageShareEntity) {
-   
     const repositoryShareImage = getRepository(MediaImageShareEntity);
     const postShareImage = new MediaImageShareEntity();
     postShareImage.object_id = body.object_id;
@@ -79,7 +76,6 @@ export class MediaImageShareService extends TypeOrmCrudService<
   }
 
   async postShareImageDownload(body: MediaImageShareEntity) {
-
     const repositoryShareImage = getRepository(MediaImageShareEntity);
     const postShareImage = new MediaImageShareEntity();
     postShareImage.object_id = body.object_id;
