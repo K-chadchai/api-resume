@@ -184,9 +184,9 @@ export class AuthService {
   }
 
   // เมื่อต้องการ kill jwt
-  killLoginActive(userId: string, uuid: string) {
+  async killLoginActive(userId: string, uuid: string) {
     // หารายการที่ login สำเร็จและยังไม่หมดอายุ
-    return this.appService.dbRunner(async (runner: QueryRunner) => {
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
       //
       const rc: any[] = await runner.manager.query(`update login_activity 
       set kill_status = '1'

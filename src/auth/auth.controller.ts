@@ -24,9 +24,9 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('killer')
-  killLoginActive(@Request() req) {
+  async killLoginActive(@Request() req) {
     const { userId, uuid } = req.user;
-    return this.authService.killLoginActive(userId, uuid);
+    return await this.authService.killLoginActive(userId, uuid);
   }
 
   @UseGuards(JwtAuthGuard)
