@@ -1,7 +1,7 @@
-import { Controller, Request, Post, UseGuards, Get, Headers } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Get, Headers, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
-import { JwtAuthGuard } from '@dohome/api-common';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +11,12 @@ export class AuthController {
   @Post('login')
   async login(@Request() req) {
     return this.authService.loginSuccessed(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('jwt-validate')
+  jwtValidate(@Request() req) {
+    req.user;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -27,9 +33,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('userrole')
-  async userRole(@Request() req, @Headers() headers) {
-    const apiProgram = headers['api-module-id'];
-    return await this.authService.userRole(req.user, apiProgram);
+  @Get('userroles')
+  async userRole(@Headers('api-module-id') moduleId, @Request() req) {
+    return await this.authService.getUserRoles(moduleId, req.user);
   }
 }

@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/typeorm';
-import { Connection, getConnection, QueryRunner } from 'typeorm';
+import { Connection, QueryRunner } from 'typeorm';
 import axios from 'axios';
-import { UserRoleEntity } from 'src/entities/user_role.entity';
 import { AppService } from 'src/app/app.service';
 import { LoginGuardEntity } from 'src/entities/login_guard.entity';
 import { LoginActivityEntity } from 'src/entities/login_activity.entity';
@@ -18,21 +23,16 @@ import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
 import { comUtility, JWT_TIMEOUT } from '@dohome/api-common';
 
-interface IGetPayload {
-  username: string;
-  password: string;
-}
-
-interface IUser {
+interface IToken {
   userId: string;
   userName: string;
-  uuid: string;
+  uuid: string; // login_activity_id
+  employeeLevel: string; // C1,C2,C3
 }
 
 interface IUserRole {
-  Reference: string;
+  RoleCode: string;
   ActionCode: string;
-  Status: string;
 }
 
 @Injectable()
@@ -44,7 +44,7 @@ export class AuthService {
     private appService: AppService,
   ) {}
 
-  async validateLocalStrategy(userId: string, passwordPlanText: string): Promise<any> {
+  async localValidate(userId: string, passwordPlanText: string): Promise<any> {
     // เวลาที่ทำรายการ
     const time_now = new Date();
     let time_end_lock: Date;
@@ -180,7 +180,7 @@ export class AuthService {
     const { EmployeeId: userId, Fullname: userName, EmployeeLevel: employeeLevel, LoginActivityId: uuid } = user;
 
     // Create payload
-    const payload = { userId, userName, uuid, employeeLevel } as IUser;
+    const payload = { userId, userName, uuid, employeeLevel } as IToken;
 
     // Create token JWT
     const token = this.jwtService.sign(payload);
@@ -190,70 +190,19 @@ export class AuthService {
   }
 
   // ตรวจสอบ JWT
-  validateJwtStrategy(payload: any) {
-    const { userId, uuid: login_activity_id } = payload;
-
+  jwtValidate(token: IToken) {
     // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
     return this.appService.dbRunner(async (runner: QueryRunner) => {
-      //
-      // 1 - ตรวจสอบค่า uuid
+      // Step - ตรวจสอบค่า uuid
       const { kill_status, id: login_activity_id_tpm } =
-        (await runner.manager.findOne(LoginActivityEntity, login_activity_id)) || {};
+        (await runner.manager.findOne(LoginActivityEntity, token.uuid)) || {};
       if (kill_status === '1' || !login_activity_id_tpm) {
         throw new UnauthorizedException();
       }
 
-      // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
-      const findRoleActivity = await runner.manager.findOne(RoleActivityEntity, login_activity_id);
-
-      // 2.1 > ถ้าพบค่า role ให้คืน role เลย
-      if (findRoleActivity && findRoleActivity.id) {
-        return { actionsCode: JSON.parse(findRoleActivity.roles_json) };
-      }
-
-      // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
-      // 3(2.2) หาค่า role จาก mssql
-      const userRoles: any[] = await this.connection.query(`SELECT R.Reference AS RoleCode, PA.ActionCode
-      FROM  [dbo].[Policy_Actions]  PA ,
-          [dbo].[Actions] A,
-          [dbo].[Roles] R
-      WHERE PA.ActionCode = A.ActionCode
-      AND PA.RoleId = R.RoleId
-      AND PA.ProgramKey = 'ERPDOHOME'
-      AND PA.[Status] = '1'
-      AND EXISTS (
-          SELECT NULL FROM Employees_Roles
-          WHERE Employees_Roles.Employees_EmployeeId = '1036349'
-          AND Employees_Roles.Roles_RoleId = PA.RoleId
-      )
-      GROUP BY R.Reference, PA.ActionCode
-      ORDER BY R.Reference, PA.ActionCode`);
-
-      /* เปลี่ยนให้เป็น json
-        ['action1','action2']
-      */
-      const jsonRoles: string[] = [];
-      userRoles.forEach((item) => {
-        // const roleName = item['RoleCode'];
-        const actionCode = item['ActionCode'];
-        if (!jsonRoles.includes(actionCode)) {
-          jsonRoles.push(actionCode);
-        }
-        // if (jsonRoles[roleName]) {
-        //   jsonRoles[roleName] = [...jsonRoles[roleName], actionCode];
-        // } else {
-        //   jsonRoles[roleName] = [actionCode];
-        // }
-      });
-
-      // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
-      await runner.manager.save(RoleActivityEntity, {
-        id: login_activity_id,
-        user_id: userId,
-        roles_json: JSON.stringify([...jsonRoles]),
-      } as IRoleActivity);
-
-      return { actionsCode: [...jsonRoles] };
+      // return
+      const { userId, userName, uuid, employeeLevel } = token;
+      return { userId, userName, uuid, employeeLevel };
     });
   }
 
@@ -274,101 +223,72 @@ export class AuthService {
     });
   }
 
-  // หา role ของ user
-  async userRole(user: IUser, apiProgram: string) {
-    const { uuid } = user || {};
-
-    // 1 - ตรวจสอบค่า uuid
-    if (!uuid) {
-      throw new NotFoundException('ไม่พบข้อมูล uuid');
+  async getUserRoles(moduleId: string, token: IToken) {
+    // ตรวจสอบ moduleId
+    if (!moduleId) {
+      throw new BadRequestException(`ไม่พบค่า moduleId, กรุณาตรวจสอบ`);
     }
+    // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
+    return this.appService.dbRunner(async (runner: QueryRunner) => {
+      // 1 - ตรวจสอบค่า uuid >> ทำแล้วที่ jwtValidate
+      // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
+      const findRoleActivity = await runner.manager.findOne(RoleActivityEntity, token.uuid);
 
-    // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
-    //const isFoundRoleByUuid = false;
-    // 2.1 > ถ้าพบค่า role ให้คืน role เลย
-    const isFoundRoleByUuid: any = await this.getRolebyId(user.uuid);
-    console.log('isFoundRoleByUuid ===>>>>>>', isFoundRoleByUuid);
-    if (isFoundRoleByUuid !== undefined) {
-      const role = JSON.stringify(isFoundRoleByUuid);
-      console.log('isFoundRoleByUuidstringify ====>>>', role);
-      return isFoundRoleByUuid;
-    }
-
-    // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
-    // 3(2.2) หาค่า role จาก mssql
-    const queryFindRole = `select rl.Reference,
-    ac.ActionCode
-from Policy_Actions ac ,
-    Roles rl 
-where ac.RoleId  =  rl.RoleId
---
-and ac.ProgramKey  =  '${apiProgram}'
-and ac.[Status]  =  1 
-and exists (
-    select null 
-    from Employees_Roles er 
-    where er.Employees_EmployeeId  =  '${user.userId}'
-    and rl.RoleId  =  er.Roles_RoleId
-)
-group by rl.Reference,
-    ac.ActionCode
-order by rl.Reference,
-    ac.ActionCode`;
-
-    const userRoles: IUserRole[] = await this.connection.query(queryFindRole);
-    if (!userRoles || userRoles.length == 0) {
-      return {};
-    }
-
-    // แปลง userRoles เป็น json ในรูปแบบ
-    // {
-    //   “BA”:[“aa”,”bb”],
-    //   “PG”:[“aa”,”bb”]
-    //   }
-    // console.log('userRoles :>> ', userRoles);
-    const jsonRoles: any = {};
-    userRoles.forEach((item) => {
-      const roleName = item['Reference'];
-      const actionCode = item['ActionCode'];
-      if (jsonRoles[roleName]) {
-        jsonRoles[roleName] = [...jsonRoles[roleName], actionCode];
-      } else {
-        jsonRoles[roleName] = [actionCode];
+      // 2.1 > ถ้าพบค่า role ให้คืน role เลย
+      if (findRoleActivity && findRoleActivity.id) {
+        return { ...JSON.parse(findRoleActivity.roles_json) };
       }
+
+      // 2.2 > ถ้าไม่พบค่า role ให้ไปอ่านจาก mssql
+      // 3(2.2) หาค่า role จาก mssql
+      const userRoles: IUserRole[] = await this.connection.query(`
+      SELECT R.Reference AS RoleCode, PA.ActionCode
+      FROM  [dbo].[Policy_Actions]  PA ,
+          [dbo].[Actions] A,
+          [dbo].[Roles] R
+      WHERE PA.ActionCode = A.ActionCode
+      AND PA.RoleId = R.RoleId
+      AND PA.ProgramKey = '${moduleId}'
+      AND PA.[Status] = '1'
+      AND EXISTS (
+          SELECT NULL FROM Employees_Roles
+          WHERE Employees_Roles.Employees_EmployeeId = '1036349'
+          AND Employees_Roles.Roles_RoleId = PA.RoleId
+      )
+      GROUP BY R.Reference, PA.ActionCode
+      ORDER BY R.Reference, PA.ActionCode`);
+
+      /* เปลี่ยนให้เป็น json
+        ['action1','action2'] 
+      */
+      const actionsCode: string[] = []; // ['action1','action2']
+      const rolesCode: string[] = []; // ['BA','SA']
+      const rolesActoins: any = {}; // {'BA':['Action1','Action2'],'SA':['Action3']}
+      userRoles.forEach((item) => {
+        if (!rolesCode.includes(item.RoleCode)) {
+          rolesCode.push(item.RoleCode);
+          rolesActoins[item.RoleCode] = [item.ActionCode];
+        } else {
+          const actions: string[] = [...rolesActoins[item.RoleCode]];
+          if (!actions.includes(item.ActionCode)) {
+            actions.push(item.ActionCode);
+          }
+          rolesActoins[item.RoleCode] = [...actions];
+        }
+        if (!actionsCode.includes(item.ActionCode)) {
+          actionsCode.push(item.ActionCode);
+        }
+      });
+
+      // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
+      const userRolesValues = { rolesActoins, rolesCode, actionsCode };
+      await runner.manager.save(RoleActivityEntity, {
+        id: token.uuid,
+        user_id: token.userId,
+        roles_json: JSON.stringify(userRolesValues),
+      } as IRoleActivity);
+
+      return userRolesValues;
     });
-    console.log('jsonRoles :>> ', jsonRoles);
-
-    // 3.1 พบค่า role เอาค่า role ไปบันทึกที่ DynamoDB
-    return await this.appService.dbRunner(async (runner: QueryRunner) => {
-      //
-      const userRoleEntity = new UserRoleEntity();
-      userRoleEntity.reference = user.uuid;
-      userRoleEntity.app = apiProgram;
-      userRoleEntity.role = jsonRoles;
-      const sUserRole_object = await runner.manager.save(UserRoleEntity, userRoleEntity);
-      //
-      const { id } = sUserRole_object;
-      if (id !== undefined) {
-        return { role: jsonRoles };
-      }
-    });
-
-    // 3.2 ไม่พบค่า role เอาค่า role { notfound : true } ไปบันทึกที่ DynamoDB
-    // 4(3.1) กรณีพบค่า role จะต้องแปลงข้อมูลเป็น json เพื่อเอาไปบันทึกที่ DynamoDB ได้
-    // 4.1 แปลงข้อมูลที่ได้จาก sql เป็น json
-    // 4.2 เอา json ไปบันทึกที่ DynamoDB
-  }
-
-  async getRolebyId(uuid: string) {
-    const fineSaleDepart = await getConnection()
-      .getRepository(UserRoleEntity)
-      .createQueryBuilder('user_role')
-      .select(['user_role.role'])
-      .where(`user_role.reference = '${uuid}'`)
-      .getOne();
-
-    const role = fineSaleDepart;
-    console.log('fineSaleDepart ===>>>>', fineSaleDepart);
-    return role;
   }
 }
