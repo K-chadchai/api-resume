@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import * as aws from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 
@@ -37,7 +33,7 @@ export class UploaderService {
         () => {
           Logger.log('deleted:', s3key);
         },
-        err => {
+        (err) => {
           console.error('delete, Error:', err);
         },
       );
@@ -55,11 +51,11 @@ export class UploaderService {
       })
       .promise()
       .then(
-        data => {
+        (data) => {
           console.log('uploadFile:success', data);
           return urlKey;
         },
-        err => {
+        (err) => {
           console.error('uploadFile:error', err);
           return err;
         },
@@ -95,14 +91,12 @@ export class UploaderService {
     });
     //
     const upload = multer({ storage }).any();
-    await upload(req, res, async function(error) {
+    await upload(req, res, async function (error) {
       if (error) {
         return res.status(400).json(`Failed to upload image file: ${error}`);
       }
       if (!req.files || req.files.length == 0) {
-        return res
-          .status(400)
-          .json(`Failed to upload image file: Invalid data `);
+        return res.status(400).json(`Failed to upload image file: Invalid data `);
       }
       //
       const file = req.files[0];
@@ -111,13 +105,11 @@ export class UploaderService {
       // Video
       if (file.mimetype.startsWith('video/')) {
         const { size, Key } = file;
-        return res
-          .status(200)
-          .json({ originalname, mimetype, size, s3key: Key });
+        return res.status(200).json({ originalname, mimetype, size, s3key: Key });
       }
       // Image
       const files = [];
-      sizes.forEach(item => {
+      sizes.forEach((item) => {
         const { width, height, size, Key, ContentType } = file[item.suffix];
         files.push({
           suffix: item.suffix,
@@ -135,8 +127,7 @@ export class UploaderService {
       } catch (error) {
         Logger.error(error);
         // delete file
-        const runAsync = () =>
-          Promise.all(files.map(async item => await deleteFile(item.s3key)));
+        const runAsync = () => Promise.all(files.map(async (item) => await deleteFile(item.s3key)));
         runAsync();
         return res.status(500).json(error.response);
       }
@@ -176,9 +167,7 @@ export class UploaderService {
       return file;
     } catch (err) {
       console.error(err);
-      throw new InternalServerErrorException(
-        `ASW, File not found s3key=${s3key}`,
-      );
+      throw new InternalServerErrorException(`ASW, File not found s3key=${s3key}`);
     }
   }
 

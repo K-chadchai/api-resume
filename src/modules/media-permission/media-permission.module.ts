@@ -8,6 +8,6 @@ import { MediaPermissionEntity } from 'src/entities/media_permission.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([MediaPermissionEntity])],
   providers: [MediaPermissionService, AppService],
-  controllers: [MediaPermissionController]
+  controllers: [MediaPermissionController],
 })
-export class MediaPermissionModule { }
+export class MediaPermissionModule {}

@@ -4,10 +4,10 @@ import { Crud } from '@nestjsx/crud';
 import { MediaArticleEntity } from 'src/entities/media_article.entity';
 
 @Crud({
-    model: { type: MediaArticleEntity },
-    params: { id: { field: 'id', type: 'uuid', primary: true } },
+  model: { type: MediaArticleEntity },
+  params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('media-article')
 export class MediaArticleController {
-    constructor(public service: MediaArticleService) { }
+  constructor(public service: MediaArticleService) {}
 }

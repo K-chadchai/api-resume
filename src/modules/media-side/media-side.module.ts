@@ -8,6 +8,6 @@ import { AppService } from 'src/app/app.service';
 @Module({
   imports: [TypeOrmModule.forFeature([MediaSideEntity])],
   providers: [MediaSideService, AppService],
-  controllers: [MediaSideController]
+  controllers: [MediaSideController],
 })
-export class MediaSideModule { }
+export class MediaSideModule {}

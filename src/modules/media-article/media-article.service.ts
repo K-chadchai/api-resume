@@ -5,15 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app/app.service';
 
 interface IPostBulk {
-    bulk: MediaArticleEntity[]
+  bulk: MediaArticleEntity[];
 }
 
 @Injectable()
 export class MediaArticleService extends TypeOrmCrudService<MediaArticleEntity> {
-    constructor(
-        @InjectRepository(MediaArticleEntity) repo,
-        private readonly appService: AppService,
-    ) {
-        super(repo);
-    }
+  constructor(@InjectRepository(MediaArticleEntity) repo, private readonly appService: AppService) {
+    super(repo);
+  }
 }

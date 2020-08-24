@@ -8,6 +8,6 @@ import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.en
 @Module({
   imports: [TypeOrmModule.forFeature([MediaObjectRelationEntity])],
   providers: [MediaObjectRelationService, AppService],
-  controllers: [MediaObjectRelationController]
+  controllers: [MediaObjectRelationController],
 })
-export class MediaObjectRelationModule { }
+export class MediaObjectRelationModule {}

@@ -18,10 +18,7 @@ interface IGetFolder {
 
 @Injectable()
 export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
-  constructor(
-    @InjectRepository(MediaFolderEntity) repo,
-    private readonly appService: AppService,
-  ) {
+  constructor(@InjectRepository(MediaFolderEntity) repo, private readonly appService: AppService) {
     super(repo);
   }
 
@@ -34,7 +31,7 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
         },
         order: {
           folder_name: 'ASC',
-        }
+        },
         //,
         //skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
         //take: 10,
@@ -53,7 +50,7 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
           : '',
         order: {
           folder_name: 'ASC',
-        }
+        },
         //,
         //skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
         //take: 10,

@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Post,
-  Req,
-  Res,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Query, Post, Req, Res, Param, Body } from '@nestjs/common';
 import { MediaUploadService } from './media-upload.service';
 
 @Controller('media-upload')

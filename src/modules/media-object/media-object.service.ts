@@ -17,10 +17,7 @@ interface IGetObjectService {
 
 @Injectable()
 export class MediaObjectService extends TypeOrmCrudService<MediaObjectEntity> {
-  constructor(
-    @InjectRepository(MediaObjectEntity) repo,
-    private readonly appService: AppService,
-  ) {
+  constructor(@InjectRepository(MediaObjectEntity) repo, private readonly appService: AppService) {
     super(repo);
   }
 

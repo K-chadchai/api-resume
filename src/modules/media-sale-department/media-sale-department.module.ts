@@ -8,6 +8,6 @@ import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.en
 @Module({
   imports: [TypeOrmModule.forFeature([MediaSaleDepartmentEntity])],
   providers: [MediaSaleDepartmentService, AppService],
-  controllers: [MediaSaleDepartmentController]
+  controllers: [MediaSaleDepartmentController],
 })
-export class MediaSaleDepartmentModule { }
+export class MediaSaleDepartmentModule {}

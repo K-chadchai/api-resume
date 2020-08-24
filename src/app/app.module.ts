@@ -76,5 +76,6 @@ import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolu
     MediaColorxModule,
     MediaResolutionModule,
   ],
+  providers: [],
 })
 export class AppModule {}

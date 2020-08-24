@@ -14,13 +14,8 @@ interface IGetResolution {
 }
 
 @Injectable()
-export class MediaResolutionService extends TypeOrmCrudService<
-  MediaResolutionEntity
-> {
-  constructor(
-    @InjectRepository(MediaResolutionEntity) repo,
-    private readonly appService: AppService,
-  ) {
+export class MediaResolutionService extends TypeOrmCrudService<MediaResolutionEntity> {
+  constructor(@InjectRepository(MediaResolutionEntity) repo, private readonly appService: AppService) {
     super(repo);
   }
 

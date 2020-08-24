@@ -8,6 +8,6 @@ import { MediaActivityLogEntity } from 'src/entities/media_activity_log.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([MediaActivityLogEntity])],
   providers: [MediaActivityLogService, AppService],
-  controllers: [MediaActivityLogController]
+  controllers: [MediaActivityLogController],
 })
-export class MediaActivityLogModule { }
+export class MediaActivityLogModule {}

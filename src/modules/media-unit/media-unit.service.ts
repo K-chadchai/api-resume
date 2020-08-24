@@ -6,10 +6,7 @@ import { AppService } from 'src/app/app.service';
 
 @Injectable()
 export class MediaUnitService extends TypeOrmCrudService<MediaUnitEntity> {
-    constructor(
-        @InjectRepository(MediaUnitEntity) repo,
-        private readonly appService: AppService,
-    ) {
-        super(repo);
-    }
+  constructor(@InjectRepository(MediaUnitEntity) repo, private readonly appService: AppService) {
+    super(repo);
+  }
 }

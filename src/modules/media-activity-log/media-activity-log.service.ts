@@ -6,36 +6,34 @@ import { AppService } from 'src/app/app.service';
 import { Like } from 'typeorm';
 
 interface IPostBulk {
-    bulk: MediaActivityLogEntity[]
+  bulk: MediaActivityLogEntity[];
 }
 
 interface IGetActivityLog {
-    page_no: number,
-    search: string
+  page_no: number;
+  search: string;
 }
 
 @Injectable()
 export class MediaActivityLogService extends TypeOrmCrudService<MediaActivityLogEntity> {
-    constructor(
-        @InjectRepository(MediaActivityLogEntity) repo,
-        private readonly appService: AppService,
-    ) {
-        super(repo);
-    }
+  constructor(@InjectRepository(MediaActivityLogEntity) repo, private readonly appService: AppService) {
+    super(repo);
+  }
 
-    // ค้นหาข้อมูล
-    async getPaging(props: IGetActivityLog) {
-        console.log('props', props)
-        return await this.repo.find({
-            where: props.search ? {
-                object_id: Like(`%${props.search}%`)
-            } : '',
-            order: {
-                object_id: 'ASC'
-            },
-            skip: props.page_no > 0 ? ((props.page_no - 1) * 10) : 0,
-            take: 10
-        });
-    }
-
+  // ค้นหาข้อมูล
+  async getPaging(props: IGetActivityLog) {
+    console.log('props', props);
+    return await this.repo.find({
+      where: props.search
+        ? {
+            object_id: Like(`%${props.search}%`),
+          }
+        : '',
+      order: {
+        object_id: 'ASC',
+      },
+      skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+      take: 10,
+    });
+  }
 }

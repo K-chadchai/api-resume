@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { ImagePostitionEntity } from './image_position.entity';
 import { FoldersEntity } from './folders.entity';
 import { ImagesEntity } from './images.entity';
@@ -17,10 +10,7 @@ const tname = 'medias';
 @Entity(tname)
 // @Unique(`uc_${tname}_folder_originalname`, ['folderId', 'originalname']) เช็คเฉพาะสถานะปกติ(N)
 export class MediasEntity implements IMediasEntity {
-  @ManyToOne(
-    () => FoldersEntity,
-    folder => folder.id,
-  )
+  @ManyToOne(() => FoldersEntity, (folder) => folder.id)
   folder: FoldersEntity;
   @Column({
     nullable: true,
@@ -31,10 +21,7 @@ export class MediasEntity implements IMediasEntity {
   @Column({ nullable: true, comment: 'path folder ที่เก็บรูปใน S3' })
   path: string;
 
-  @ManyToOne(
-    () => ImagePostitionEntity,
-    inv => inv.id,
-  )
+  @ManyToOne(() => ImagePostitionEntity, (inv) => inv.id)
   imagePosition: ImagePostitionEntity;
   @Column({ nullable: true, comment: 'ตำแหน่งภาพถ่าย' })
   imagePositionId: string;

@@ -6,11 +6,7 @@ import {
   ExceptionFilter,
   ArgumentsHost,
 } from '@nestjs/common';
-import {
-  Connection as ConnectionTypeOrm,
-  QueryRunner,
-  QueryFailedError,
-} from 'typeorm';
+import { Connection as ConnectionTypeOrm, QueryRunner, QueryFailedError } from 'typeorm';
 import { Response } from 'express';
 
 @Injectable()
@@ -29,8 +25,7 @@ export class AppService {
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException(
-        `Postgres transaction couldn\'t create : ${error.errmsg ||
-          error.message}`,
+        `Postgres transaction couldn\'t create : ${error.errmsg || error.message}`,
       );
     }
     // Call service
@@ -40,9 +35,7 @@ export class AppService {
       await runner.commitTransaction();
     } catch (error) {
       await runner.rollbackTransaction();
-      throw new InternalServerErrorException(
-        `Transaction Error,${error.errmsg || error.message}`,
-      );
+      throw new InternalServerErrorException(`Transaction Error,${error.errmsg || error.message}`);
     } finally {
       await runner.release();
     }

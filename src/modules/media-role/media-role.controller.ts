@@ -4,16 +4,15 @@ import { Crud } from '@nestjsx/crud';
 import { MediaRoleEntity } from 'src/entities/media_role.entity';
 
 @Crud({
-    model: { type: MediaRoleEntity },
-    params: { id: { field: 'id', type: 'uuid', primary: true } },
+  model: { type: MediaRoleEntity },
+  params: { id: { field: 'id', type: 'uuid', primary: true } },
 })
 @Controller('media-role')
 export class MediaRoleController {
-    constructor(public service: MediaRoleService) { }
+  constructor(public service: MediaRoleService) {}
 
-
-    @Get('/paging')
-    async get(@Query() query) {
-        return await this.service.getPaging(query)
-    }
+  @Get('/paging')
+  async get(@Query() query) {
+    return await this.service.getPaging(query);
+  }
 }
