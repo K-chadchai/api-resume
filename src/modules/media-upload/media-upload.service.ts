@@ -64,6 +64,10 @@ interface IPostDataUpload {
   data: DataUpload[];
 }
 
+interface IGetArticleSet {
+  folder_id: string
+}
+
 @Injectable()
 export class MediaUploadService {
   constructor(
@@ -886,7 +890,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     return await this.uploaderService.getFileBody(s3key);
   }
 
-  async postDataUploadRelation(body: MediaObjectRelationEntity) {
+  async postDataUploadArticleSetDetail(body: MediaObjectRelationEntity) {
     //let postDataUploadRelation;
     const repositorypostObjectRelation = getRepository(
       MediaObjectRelationEntity,
@@ -955,5 +959,29 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         'ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err,
       );
     }
+  }
+
+  async getArticleSet(props: IGetArticleSet) {
+    // Validate
+         if (!props.folder_id) {
+             throw new BadRequestException("ไม่พบข้อมูล, folder_id");
+         }
+      const query = await getConnection()
+      .getRepository(MediaObjectRelationEntity)
+      .createQueryBuilder('media_object_relation')
+      .leftJoinAndSelect(
+        MediaArticleEntity,
+        'media_article',
+        'media_article.id = media_object_relation.article_id',
+      )
+      .leftJoinAndSelect(
+        MediaUnitEntity,
+        'media_unit',
+        'media_unit.id = media_object_relation.article_unit_id',
+      )
+      .where(`media_object_relation.object_id = ${props.folder_id}`)  
+      .getRawMany();
+
+    return query
   }
 }

@@ -59,13 +59,19 @@ export class MediaUploadController {
     return await this.service.getDownload(s3key);
   }
 
-  @Post('DataUploadRelation')
-  async postDataUploadRelation(@Body() body) {
-    return await this.service.postDataUploadRelation(body);
+  @Post('DataUploadArticleSetDetail')
+  async postDataUploadArticleSetDetail(@Body() body) {
+    return await this.service.postDataUploadArticleSetDetail(body);
   }
 
   @Post('DataUploadArticleSet')
   async postDataUploadArticleSet(@Body() body) {
     return await this.service.postDataUploadArticleSet(body);
   }
+
+  @Get('/ArticleSet')
+  async getArticleSet(@Query() query) {
+      return await this.service.getArticleSet(query)
+  }
+  
 }
