@@ -2,15 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { IEmployeeEntity } from 'src/interfaces/employees';
+import { DBAUTHOR } from 'src/app/app.constants';
 
 export type User = any;
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectConnection('mssql')
-    private readonly connection: Connection,
-  ) {}
+  constructor(@InjectConnection(DBAUTHOR) private readonly connection: Connection) {}
 
   async findOne(userId: string): Promise<User | undefined> {
     const queryEmployee = `select em.[EmployeeId] as EmployeeId,

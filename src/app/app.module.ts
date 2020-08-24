@@ -4,6 +4,7 @@ import { routes } from './app.routes';
 import { AuthModule } from '../auth/auth.module';
 import { EasyconfigModule } from 'nestjs-easyconfig';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DBAUTHOR } from './app.constants';
 
 @Module({
   imports: [
@@ -23,11 +24,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      name: 'DBAUTHOR',
+      name: DBAUTHOR,
       host: process.env.DB_MSSQL_HOST,
       username: process.env.DB_MSSQL_USERNAME,
       password: process.env.DB_MSSQL_PASSWORD,
-      database: 'DBAUTHOR',
+      database: DBAUTHOR,
       entities: ['dist/**/*.entity{.ts,.js}'],
       options: { enableArithAbort: true },
       // synchronize: true,

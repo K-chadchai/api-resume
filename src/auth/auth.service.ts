@@ -22,6 +22,7 @@ import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
 import { ComUtility, JWT_TIMEOUT, IToken } from '@nikom.san/api-common';
+import { DBAUTHOR } from 'src/app/app.constants';
 
 interface IUserRole {
   RoleCode: string;
@@ -33,7 +34,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    @InjectConnection('DBAUTHOR') private connection: Connection,
+    @InjectConnection(DBAUTHOR) private connection: Connection,
     private appService: AppService,
   ) {}
 
