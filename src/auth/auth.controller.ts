@@ -1,7 +1,8 @@
-import { Controller, Request, Post, UseGuards, Get, Headers, Body } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Get, Headers, Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { JWT_VALIDATE_KEY } from '@dohome/api-common';
 
 @Controller('auth')
 export class AuthController {
@@ -13,10 +14,12 @@ export class AuthController {
     return this.authService.loginSuccessed(req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('jwt-validate')
-  jwtValidate(@Request() req) {
-    req.user;
+  async jwtValidate(@Headers('api-validate-key') jwtValidateKey, @Body('token') tokenPayload) {
+    if (jwtValidateKey !== JWT_VALIDATE_KEY) {
+      throw new UnauthorizedException('Invalidate jwt-validate-key');
+    }
+    return await this.authService.jwtValidate(tokenPayload);
   }
 
   @UseGuards(JwtAuthGuard)

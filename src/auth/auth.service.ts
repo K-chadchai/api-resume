@@ -21,14 +21,7 @@ import { ILoginLock } from 'src/interfaces/login_lock.interface';
 import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
-import { comUtility, JWT_TIMEOUT } from '@dohome/api-common';
-
-interface IToken {
-  userId: string;
-  userName: string;
-  uuid: string; // login_activity_id
-  employeeLevel: string; // C1,C2,C3
-}
+import { ComUtility, JWT_TIMEOUT, IToken } from '@dohome/api-common';
 
 interface IUserRole {
   RoleCode: string;
@@ -140,7 +133,7 @@ export class AuthService {
             // หาเวลา login_time_first , login_time_last
             const login_time_first = findLoginActivity[0].login_time;
             const login_time_last = findLoginActivity[findLoginActivity.length - 1].login_time;
-            const diffTime = comUtility.getTimeDiff(login_time_first, login_time_last);
+            const diffTime = ComUtility.getTimeDiff(login_time_first, login_time_last);
             if (diffTime.diffMinutes <= failure_intime) {
               //> ใส่รหัสผ่านผิดภายในเวลาที่กำหนด = Lock
               // คำนวณระยะเวลาที่ user จะถูกล็อค
@@ -189,23 +182,6 @@ export class AuthService {
     return { token };
   }
 
-  // ตรวจสอบ JWT
-  jwtValidate(token: IToken) {
-    // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
-    return this.appService.dbRunner(async (runner: QueryRunner) => {
-      // Step - ตรวจสอบค่า uuid
-      const { kill_status, id: login_activity_id_tpm } =
-        (await runner.manager.findOne(LoginActivityEntity, token.uuid)) || {};
-      if (kill_status === '1' || !login_activity_id_tpm) {
-        throw new UnauthorizedException();
-      }
-
-      // return
-      const { userId, userName, uuid, employeeLevel } = token;
-      return { userId, userName, uuid, employeeLevel };
-    });
-  }
-
   // เมื่อต้องการ kill jwt
   killLoginActive(userId: string, uuid: string) {
     // หารายการที่ login สำเร็จและยังไม่หมดอายุ
@@ -223,6 +199,22 @@ export class AuthService {
     });
   }
 
+  async jwtValidate(token: IToken) {
+    // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      // Step - ตรวจสอบค่า uuid
+      const { kill_status, id: login_activity_id_tpm } =
+        (await runner.manager.findOne(LoginActivityEntity, token.uuid)) || {};
+      if (kill_status === '1' || !login_activity_id_tpm) {
+        throw new UnauthorizedException();
+      }
+
+      // return
+      const { userId, userName, uuid, employeeLevel } = token;
+      return { userId, userName, uuid, employeeLevel };
+    });
+  }
+
   async getUserRoles(moduleId: string, token: IToken) {
     // ตรวจสอบ moduleId
     if (!moduleId) {
@@ -230,7 +222,7 @@ export class AuthService {
     }
     // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
     return this.appService.dbRunner(async (runner: QueryRunner) => {
-      // 1 - ตรวจสอบค่า uuid >> ทำแล้วที่ jwtValidate
+      // 1 - ตรวจสอบค่า uuid >> ทำแล้วที่ jwt.strategy>validate
       // 2 - เอา uuid ไปเช็คว่าใน DynamoDB มีค่า role หรือป่าว
       const findRoleActivity = await runner.manager.findOne(RoleActivityEntity, token.uuid);
 

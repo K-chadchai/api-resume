@@ -6,14 +6,14 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AppService } from 'src/app/app.service';
-import { APP_SECRET_KEY, JWT_TIMEOUT } from '@dohome/api-common';
+import { JWT_SECRET_KEY, JWT_TIMEOUT } from '@dohome/api-common';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: APP_SECRET_KEY,
+      secret: JWT_SECRET_KEY,
       signOptions: { expiresIn: JWT_TIMEOUT },
     }),
     UsersModule,

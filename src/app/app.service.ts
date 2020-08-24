@@ -1,16 +1,15 @@
 import { Logger, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Connection as ConnectionTypeOrm, QueryRunner } from 'typeorm';
+import { Connection, QueryRunner } from 'typeorm';
 
 @Injectable()
 export class AppService {
-  constructor(private connTypeOrm: ConnectionTypeOrm) {}
-
+  constructor(private connection: Connection) {}
   // Postgres Session
   async dbRunner(onCallback: Function) {
     let runner: QueryRunner;
     // Create transaction
     try {
-      runner = this.connTypeOrm.createQueryRunner();
+      runner = this.connection.createQueryRunner();
       await runner.connect();
       await runner.startTransaction();
     } catch (error) {
