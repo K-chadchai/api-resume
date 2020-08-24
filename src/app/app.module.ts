@@ -42,7 +42,7 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      name: 'mssql',
+      name: 'DBMASTER',
       host: process.env.DB_MSSQL_HOST,
       username: process.env.DB_MSSQL_USERNAME,
       password: process.env.DB_MSSQL_PASSWORD,

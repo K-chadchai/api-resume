@@ -68,7 +68,7 @@ interface IGetArticleSet {
 export class MediaUploadService {
   constructor(
     private readonly appService: AppService,
-    @InjectConnection('mssql')
+    @InjectConnection('DBMASTER')
     private readonly connection: Connection,
     private readonly uploaderService: UploaderService,
   ) {}
