@@ -47,6 +47,7 @@ import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolu
       password: process.env.DB_MSSQL_PASSWORD,
       database: 'DBMASTER',
       entities: ['dist/**/*.entity{.ts,.js}'],
+      options: { enableArithAbort: true },
       // synchronize: true,
     }),
 
