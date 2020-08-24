@@ -24,6 +24,7 @@ import { MediaUserActionModule } from 'src/modules/media-user-action/media-user-
 import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module';
 import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module';
 import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolution.module';
+import { JwtStrategy } from 'src/auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -76,6 +77,6 @@ import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolu
     MediaColorxModule,
     MediaResolutionModule,
   ],
-  providers: [],
+  providers: [JwtStrategy],
 })
 export class AppModule {}
