@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(token: IToken) {
+  async validate(token: IToken): Promise<any> {
     // return await this.authService.jwtValidate(token);
     return await axios
       .post(
