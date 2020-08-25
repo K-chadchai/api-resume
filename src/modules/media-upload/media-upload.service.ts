@@ -60,11 +60,17 @@ interface IPostDataUpload {
   data: DataUpload[];
 }
 
+interface IGetArticleSet {
+  article_code: string;
+  folder_id: string;
+  article_unit_code: string;
+}
+
 @Injectable()
 export class MediaUploadService {
   constructor(
     private readonly appService: AppService,
-    @InjectConnection('mssql')
+    @InjectConnection('DBMASTER')
     private readonly connection: Connection,
     private readonly uploaderService: UploaderService,
   ) {}
@@ -831,13 +837,79 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     return await this.uploaderService.getFileBody(s3key);
   }
 
-  async postDataUploadRelation(body: MediaObjectRelationEntity) {
+  async postDataUploadArticleSetDetail(body: IGetArticleSet) {
+    if (!body.folder_id && !body.article_code && !body.article_unit_code) {
+      throw new BadRequestException('กรุณาใส่ข้อมูลให้ถูกต้อง');
+    }
+
+    //ค้นหา article ถ้าไม่มีข้อมูลให้ insert ลง
+    const fineArticle = await getConnection()
+      .getRepository(MediaArticleEntity)
+      .createQueryBuilder('media_article')
+      .select(['media_article.id'])
+      .where(`media_article.code = '${body.article_code}'`)
+      .getOne();
+
+    const queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.article_code}'`;
+    const articleData = await this.connection.query(queryArticle);
+    const DescriptionTHData: Array<IGetArticle> = articleData;
+    const descArticle = DescriptionTHData[0].DescriptionTH ? DescriptionTHData[0].DescriptionTH : '';
+
+    let article;
+    let id_article;
+    if (fineArticle === undefined) {
+      const repositoryArticle = getRepository(MediaArticleEntity);
+      article = new MediaArticleEntity();
+      article.code = body.article_code;
+      article.description = descArticle;
+      article.creator = '';
+      article.created_time = new Date();
+      try {
+        const { id } = await repositoryArticle.save(article);
+        id_article = id;
+      } catch (err) {
+        console.log('บันทึกข้อมูล article ไม่สำเร็จ' + err);
+        throw new InternalServerErrorException('บันทึกข้อมูล article ไม่สำเร็จ' + ' , ' + err);
+      }
+    } else id_article = fineArticle.id;
+
+    //ค้นหา unit ถ้าไม่มีข้อมูลให้ insert ลง
+    const fineUnit = await getConnection()
+      .getRepository(MediaUnitEntity)
+      .createQueryBuilder('media_unit')
+      .select(['media_unit.id'])
+      .where(`media_unit.code = '${body.article_unit_code}'`)
+      .getOne();
+
+    const queryUnit = `select TOP (1) * from TBMaster_Unit where CODE = '${body.article_unit_code}'`;
+    const unitData = await this.connection.query(queryUnit);
+    const unitNameData: Array<IGetUnit> = unitData;
+    const unitName = unitNameData[0].MYNAME ? unitNameData[0].MYNAME : '';
+
+    let unit;
+    let id_unit;
+    if (fineUnit === undefined) {
+      const repositoryUnit = getRepository(MediaUnitEntity);
+      unit = new MediaUnitEntity();
+      unit.code = body.article_unit_code;
+      unit.description = unitName;
+      unit.creator = '';
+      unit.created_time = new Date();
+      try {
+        const { id } = await repositoryUnit.save(unit);
+        id_unit = id;
+      } catch (err) {
+        console.log('บันทึกข้อมูล Unit ไม่สำเร็จ');
+        throw new InternalServerErrorException('บันทึกข้อมูล Unit ไม่สำเร็จ' + ' , ' + err);
+      }
+    } else id_unit = fineUnit.id;
+
     //let postDataUploadRelation;
     const repositorypostObjectRelation = getRepository(MediaObjectRelationEntity);
     const postDataUploadRelation = new MediaObjectRelationEntity();
-    postDataUploadRelation.object_id = body.object_id;
-    postDataUploadRelation.article_id = body.article_id;
-    postDataUploadRelation.article_unit_id = body.article_unit_id;
+    postDataUploadRelation.object_id = body.folder_id;
+    postDataUploadRelation.article_id = id_article;
+    postDataUploadRelation.article_unit_id = id_unit;
     //postDataUploadRelation.creator = '';
     postDataUploadRelation.sale_depart_id = uuid();
     postDataUploadRelation.article_side_id = uuid();
@@ -890,5 +962,21 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     } catch (err) {
       throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err);
     }
+  }
+
+  async getArticleSet(props: IGetArticleSet) {
+    // Validate
+    if (!props.folder_id) {
+      throw new BadRequestException('ไม่พบข้อมูล, folder_id');
+    }
+    const query = await getConnection()
+      .getRepository(MediaObjectRelationEntity)
+      .createQueryBuilder('media_object_relation')
+      .leftJoinAndSelect(MediaArticleEntity, 'media_article', 'media_article.id = media_object_relation.article_id')
+      .leftJoinAndSelect(MediaUnitEntity, 'media_unit', 'media_unit.id = media_object_relation.article_unit_id')
+      .where(`media_object_relation.object_id = '${props.folder_id}'`)
+      .getRawMany();
+
+    return query;
   }
 }

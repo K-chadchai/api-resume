@@ -43,7 +43,7 @@ import { DBMASTER } from './app.constants';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      name: 'mssql',
+      name: 'DBMASTER',
       host: process.env.DB_MSSQL_HOST,
       username: process.env.DB_MSSQL_USERNAME,
       password: process.env.DB_MSSQL_PASSWORD,
@@ -77,6 +77,6 @@ import { DBMASTER } from './app.constants';
     MediaColorxModule,
     MediaResolutionModule,
   ],
-  providers: [JwtStrategy],
+  // providers: [JwtStrategy],
 })
 export class AppModule {}
