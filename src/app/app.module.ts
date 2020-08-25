@@ -25,6 +25,7 @@ import { MediaUploadModule } from 'src/modules/media-upload/media-upload.module'
 import { MediaColorxModule } from 'src/modules/media-colorx/media-colorx.module';
 import { MediaResolutionModule } from 'src/modules/media-resolution/media-resolution.module';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
+import { DBMASTER } from './app.constants';
 
 @Module({
   imports: [
@@ -46,12 +47,11 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
       host: process.env.DB_MSSQL_HOST,
       username: process.env.DB_MSSQL_USERNAME,
       password: process.env.DB_MSSQL_PASSWORD,
-      database: 'DBMASTER',
+      database: DBMASTER,
       entities: ['dist/**/*.entity{.ts,.js}'],
       options: { enableArithAbort: true },
       // synchronize: true,
     }),
-
     RouterModule.forRoutes(routes),
     CategoriesModule,
     FoldersModule,
