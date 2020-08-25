@@ -122,7 +122,6 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
   // Upload file to media
   async uploadMedia(req, res, query, callback = null) {
-    const { folderId, employee_id, path, old_id, isUserProfile } = query;
     const onCallback = async (data: any) => {
       //console.log('data :>> ', data);
       const file = data.files[0];
@@ -975,5 +974,13 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       .getRawMany();
 
     return query;
+  }
+
+  async deleteMediaImage(s3key) {
+    // Validate
+    if (!s3key) {
+      throw new BadRequestException('ไม่พบข้อมูล, s3key');
+    }
+     return await this.uploaderService.deleteFile(s3key);
   }
 }

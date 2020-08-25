@@ -32,9 +32,11 @@ export class UploaderService {
       .then(
         () => {
           Logger.log('deleted:', s3key);
+          return {s3key};
         },
         (err) => {
           console.error('delete, Error:', err);
+          throw new InternalServerErrorException(`ASW, File not found s3key=${s3key}`);
         },
       );
   }

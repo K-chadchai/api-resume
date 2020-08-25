@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Post, Req, Res, Param, Body } from '@nestjs/common';
+import { Controller, Get, Query, Post, Req, Res, Param, Body, Delete } from '@nestjs/common';
 import { MediaUploadService } from './media-upload.service';
 
 @Controller('media-upload')
@@ -63,6 +63,12 @@ export class MediaUploadController {
   @Get('/ArticleSet')
   async getArticleSet(@Query() query) {
       return await this.service.getArticleSet(query)
+  }
+
+  @Delete('deleteImage/:s3key')
+  async deleteMediaImage(@Param('s3key') s3key) {
+    console.log('s3key', s3key)
+    return await this.service.deleteMediaImage(s3key);
   }
   
 }

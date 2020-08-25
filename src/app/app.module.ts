@@ -50,6 +50,7 @@ import { DBMASTER } from './app.constants';
       database: DBMASTER,
       entities: ['dist/**/*.entity{.ts,.js}'],
       options: { enableArithAbort: true },
+      logging: true,
       // synchronize: true,
     }),
     RouterModule.forRoutes(routes),
@@ -77,6 +78,6 @@ import { DBMASTER } from './app.constants';
     MediaColorxModule,
     MediaResolutionModule,
   ],
-  providers: [JwtStrategy],
+  // providers: [JwtStrategy],
 })
 export class AppModule {}
