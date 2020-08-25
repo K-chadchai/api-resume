@@ -4,19 +4,16 @@ import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection, getConnection, QueryRunner, getRepository } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
-import { async } from 'rxjs/internal/scheduler/async';
 import { MediaObjectEntity } from 'src/entities/media_object.entity';
 import { MediaFolderEntity } from 'src/entities/media_folder.entity';
-import { create } from 'domain';
 import { MediaArticleEntity } from 'src/entities/media_article.entity';
 import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.entity';
 import { MediaSideEntity } from 'src/entities/media_side.entity';
 import { MediaUnitEntity } from 'src/entities/media_unit.entity';
 import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.entity';
 import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
-import { throwError } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import { count } from 'console';
+import { DBMASTER } from 'src/app/app.constants';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -70,7 +67,7 @@ interface IGetArticleSet {
 export class MediaUploadService {
   constructor(
     private readonly appService: AppService,
-    @InjectConnection('DBMASTER')
+    @InjectConnection(DBMASTER)
     private readonly connection: Connection,
     private readonly uploaderService: UploaderService,
   ) {}
