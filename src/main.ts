@@ -8,16 +8,16 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // const reflector = app.get(Reflector);
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   app.enableCors({
     origin: '*',
     allowedHeaders: '*',
     methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   });
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new QueryFailedErrorFilter());
+  // app.useGlobalPipes(new ValidationPipe());
+  // app.useGlobalFilters(new QueryFailedErrorFilter());
 
   // const docbuilder = new DocumentBuilder()
   //   .setTitle('Files')

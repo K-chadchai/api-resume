@@ -77,6 +77,6 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
     MediaColorxModule,
     MediaResolutionModule,
   ],
-  providers: [JwtStrategy],
+  // providers: [JwtStrategy],
 })
 export class AppModule {}
