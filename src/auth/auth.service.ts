@@ -210,9 +210,9 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-      // return
+      // return req.user
       const { userId, userName, uuid, employeeLevel } = token;
-      return { userId, userName, uuid, employeeLevel };
+      return { userId, userName, uuid, employeeLevel, actionTime: new Date() };
     });
   }
 
