@@ -1,0 +1,5 @@
+"paths": {
+      "@libs/configs": ["libs/src/configs"],
+      "@libs/dtos": ["libs/src/dtos"],
+      "@libs/interfaces": ["libs/src/interfaces"]
+    }

@@ -671,15 +671,10 @@
   resolved "https://registry.yarnpkg.com/@nestjsx/util/-/util-4.6.2.tgz#89bd31447a30f9666d7ad1616111c78b2d61dd56"
   integrity sha512-YG2gQvSm7p8zBFaW6MFM5r1Ihk4Vr189SB2OTr7fV7qcjPS+02v7xILw2dTz2emdmu0t0AgCL2RU1V0lY8Aa9w==
 
-"@nikom.san/api-authen@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@nikom.san/api-authen/-/api-authen-0.0.3.tgz#9709b2f8a1e17eb2e29c9b1f4f0acd3d2631fbbb"
-  integrity sha512-sdoTy2spwjJ3BkKryKXs/GKUh6tnkmYKjOeEphk7qGwB+YIQl3gT4w+llj/jKi6k7pRr4yZmTk9jICJDgvpzfQ==
-
-"@nikom.san/api-common@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@nikom.san/api-common/-/api-common-1.0.4.tgz#5573d47a1eb64318b37a63af9edcfd42c93c49af"
-  integrity sha512-iNM0240vE7MF1qKIAHgSft/bAs87gqiFc4UQkY15+o0QulFmWXRs3dmiGNUXEwRvtjbk7Epsw4uU4BPMTLSjzw==
+"@nikom.san/api-authen@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@nikom.san/api-authen/-/api-authen-0.0.8.tgz#52e24b07b28cbd619b2220a0aaa4d999c1b54238"
+  integrity sha512-xjr71/zFDSdFjj8se7Aoawzc+h8uIUpHgtk0P+Pj3tSWxb7My/i5tOHnAeF8frD7yF5s3mR8MPObMTYRbU/rjg==
 
 "@nuxtjs/opencollective@0.2.2":
   version "0.2.2"

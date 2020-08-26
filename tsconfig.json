@@ -9,12 +9,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true,
-    "paths": {
-      "@libs/configs": ["libs/src/configs"],
-      "@libs/dtos": ["libs/src/dtos"],
-      "@libs/interfaces": ["libs/src/interfaces"]
-    }
+    "incremental": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "libs"]

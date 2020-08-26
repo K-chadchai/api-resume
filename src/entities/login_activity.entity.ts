@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ILoginActivity } from '@libs/interfaces';
 
 const tname = 'login_activity';
 
