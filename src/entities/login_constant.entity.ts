@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ILoginConstant } from '@libs/interfaces';
 
 const tname = 'login_constant';
 
