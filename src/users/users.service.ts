@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { IEmployeeEntity } from 'src/interfaces/employees';
 import { DBAUTHOR } from 'src/app/app.constants';
 
-export type User = any;
+interface IEmployee {
+  EmployeeId: string;
+  Fullname: string;
+  Secrets: string;
+  EmployeeLevel: string;
+}
 
 @Injectable()
 export class UsersService {
   constructor(@InjectConnection(DBAUTHOR) private readonly connection: Connection) {}
 
-  async findOne(userId: string): Promise<User | undefined> {
+  async findOne(userId: string) {
     const queryEmployee = `select em.[EmployeeId] as EmployeeId,
     em.[Fullname] as Fullname,
     sc.[Password] as Secrets,
@@ -20,11 +24,10 @@ from [Employees] em,
 where em.EmployeeId = sc.EmployeeId 
 and  em.EmployeeId = '${userId}'`;
 
-    const employee: IEmployeeEntity[] = await this.connection.query(queryEmployee);
+    const employee: IEmployee[] = await this.connection.query(queryEmployee);
     if (!employee || employee.length !== 1) {
       throw new NotFoundException(`Not found EmployeeId=${userId}`);
     }
     return employee[0];
-    //return this.users.find((user) => user.username === username);
   }
 }

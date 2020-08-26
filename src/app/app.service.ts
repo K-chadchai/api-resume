@@ -5,7 +5,7 @@ import { Connection, QueryRunner } from 'typeorm';
 export class AppService {
   constructor(private connection: Connection) {}
   // Postgres Session
-  async dbRunner(onCallback: Function) {
+  async dbRunner(onCallback: (runner: QueryRunner) => Promise<any>) {
     let runner: QueryRunner;
     // Create transaction
     try {

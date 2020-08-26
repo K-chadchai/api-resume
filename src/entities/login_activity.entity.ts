@@ -27,4 +27,16 @@ export class LoginActivityEntity implements ILoginActivity {
 
   @Column({ nullable: true })
   kill_status: string;
+
+  @Column({ nullable: true })
+  kill_admin: string;
+
+  @Column({ nullable: true })
+  kill_time: Date;
+
+  @Column({ nullable: true })
+  logout_status: string; // 1=ออกจากระบบแล้ว
+
+  @Column({ nullable: true })
+  logout_time: Date; // เวลาที่ทำการ logout
 }

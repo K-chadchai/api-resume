@@ -4,6 +4,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JWT_VALIDATE_KEY } from '@nikom.san/api-common';
 import { KeysHeader } from 'src/app/app.constants';
+import { report } from 'process';
 
 @Controller('auth')
 export class AuthController {
@@ -12,7 +13,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req) {
-    return this.authService.loginSuccessed(req.user);
+    return await this.authService.loginSuccessed(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Request() req) {
+    return await this.authService.logout(req.user);
   }
 
   @Post('jwt-validate')
@@ -24,15 +31,16 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('killer')
-  async killLoginActive(@Request() req) {
-    const { userId, uuid } = req.user;
-    return await this.authService.killLoginActive(userId, uuid);
+  @Post('kill-user')
+  async killUser(@Request() req, @Body('userId') userKill) {
+    const { userId: userAdmin } = req.user;
+
+    return await this.authService.killUser(userAdmin, userKill);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
+  @Get('payload')
+  getPayload(@Request() req) {
     return req.user;
   }
 

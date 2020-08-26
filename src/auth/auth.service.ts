@@ -23,6 +23,7 @@ import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { IRoleActivity } from 'src/interfaces/role_activity.interface';
 import { ComUtility, JWT_TIMEOUT, IToken } from '@nikom.san/api-common';
 import { DBAUTHOR } from 'src/app/app.constants';
+import { ILoginActivity } from 'src/interfaces/login_activity.interface';
 
 interface IUserRole {
   RoleCode: string;
@@ -183,20 +184,49 @@ export class AuthService {
     return { token };
   }
 
+  async logout({ uuid, actionTime }: IToken) {
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      //
+      const findLoginActivity = await runner.manager.findOne(LoginActivityEntity, uuid);
+      if (!findLoginActivity) {
+        throw new NotFoundException(`ไม่พบ login_activity.id=${uuid}`);
+      }
+      if (findLoginActivity.login_success !== '1') {
+        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,login_success !== '1' ,ไม่สามารถ logout ได้`);
+      }
+      if (findLoginActivity.logout_status === '1') {
+        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,logout_status === '1' ,ไม่สามารถ logout ได้`);
+      }
+      if (findLoginActivity.kill_status === '1') {
+        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,kill_status === '1' ,ไม่สามารถ logout ได้`);
+      }
+
+      // Update
+      findLoginActivity.logout_status = '1';
+      findLoginActivity.logout_time = actionTime;
+      return await runner.manager.save(LoginActivityEntity, findLoginActivity);
+    });
+  }
+
   // เมื่อต้องการ kill jwt
-  async killLoginActive(userId: string, uuid: string) {
+  async killUser(userAdmin: string, userKill: string) {
     // หารายการที่ login สำเร็จและยังไม่หมดอายุ
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       //
-      const rc: any[] = await runner.manager.query(`update login_activity 
-      set kill_status = '1'
-      where user_id = '${userId}'
+      const rc: any[] = await runner.manager.query(`
+      update login_activity 
+      set kill_status = '1' ,
+        kill_admin = '${userAdmin}',
+        kill_time = now()
+      where user_id = '${userKill}'
       and login_success = '1'
-      and id != '${uuid}'
       and now() < time_expire 
       and (kill_status is null or kill_status = '0')`);
-      //
-      return { rowsEffect: rc[1] };
+      const rowsEffect = rc[1];
+      if (rowsEffect !== 1) {
+        throw new InternalServerErrorException(`Update kill : ต้องมีแค่ 1 รายการเท่านั้น ,rowsEffect=${rowsEffect}`);
+      }
+      return { rowsEffect };
     });
   }
 
