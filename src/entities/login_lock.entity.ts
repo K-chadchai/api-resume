@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
-import { ILoginLock } from '@libs/interfaces/login_lock.interface';
+import { ILoginLock } from '@libs/interfaces';
 
 const tname = 'login_lock';
 

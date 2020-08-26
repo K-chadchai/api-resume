@@ -11,8 +11,9 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@libs/*": ["libs/src/*"]
+      "@libs/interfaces": ["libs/src/interfaces"]
     }
   },
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "libs"]
 }

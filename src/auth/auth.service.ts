@@ -16,14 +16,10 @@ import { LoginGuardEntity } from 'src/entities/login_guard.entity';
 import { LoginActivityEntity } from 'src/entities/login_activity.entity';
 import { LoginLockEntity } from 'src/entities/login_lock.entity';
 import { LoginConstantEntity } from 'src/entities/login_constant.entity';
-import { ILoginConstant } from 'src/interfaces/login_constant.interface';
-import { ILoginLock } from 'src/interfaces/login_lock.interface';
-import { ILoginGuard } from 'src/interfaces/login_guard.interface';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
-import { IRoleActivity } from 'src/interfaces/role_activity.interface';
 import { ComUtility, JWT_TIMEOUT, IToken } from '@nikom.san/api-common';
 import { DBAUTHOR } from 'src/app/app.constants';
-import { ILoginActivity } from 'src/interfaces/login_activity.interface';
+import { IRoleActivity, ILoginConstant, ILoginLock, ILoginGuard } from '@libs/interfaces';
 
 interface IUserRole {
   RoleCode: string;
