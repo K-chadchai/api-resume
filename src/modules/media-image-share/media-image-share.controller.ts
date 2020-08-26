@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Param, Put, Body, Delete, Post, Res } from '@nestjs/common';
+import { Controller, Get, Query, Param, Put, Body, Delete, Post, Res, Req } from '@nestjs/common';
 import { MediaImageShareService } from './media-image-share.service';
 import { Crud } from '@nestjsx/crud';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';
@@ -22,11 +22,11 @@ export class MediaImageShareController {
   }
 
   @Post('postShareImage')
-  async postDataUpload(@Body() body) {
-    return await this.service.postShareImage(body);
+  async postDataUpload(@Body() body, @Req() req) {
+    return await this.service.postShareImage(body,req);
   }
   @Post('postShareImageDownload')
-  async postShareImageDoload(@Body() body) {
-    return await this.service.postShareImageDownload(body);
+  async postShareImageDoload(@Body() body, @Req() req) {
+    return await this.service.postShareImageDownload(body, req);
   }
 }

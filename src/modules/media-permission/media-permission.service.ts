@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { MediaPermissionEntity } from 'src/entities/media_permission.entity';
 import { InjectRepository } from '@nestjs/typeorm';

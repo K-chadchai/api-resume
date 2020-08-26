@@ -919,7 +919,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async postDataUploadArticleSet(body: DataUploadArticleSet) {
-    try {
+    
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
         const media_object = new MediaObjectEntity();
         media_object.folder_id = body.folder_id; //body.article_side_id;
@@ -955,9 +955,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
         }
       });
-    } catch (err) {
-      throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้ ----->>>>>' + ' , ' + err);
-    }
+   
   }
 
   async getArticleSet(props: IGetArticleSet) {

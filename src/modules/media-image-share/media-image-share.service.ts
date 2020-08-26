@@ -4,7 +4,7 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app/app.service';
-import { Like, getRepository } from 'typeorm';
+import { Like, getRepository, QueryRunner } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
 
 interface IPostBulk {
@@ -61,31 +61,33 @@ export class MediaImageShareService extends TypeOrmCrudService<MediaImageShareEn
     }
   }
 
-  async postShareImage(body: MediaImageShareEntity) {
-    const repositoryShareImage = getRepository(MediaImageShareEntity);
-    const postShareImage = new MediaImageShareEntity();
-    postShareImage.object_id = body.object_id;
-    postShareImage.file_type = body.file_type;
-    postShareImage.resolution = body.resolution;
-    postShareImage.url = body.url;
-    postShareImage.creator = '';
-    postShareImage.created_time = new Date();
-    postShareImage.s3key = body.s3key;
-    postShareImage.share_type = 'Public';
-    return await repositoryShareImage.save(postShareImage);
+  async postShareImage(body: MediaImageShareEntity,req) {
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      const postShareImage = new MediaImageShareEntity();
+      postShareImage.object_id = body.object_id;
+      postShareImage.file_type = body.file_type;
+      postShareImage.resolution = body.resolution;
+      postShareImage.url = body.url;
+      postShareImage.creator = req.user.userId?req.user.userId:'' ; //จาก token
+      postShareImage.created_time = req.actionTime?req.actionTime:''; // จาก token
+      postShareImage.s3key = body.s3key;
+      postShareImage.share_type = 'Public';
+      return await runner.manager.save(MediaImageShareEntity, postShareImage);
+    });
   }
 
-  async postShareImageDownload(body: MediaImageShareEntity) {
-    const repositoryShareImage = getRepository(MediaImageShareEntity);
-    const postShareImage = new MediaImageShareEntity();
-    postShareImage.object_id = body.object_id;
-    postShareImage.file_type = body.file_type;
-    postShareImage.resolution = body.resolution;
-    postShareImage.url = body.url;
-    postShareImage.creator = '';
-    postShareImage.created_time = new Date();
-    postShareImage.s3key = body.s3key;
-    postShareImage.share_type = 'InHouse';
-    return await repositoryShareImage.save(postShareImage);
+  async postShareImageDownload(body: MediaImageShareEntity,req) {
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      const postShareImage = new MediaImageShareEntity();
+      postShareImage.object_id = body.object_id;
+      postShareImage.file_type = body.file_type;
+      postShareImage.resolution = body.resolution;
+      postShareImage.url = body.url;
+      postShareImage.creator = req.user.userId?req.user.userId:'';
+      postShareImage.created_time = req.actionTime?req.actionTime:'';
+      postShareImage.s3key = body.s3key;
+      postShareImage.share_type = 'InHouse';
+      return await runner.manager.save(MediaImageShareEntity, postShareImage);
+    });
   }
 }
