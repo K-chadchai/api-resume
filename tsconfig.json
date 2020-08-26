@@ -11,9 +11,10 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
+      "@libs/dtos": ["libs/src/dtos"],
       "@libs/interfaces": ["libs/src/interfaces"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "libs"]
 }
