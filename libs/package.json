@@ -1,13 +1,13 @@
 {
   "name": "@nikom.san/api-authen",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "description": "NestJS",
-  "author": "",
-  "license": "UNLICENSED",
+  "author": "@dohome/development",
+  "license": "MIT",
   "main": "dist/index.js",
   "files": [
     "dist/**/*",
-    "*.md"
+    "*.md" 
   ],
   "scripts": {
     "start:dev": "tsc -w",
@@ -21,11 +21,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nestjsplus/nestjs-package-starter"
-  },
-  "bugs": "https://github.com/nestjsplus/nestjs-package-starter",
   "dependencies": {},
   "devDependencies": {
     "prettier": "2.1.1"
