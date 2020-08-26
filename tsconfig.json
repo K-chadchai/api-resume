@@ -9,8 +9,11 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "paths": {
+      "@api-authen": ["@nikom.san/api-authen"]
+    }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "libs"]
+  "exclude": ["node_modules", "dist", "libx"]
 }
