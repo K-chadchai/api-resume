@@ -1,5 +1,5 @@
 import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ILoginGuard } from 'src/interfaces/login_guard.interface';
+import { ILoginGuard } from '@libs/interfaces/login_guard.interface';
 
 const tname = 'login_guard';
 

@@ -1,0 +1,5 @@
+
+yarn 
+
+// ไปเปลี่ยน packages.version ก่อน publish ด้วยนะจ้ะ
+npm publish

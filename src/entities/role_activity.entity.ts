@@ -1,5 +1,5 @@
-import { IRoleActivity } from 'src/interfaces/role_activity.interface';
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import { IRoleActivity } from '@libs/interfaces/role_activity.interface';
 
 const tname = 'role_activity';
 
