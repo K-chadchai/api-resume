@@ -75,8 +75,16 @@ export class MediaUploadService {
   async getArticleInfo(props: IGetArticleInfo) {
     let query = '';
     props.search
-      ? (query = `select TOP (20) * from TBMaster_Article where Article like ('%${props.search}%') or DescriptionEN like ('%${props.search}%')`)
-      : (query = 'select TOP (20) * from TBMaster_Article');
+      ? (query = `select TOP (20) [CODE] as Article,[NAMETH] as DescriptionTH from TBMaster_Product where code like ('%${props.search}%') or NAMETH like ('%${props.search}%')`)
+      : (query = 'select TOP (20) [CODE] as Article,[NAMETH] as DescriptionTH from TBMaster_Product');
+    return this.connection.query(query);
+  }
+
+  async getArticleInfoSet(props: IGetArticleInfo) {
+    let query = '';
+    props.search
+      ? (query = `select TOP (1) [CODE] as Article,[NAMETH] as DescriptionTH from TBMaster_Product where code = '${props.search}'`)
+      : (query = 'select TOP (1) [CODE] as Article,[NAMETH] as DescriptionTH from TBMaster_Product');
     return this.connection.query(query);
   }
 

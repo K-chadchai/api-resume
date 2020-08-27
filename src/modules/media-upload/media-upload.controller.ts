@@ -10,6 +10,11 @@ export class MediaUploadController {
     return await this.service.getArticleInfo(query);
   }
 
+  @Get('/articleInfoSet')
+  async getArticleInfoSet(@Query() query) {
+    return await this.service.getArticleInfoSet(query);
+  }
+
   @Get('/saleDepartment')
   async getSaleDepartment(@Query() query) {
     return await this.service.getSaleDepartment(query);
