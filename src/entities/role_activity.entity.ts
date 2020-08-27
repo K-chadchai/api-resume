@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
-import { IRoleActivity } from '@libs/interfaces';
+import { IRoleActivity } from '@nikom.san/api-authen';
 
 const tname = 'role_activity';
 

@@ -671,10 +671,10 @@
   resolved "https://registry.yarnpkg.com/@nestjsx/util/-/util-4.6.2.tgz#89bd31447a30f9666d7ad1616111c78b2d61dd56"
   integrity sha512-YG2gQvSm7p8zBFaW6MFM5r1Ihk4Vr189SB2OTr7fV7qcjPS+02v7xILw2dTz2emdmu0t0AgCL2RU1V0lY8Aa9w==
 
-"@nikom.san/api-authen@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@nikom.san/api-authen/-/api-authen-1.0.14.tgz#c03e7501241c7c56d5d76c6f613999d35b9e3995"
-  integrity sha512-8hhyGRFetjuGGtuDvAx2t5/r2ShPpw4FmK6fpKeRa4V0RogJRoOQoVmKVbiikM1RHfZCAKPbwh5XEPXWPWdgNw==
+"@nikom.san/api-authen@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@nikom.san/api-authen/-/api-authen-1.0.15.tgz#85c6cd8d616a7df68f62607d5dabc136cb9ccbe5"
+  integrity sha512-8noiMw4RiXuyvb0AW/6CNZIi/eKNOMxm7ispbB38FCIl7En+yZDaq5kZsYyI8REgxR75rw4qgJ46Auy5s4a1/Q==
 
 "@nuxtjs/opencollective@0.2.2":
   version "0.2.2"

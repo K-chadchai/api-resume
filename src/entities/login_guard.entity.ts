@@ -1,5 +1,5 @@
 import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ILoginGuard } from '@libs/interfaces';
+import { ILoginGuard } from '@nikom.san/api-authen';
 
 const tname = 'login_guard';
 
