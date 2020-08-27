@@ -958,7 +958,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
    
   }
 
-  async getArticleSet(props: IGetArticleSet) {
+  async getArticleSetDetail(props: IGetArticleSet) {
     // Validate
     if (!props.folder_id) {
       throw new BadRequestException('ไม่พบข้อมูล, folder_id');

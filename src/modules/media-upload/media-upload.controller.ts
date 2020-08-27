@@ -60,9 +60,9 @@ export class MediaUploadController {
     return await this.service.postDataUploadArticleSet(body);
   }
 
-  @Get('/ArticleSet')
-  async getArticleSet(@Query() query) {
-      return await this.service.getArticleSet(query)
+  @Get('/ArticleSetDetail')
+  async getArticleSetDetail(@Query() query) {
+      return await this.service.getArticleSetDetail(query)
   }
 
   @Delete('deleteImage/:s3key')

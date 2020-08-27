@@ -78,6 +78,6 @@ import { DBMASTER } from './app.constants';
     MediaColorxModule,
     MediaResolutionModule,
   ],
-  // providers: [JwtStrategy],
+  //providers: [JwtStrategy],
 })
 export class AppModule {}
