@@ -17,9 +17,9 @@ import { LoginActivityEntity } from 'src/entities/login_activity.entity';
 import { LoginLockEntity } from 'src/entities/login_lock.entity';
 import { LoginConstantEntity } from 'src/entities/login_constant.entity';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
-import { ComUtility, JWT_TIMEOUT, IToken } from '@nikom.san/api-common';
 import { DBAUTHOR } from 'src/app/app.constants';
-import { IRoleActivity, ILoginConstant, ILoginLock, ILoginGuard } from '@libs/interfaces';
+import { ILoginLock, ILoginGuard, JWT, ILoginConstant, DToken, IRoleActivity } from '@nikom.san/api-authen';
+import { Utility } from '@nikom.san/api-common';
 
 interface IUserRole {
   RoleCode: string;
@@ -85,7 +85,7 @@ export class AuthService {
 
       // เก็บ login_activity
       const time_expire = new Date(time_now);
-      time_expire.setSeconds(time_expire.getSeconds() + JWT_TIMEOUT);
+      time_expire.setSeconds(time_expire.getSeconds() + JWT.TIMEOUT);
       const saveLoginActivity = await runner.manager.save(LoginActivityEntity, {
         user_id: userId,
         login_success: isSuccess ? '1' : '0',
@@ -131,7 +131,7 @@ export class AuthService {
             // หาเวลา login_time_first , login_time_last
             const login_time_first = findLoginActivity[0].login_time;
             const login_time_last = findLoginActivity[findLoginActivity.length - 1].login_time;
-            const diffTime = ComUtility.getTimeDiff(login_time_first, login_time_last);
+            const diffTime = Utility.diffTimes(login_time_first, login_time_last);
             if (diffTime.diffMinutes <= failure_intime) {
               //> ใส่รหัสผ่านผิดภายในเวลาที่กำหนด = Lock
               // คำนวณระยะเวลาที่ user จะถูกล็อค
@@ -171,7 +171,7 @@ export class AuthService {
     const { EmployeeId: userId, Fullname: userName, EmployeeLevel: employeeLevel, LoginActivityId: uuid } = user;
 
     // Create payload
-    const payload = { userId, userName, uuid, employeeLevel } as IToken;
+    const payload = { userId, userName, uuid, employeeLevel } as DToken;
 
     // Create token JWT
     const token = this.jwtService.sign(payload);
@@ -180,7 +180,7 @@ export class AuthService {
     return { token };
   }
 
-  async logout({ uuid, actionTime }: IToken) {
+  async logout({ uuid, actionTime }: DToken) {
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       //
       const findLoginActivity = await runner.manager.findOne(LoginActivityEntity, uuid);
@@ -226,7 +226,7 @@ export class AuthService {
     });
   }
 
-  async jwtValidate(token: IToken) {
+  async jwtValidate(token: DToken) {
     // ตรวจสอบว่า uuid( login_activity.id ) ถูก kill ไปแล้วหรือยัง
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       // Step - ตรวจสอบค่า uuid
@@ -242,7 +242,7 @@ export class AuthService {
     });
   }
 
-  async getUserRoles(moduleId: string, token: IToken) {
+  async getUserRoles(moduleId: string, token: DToken) {
     // ตรวจสอบ moduleId
     if (!moduleId) {
       throw new BadRequestException(`ไม่พบค่า moduleId, กรุณาตรวจสอบ`);

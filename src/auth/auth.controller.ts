@@ -2,9 +2,8 @@ import { Controller, Request, Post, UseGuards, Get, Headers, Body, UnauthorizedE
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { JWT_VALIDATE_KEY } from '@nikom.san/api-common';
 import { KeysHeader } from 'src/app/app.constants';
-import { report } from 'process';
+import { JWT } from '@nikom.san/api-authen';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +23,7 @@ export class AuthController {
 
   @Post('jwt-validate')
   async jwtValidate(@Headers(KeysHeader.ApiValidateKey) jwtValidateKey, @Body('token') tokenPayload) {
-    if (jwtValidateKey !== JWT_VALIDATE_KEY) {
+    if (jwtValidateKey !== JWT.VALIDATE_KEY) {
       throw new UnauthorizedException('Invalidate jwt-validate-key');
     }
     return await this.authService.jwtValidate(tokenPayload);

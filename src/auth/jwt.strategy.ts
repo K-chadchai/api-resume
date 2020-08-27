@@ -2,8 +2,8 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { JWT_SECRET_KEY, IToken } from '@nikom.san/api-common';
 import { AuthService } from './auth.service';
+import { JWT, DToken } from '@nikom.san/api-authen';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -11,11 +11,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: JWT_SECRET_KEY,
+      secretOrKey: JWT.SECRET_KEY,
     });
   }
 
-  async validate(token: IToken) {
+  async validate(token: DToken) {
     return await this.authService.jwtValidate(token);
   }
 }

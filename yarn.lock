@@ -676,6 +676,11 @@
   resolved "https://registry.yarnpkg.com/@nikom.san/api-authen/-/api-authen-1.0.15.tgz#85c6cd8d616a7df68f62607d5dabc136cb9ccbe5"
   integrity sha512-8noiMw4RiXuyvb0AW/6CNZIi/eKNOMxm7ispbB38FCIl7En+yZDaq5kZsYyI8REgxR75rw4qgJ46Auy5s4a1/Q==
 
+"@nikom.san/api-common@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@nikom.san/api-common/-/api-common-1.0.7.tgz#b8bde0bb60cac77d531e0def086e726ed896d134"
+  integrity sha512-ZIB/1ZzJqs7oAnSEhsnQbxaCqslZSZ8abiP9jbaHRE5C3ykNGnjzXr0TBTICckJM5CJExEsH4IJZodyzjGf7Ww==
+
 "@nuxtjs/opencollective@0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/opencollective/-/opencollective-0.2.2.tgz#26a761ebf588cc92a422d7cee996a66bd6e2761e"
