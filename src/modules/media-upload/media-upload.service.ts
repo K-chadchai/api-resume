@@ -24,7 +24,7 @@ interface IGetSaleDepartment {
   search: string;
 }
 interface IGetArticle {
-  DescriptionTH: string;
+  NAMETH: string;
 }
 interface IGetUnit {
   MYNAME: string;
@@ -276,10 +276,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           .where(`media_article.code = '${body.data[i].article_code}'`)
           .getOne();
 
-        const queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.data[i].article_code}'`;
+        const queryArticle = `select TOP (1) [NAMETH] from TBMaster_Product where code = '${body.data[i].article_code}'`;
         const articleData = await this.connection.query(queryArticle);
         const DescriptionTHData: Array<IGetArticle> = articleData;
-        const descArticle = DescriptionTHData[0].DescriptionTH ? DescriptionTHData[0].DescriptionTH : '';
+        const descArticle = DescriptionTHData[0].NAMETH ? DescriptionTHData[0].NAMETH : '';
 
         let article;
         let id_article;
@@ -654,10 +654,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .where(`media_article.code = '${body.article_code}'`)
         .getOne();
 
-      const queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.article_code}'`;
+      const queryArticle = `select TOP (1) [NAMETH] from TBMaster_Product where code = '${body.article_code}'`;
       const articleData = await this.connection.query(queryArticle);
       const DescriptionTHData: Array<IGetArticle> = articleData;
-      const descArticle = DescriptionTHData[0].DescriptionTH ? DescriptionTHData[0].DescriptionTH : '';
+      const descArticle = DescriptionTHData[0].NAMETH ? DescriptionTHData[0].NAMETH : '';
 
       let article;
       let id_article;
@@ -854,10 +854,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       .where(`media_article.code = '${body.article_code}'`)
       .getOne();
 
-    const queryArticle = `select TOP (1) * from TBMaster_Article where Article = '${body.article_code}'`;
+    const queryArticle = `select TOP (1) [NAMETH] from TBMaster_Product where code = '${body.article_code}'`;
     const articleData = await this.connection.query(queryArticle);
     const DescriptionTHData: Array<IGetArticle> = articleData;
-    const descArticle = DescriptionTHData[0].DescriptionTH ? DescriptionTHData[0].DescriptionTH : '';
+    const descArticle = DescriptionTHData[0].NAMETH ? DescriptionTHData[0].NAMETH : '';
 
     let article;
     let id_article;
