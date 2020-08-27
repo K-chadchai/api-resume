@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
-import { ILoginLock } from '@nikom.san/api-authen';
+import { ILoginLock } from '@libs';
 
 const tname = 'login_lock';
 

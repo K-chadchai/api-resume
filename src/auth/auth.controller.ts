@@ -3,49 +3,62 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { KeysHeader } from 'src/app/app.constants';
-import { JWT } from '@nikom.san/api-authen';
+import {
+  JwtConstant,
+  routeAuth,
+  AuthLogin,
+  AuthLogout,
+  AuthKillUser,
+  AuthJwtValidate,
+  AuthJwtValidateBody,
+  AuthPayload,
+  AuthUserRoles,
+} from '@libs';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Request() req) {
+  @Post(routeAuth.login)
+  async login(@Request() req): Promise<AuthLogin> {
     return await this.authService.loginSuccessed(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('logout')
-  async logout(@Request() req) {
+  @Post(routeAuth.logout)
+  async logout(@Request() req): Promise<AuthLogout> {
     return await this.authService.logout(req.user);
   }
 
-  @Post('jwt-validate')
-  async jwtValidate(@Headers(KeysHeader.ApiValidateKey) jwtValidateKey, @Body('token') tokenPayload) {
-    if (jwtValidateKey !== JWT.VALIDATE_KEY) {
-      throw new UnauthorizedException('Invalidate jwt-validate-key');
+  // เรียกใช้งานที่ jwt.strategy (ของ project อื่น)
+  @Post(routeAuth.jwtValidate)
+  async jwtValidate(
+    @Headers(KeysHeader.ApiValidateKey) jwtValidateKey,
+    @Body() body: AuthJwtValidateBody,
+  ): Promise<AuthJwtValidate> {
+    if (jwtValidateKey !== JwtConstant.VALIDATE_KEY) {
+      throw new UnauthorizedException('Invalid key');
     }
-    return await this.authService.jwtValidate(tokenPayload);
+    return await this.authService.jwtValidate(body.token);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('kill-user')
-  async killUser(@Request() req, @Body('userId') userKill) {
+  @Post(routeAuth.killUser)
+  async killUser(@Request() req, @Body('userId') userKill: string): Promise<AuthKillUser> {
     const { userId: userAdmin } = req.user;
-
     return await this.authService.killUser(userAdmin, userKill);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('payload')
-  getPayload(@Request() req) {
+  @Get(routeAuth.payload)
+  getPayload(@Request() req): AuthPayload {
     return req.user;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('user-roles')
-  async userRole(@Headers(KeysHeader.ApiModuleId) moduleId, @Request() req) {
+  @Get(routeAuth.userRoles)
+  async userRole(@Headers(KeysHeader.ApiModuleId) moduleId, @Request() req): Promise<AuthUserRoles> {
     return await this.authService.getUserRoles(moduleId, req.user);
   }
 }

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ILoginActivity } from '@nikom.san/api-authen';
+import { ILoginActivity } from '@libs';
 
 const tname = 'login_activity';
 

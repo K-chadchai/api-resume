@@ -31,7 +31,6 @@
     "@nestjs/typeorm": "^7.1.0",
     "@nestjsx/crud": "^4.6.2",
     "@nestjsx/crud-typeorm": "^4.5.0",
-    "@nikom.san/api-authen": "^1.0.16",
     "@nikom.san/api-common": "^1.0.7",
     "axios": "^0.20.0",
     "class-transformer": "^0.2.3",

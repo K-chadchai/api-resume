@@ -671,11 +671,6 @@
   resolved "https://registry.yarnpkg.com/@nestjsx/util/-/util-4.6.2.tgz#89bd31447a30f9666d7ad1616111c78b2d61dd56"
   integrity sha512-YG2gQvSm7p8zBFaW6MFM5r1Ihk4Vr189SB2OTr7fV7qcjPS+02v7xILw2dTz2emdmu0t0AgCL2RU1V0lY8Aa9w==
 
-"@nikom.san/api-authen@^1.0.16":
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/@nikom.san/api-authen/-/api-authen-1.0.16.tgz#1a56a9435295a9477b813f43597904a08c620ecc"
-  integrity sha512-hQYFmYU7EJ5OpwwuTf0OGqZ/8Y8tWsjA4ju1xAtD0+J2kK744868Iv30SJBfuB+OW06ayjEmK6FEfFIof4EW4g==
-
 "@nikom.san/api-common@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@nikom.san/api-common/-/api-common-1.0.7.tgz#b8bde0bb60cac77d531e0def086e726ed896d134"

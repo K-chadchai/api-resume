@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ILoginConstant } from '@nikom.san/api-authen';
+import { ILoginConstant } from '@libs';
 
 const tname = 'login_constant';
 

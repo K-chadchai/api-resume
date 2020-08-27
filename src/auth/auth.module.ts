@@ -7,14 +7,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AppService } from 'src/app/app.service';
 import { JwtStrategy } from './jwt.strategy';
-import { JWT } from '@nikom.san/api-authen';
+import { JwtConstant } from '@libs';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: JWT.SECRET_KEY,
-      signOptions: { expiresIn: JWT.TIMEOUT },
+      secret: JwtConstant.SECRET_KEY,
+      signOptions: { expiresIn: JwtConstant.TIMEOUT },
     }),
     UsersModule,
   ],

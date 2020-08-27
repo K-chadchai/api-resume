@@ -1,4 +1,4 @@
-export interface DToken {
+export class TokenDto {
   userId: string;
   userName: string;
   uuid: string; // login_activity_id
