@@ -46,8 +46,8 @@ export class MediaUploadController {
   // }
 
   @Post('DataUpload')
-  async postDataUpload(@Body() body) {
-    return await this.service.postDataUpload(body);
+  async postDataUpload(@Body() body, @Req() req) {
+    return await this.service.postDataUpload(body, req);
   }
 
   @Get('download/:s3key')
@@ -56,13 +56,13 @@ export class MediaUploadController {
   }
 
   @Post('DataUploadArticleSetDetail')
-  async postDataUploadArticleSetDetail(@Body() body) {
-    return await this.service.postDataUploadArticleSetDetail(body);
+  async postDataUploadArticleSetDetail(@Body() body, @Req() req) {
+    return await this.service.postDataUploadArticleSetDetail(body,req);
   }
 
   @Post('DataUploadArticleSet')
-  async postDataUploadArticleSet(@Body() body) {
-    return await this.service.postDataUploadArticleSet(body);
+  async postDataUploadArticleSet(@Body() body, @Req() req) {
+    return await this.service.postDataUploadArticleSet(body, req);
   }
 
   @Get('/ArticleSetDetail')
