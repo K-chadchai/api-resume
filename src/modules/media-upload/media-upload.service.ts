@@ -919,13 +919,10 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     postDataUploadRelation.object_id = body.folder_id;
     postDataUploadRelation.article_id = id_article;
     postDataUploadRelation.article_unit_id = id_unit;
-    //postDataUploadRelation.creator = '';
     postDataUploadRelation.sale_depart_id = uuid();
     postDataUploadRelation.article_side_id = uuid();
     postDataUploadRelation.color_id = uuid();
-    postDataUploadRelation.object_id = uuid();
     postDataUploadRelation.resolution_id = uuid();
-    //postDataUploadRelation.created_time = new Date();
     postDataUploadRelation.relation_type = 'ARTICLE_SET';
 
     return await repositorypostObjectRelation.save(postDataUploadRelation);
