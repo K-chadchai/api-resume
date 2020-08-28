@@ -534,8 +534,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         folder.parent_id = fineFolder.id;
         folder.folder_type = 'FOLDER';
         folder.reference = body.sale_depart_code;
-        folder.created_time = req.actionTime?req.actionTime:new Date();
-        folder.creator = req.user.userId?req.user.userId:'';
+        folder.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+        folder.creator = (req.user === undefined)?'':req.user.userId;
         folder.description = '';
         const { id } = await repositoryFolder.save(folder);
         id_folder_Depart = id;
@@ -560,8 +560,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           folder.parent_id = id_folder_Depart;
           folder.folder_type = 'FOLDER';
           folder.reference = body.article_code;
-          folder.created_time = req.actionTime?req.actionTime:new Date();
-          folder.creator = req.user.userId?req.user.userId:'';
+          folder.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+          folder.creator = (req.user === undefined)?'':req.user.userId;
           folder.description = '';
           const { id } = await repositoryFolderArticle.save(folder);
           id_folder_Article = id;
@@ -586,8 +586,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           folder.parent_id = id_folder_Article;
           folder.folder_type = 'FOLDER';
           folder.reference = body.article_color_id;
-          folder.created_time = req.actionTime?req.actionTime:new Date();
-          folder.creator = req.user.userId?req.user.userId:'';
+          folder.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+          folder.creator = (req.user === undefined)?'':req.user.userId;
           folder.description = '';
           const { id } = await repositoryFolderColor.save(folder);
           id_folder_Color = id;
@@ -612,8 +612,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           folder.parent_id = id_folder_Color;
           folder.folder_type = 'FOLDER';
           folder.reference = body.article_unit_code;
-          folder.created_time = req.actionTime?req.actionTime:new Date();
-          folder.creator = req.user.userId?req.user.userId:'';
+          folder.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+          folder.creator = (req.user === undefined)?'':req.user.userId;
           folder.description = '';
           const { id } = await repositoryFolderUnit.save(folder);
           id_folder_Unit = id;
@@ -638,8 +638,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           folder.parent_id = id_folder_Unit;
           folder.folder_type = 'SIDE_FOLDER';
           folder.reference = body.article_side_id;
-          folder.created_time = req.actionTime?req.actionTime:new Date();
-          folder.creator = req.user.userId?req.user.userId:'';
+          folder.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+          folder.creator = (req.user === undefined)?'':req.user.userId;
           folder.description = '';
           const { id } = await repositoryFolderSide.save(folder);
           id_folder_Side = id;
@@ -666,8 +666,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         article = new MediaArticleEntity();
         article.code = body.article_code;
         article.description = descArticle;
-        article.creator = req.user.userId?req.user.userId:'';
-        article.created_time = req.actionTime?req.actionTime:new Date();
+        article.creator = (req.user === undefined)?'':req.user.userId;
+        article.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
         try {
           const { id } = await repositoryArticle.save(article);
           id_article = id;
@@ -697,8 +698,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         unit = new MediaUnitEntity();
         unit.code = body.article_unit_code;
         unit.description = unitName;
-        unit.creator = req.user.userId?req.user.userId:'';
-        unit.created_time = req.actionTime?req.actionTime:new Date();
+        unit.creator = (req.user === undefined)?'':req.user.userId;
+        unit.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
         try {
           const { id } = await repositoryUnit.save(unit);
           id_unit = id;
@@ -728,8 +730,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         sale_depart = new MediaUnitEntity();
         sale_depart.code = body.sale_depart_code;
         sale_depart.description = SaleDepartName;
-        sale_depart.creator = req.user.userId?req.user.userId:'';
-        sale_depart.created_time = req.actionTime?req.actionTime:new Date();
+        sale_depart.creator = (req.user === undefined)?'':req.user.userId;
+        sale_depart.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
         try {
           const { id } = await repositorySaleDepartment.save(sale_depart);
           id_sale_depart = id;
@@ -784,8 +787,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               media_object.file_type = body.ContentType;
               media_object.file_group = 'ARTICLE';
               media_object.is_original = 0;
-              media_object.creator = req.user.userId?req.user.userId:'';
-              media_object.created_time = req.actionTime?req.actionTime:new Date();
+              media_object.creator = (req.user === undefined)?'':req.user.userId;
+              media_object.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
               media_object.s3key = body.s3key;
 
               const sMedia_object = await runner.manager.save(MediaObjectEntity, media_object);
@@ -866,8 +869,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       article = new MediaArticleEntity();
       article.code = body.article_code;
       article.description = descArticle;
-      article.creator = req.user.userId?req.user.userId:'';
-      article.created_time = req.actionTime?req.actionTime:new Date();
+      article.creator = (req.user === undefined)?'':req.user.userId;
+      article.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
       try {
         const { id } = await repositoryArticle.save(article);
         id_article = id;
@@ -897,8 +901,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       unit = new MediaUnitEntity();
       unit.code = body.article_unit_code;
       unit.description = unitName;
-      unit.creator = req.user.userId?req.user.userId:'';
-      unit.created_time = req.actionTime?req.actionTime:new Date();
+      unit.creator = (req.user === undefined)?'':req.user.userId;
+      unit.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
       try {
         const { id } = await repositoryUnit.save(unit);
         id_unit = id;
@@ -927,7 +932,11 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async postDataUploadArticleSet(body: DataUploadArticleSet, req) {
-    
+     // Validate
+     if (!body.folder_id && !body.object_name && body.ContentType && body.s3key && body.resolution_id) {
+      throw new BadRequestException('ไม่พบข้อมูล, folder_id');
+    }
+
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
         const media_object = new MediaObjectEntity();
         media_object.folder_id = body.folder_id; //body.article_side_id;
@@ -936,8 +945,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         media_object.file_type = body.ContentType;
         media_object.file_group = 'ARTICLE_SET';
         media_object.is_original = 0;
-        media_object.creator = req.user.userId?req.user.userId:'';
-        media_object.created_time = req.actionTime?req.actionTime:new Date();
+        media_object.creator = (req.user === undefined)?'':req.user.userId;
+        media_object.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
         media_object.s3key = body.s3key;
 
         //let sMedia_object;

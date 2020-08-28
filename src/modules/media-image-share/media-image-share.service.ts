@@ -68,8 +68,8 @@ export class MediaImageShareService extends TypeOrmCrudService<MediaImageShareEn
       postShareImage.file_type = body.file_type;
       postShareImage.resolution = body.resolution;
       postShareImage.url = body.url;
-      postShareImage.creator = req.user.userId?req.user.userId:'' ; //จาก token
-      postShareImage.created_time = req.actionTime?req.actionTime:''; // จาก token
+      postShareImage.creator = (req.user === undefined)?'':req.user.userId; //จาก token
+      postShareImage.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime; // จาก token
       postShareImage.s3key = body.s3key;
       postShareImage.share_type = 'Public';
       return await runner.manager.save(MediaImageShareEntity, postShareImage);
@@ -83,8 +83,8 @@ export class MediaImageShareService extends TypeOrmCrudService<MediaImageShareEn
       postShareImage.file_type = body.file_type;
       postShareImage.resolution = body.resolution;
       postShareImage.url = body.url;
-      postShareImage.creator = req.user.userId?req.user.userId:'';
-      postShareImage.created_time = req.actionTime?req.actionTime:'';
+      postShareImage.creator = (req.user === undefined)?'':req.user.userId;
+      postShareImage.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
       postShareImage.s3key = body.s3key;
       postShareImage.share_type = 'InHouse';
       return await runner.manager.save(MediaImageShareEntity, postShareImage);
