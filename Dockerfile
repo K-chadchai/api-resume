@@ -1,7 +1,7 @@
 #
 # docker build -t api-authen .
-# docker tag api-authen:latest snikom1723/dohome-api-authen:latest
-# docker push snikom1723/dohome-api-authen:latest
+# docker tag api-authen:latest newsolution/api-authen:latest
+# docker push newsolution/api-authen:latest
 #
 # stage: 1
 FROM node:13-alpine as builder
