@@ -1,4 +1,4 @@
-import { TokenDto } from 'src';
+import { TokenDto } from '../dtos';
 
 export const routeApiAuth = {
   getUrl: (host: string, route: string, version = 'v1') => `${host}/${version}/auth/${route}`,
