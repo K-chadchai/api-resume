@@ -5,14 +5,14 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { KeysHeader } from 'src/app/app.constants';
 import {
   JwtConstant,
-  routeAuth,
-  AuthLogin,
-  AuthLogout,
-  AuthKillUser,
-  AuthJwtValidate,
-  AuthJwtValidateBody,
-  AuthPayload,
-  AuthUserRoles,
+  routeApiAuth,
+  RAuthLogin,
+  RAuthLogout,
+  BAuthJwtValidate,
+  RAuthJwtValidate,
+  RAuthKillUser,
+  RAuthPayload,
+  RAuthUserRoles,
 } from '@libs';
 
 @Controller('auth')
@@ -20,23 +20,23 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post(routeAuth.login)
-  async login(@Request() req): Promise<AuthLogin> {
+  @Post(routeApiAuth.login)
+  async login(@Request() req): Promise<RAuthLogin> {
     return await this.authService.loginSuccessed(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(routeAuth.logout)
-  async logout(@Request() req): Promise<AuthLogout> {
+  @Post(routeApiAuth.logout)
+  async logout(@Request() req): Promise<RAuthLogout> {
     return await this.authService.logout(req.user);
   }
 
   // เรียกใช้งานที่ jwt.strategy (ของ project อื่น)
-  @Post(routeAuth.jwtValidate)
+  @Post(routeApiAuth.jwtValidate)
   async jwtValidate(
     @Headers(KeysHeader.ApiValidateKey) jwtValidateKey,
-    @Body() body: AuthJwtValidateBody,
-  ): Promise<AuthJwtValidate> {
+    @Body() body: BAuthJwtValidate,
+  ): Promise<RAuthJwtValidate> {
     if (jwtValidateKey !== JwtConstant.VALIDATE_KEY) {
       throw new UnauthorizedException('Invalid key');
     }
@@ -44,21 +44,21 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(routeAuth.killUser)
-  async killUser(@Request() req, @Body('userId') userKill: string): Promise<AuthKillUser> {
+  @Post(routeApiAuth.killUser)
+  async killUser(@Request() req, @Body('userId') userKill: string): Promise<RAuthKillUser> {
     const { userId: userAdmin } = req.user;
     return await this.authService.killUser(userAdmin, userKill);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(routeAuth.payload)
-  getPayload(@Request() req): AuthPayload {
+  @Get(routeApiAuth.payload)
+  getPayload(@Request() req): RAuthPayload {
     return req.user;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(routeAuth.userRoles)
-  async userRole(@Headers(KeysHeader.ApiModuleId) moduleId, @Request() req): Promise<AuthUserRoles> {
+  @Get(routeApiAuth.userRoles)
+  async userRole(@Headers(KeysHeader.ApiModuleId) moduleId, @Request() req): Promise<RAuthUserRoles> {
     return await this.authService.getUserRoles(moduleId, req.user);
   }
 }

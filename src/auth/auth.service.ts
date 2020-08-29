@@ -19,7 +19,7 @@ import { LoginConstantEntity } from 'src/entities/login_constant.entity';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { DBAUTHOR } from 'src/app/app.constants';
 import { Utility } from '@nikom.san/api-common';
-import { ILoginLock, JwtConstant, ILoginConstant, ILoginGuard, TokenDto, IRoleActivity, AuthUserRoles } from '@libs';
+import { ILoginLock, JwtConstant, ILoginConstant, ILoginGuard, IRoleActivity, RAuthUserRoles, TokenDto } from '@libs';
 
 interface IUserRole {
   RoleCode: string;
@@ -246,7 +246,7 @@ export class AuthService {
     });
   }
 
-  async getUserRoles(moduleId: string, token: TokenDto): Promise<AuthUserRoles> {
+  async getUserRoles(moduleId: string, token: TokenDto): Promise<RAuthUserRoles> {
     // ตรวจสอบ moduleId
     if (!moduleId) {
       throw new BadRequestException(`ไม่พบค่า moduleId, กรุณาตรวจสอบ`);
