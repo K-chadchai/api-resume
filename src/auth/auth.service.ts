@@ -185,17 +185,17 @@ export class AuthService {
       //
       const findLoginActivity = await runner.manager.findOne(LoginActivityEntity, uuid);
       if (!findLoginActivity) {
-        throw new NotFoundException(`ไม่พบ login_activity.id=${uuid}`);
+        return {}; // throw new NotFoundException(`ไม่พบ login_activity.id=${uuid}`);
       }
-      if (findLoginActivity.login_success !== '1') {
-        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,login_success !== '1' ,ไม่สามารถ logout ได้`);
-      }
-      if (findLoginActivity.logout_status === '1') {
-        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,logout_status === '1' ,ไม่สามารถ logout ได้`);
-      }
-      if (findLoginActivity.kill_status === '1') {
-        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,kill_status === '1' ,ไม่สามารถ logout ได้`);
-      }
+      // if (findLoginActivity.login_success !== '1') {
+      //   throw new BadRequestException(`รายการ login_activity.id=${uuid} ,login_success !== '1' ,ไม่สามารถ logout ได้`);
+      // }
+      // if (findLoginActivity.logout_status === '1') {
+      //   throw new BadRequestException(`รายการ login_activity.id=${uuid} ,logout_status === '1' ,ไม่สามารถ logout ได้`);
+      // }
+      // if (findLoginActivity.kill_status === '1') {
+      //   throw new BadRequestException(`รายการ login_activity.id=${uuid} ,kill_status === '1' ,ไม่สามารถ logout ได้`);
+      // }
 
       // Update
       findLoginActivity.logout_status = '1';
