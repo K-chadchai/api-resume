@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/class-name-casing */
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MediaObjectRelationEntity } from 'src/entities/media_object_relation.entity';
@@ -38,7 +38,7 @@ export class MediaObjectRelationService extends TypeOrmCrudService<MediaObjectRe
   // ค้นหาข้อมูล
   async getArticleDepartUnitSide(props: IGetByArticleDepartUnitSide) {
     if (!props.searchAll && !props.article_unit && !props.article_side && !props.sale_depart && !props.last_edited)
-      throw new InternalServerErrorException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
+      throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
 
     let unit = '';
     for (let i = 0; i < props.article_unit.length; i++) {

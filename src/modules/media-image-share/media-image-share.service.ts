@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { MediaImageShareEntity } from 'src/entities/media_image_share.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -62,6 +62,10 @@ export class MediaImageShareService extends TypeOrmCrudService<MediaImageShareEn
   }
 
   async postShareImage(body: MediaImageShareEntity,req) {
+      // Validate
+    if (!body.object_id || !body.file_type || !body.resolution || !body.url || !body.s3key) {
+      throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการบันทึกข้อมูลแชร์ไฟล์');
+    }
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       const postShareImage = new MediaImageShareEntity();
       postShareImage.object_id = body.object_id;
@@ -77,6 +81,10 @@ export class MediaImageShareService extends TypeOrmCrudService<MediaImageShareEn
   }
 
   async postShareImageDownload(body: MediaImageShareEntity,req) {
+    // Validate
+    if (!body.object_id || !body.file_type || !body.resolution || !body.url || !body.s3key) {
+      throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการบันทึกข้อมูลแชร์ไฟล์');
+    }
     return await this.appService.dbRunner(async (runner: QueryRunner) => {
       const postShareImage = new MediaImageShareEntity();
       postShareImage.object_id = body.object_id;

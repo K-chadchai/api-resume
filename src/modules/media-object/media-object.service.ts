@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { MediaObjectEntity } from 'src/entities/media_object.entity';
 import { AppService } from 'src/app/app.service';
@@ -39,6 +39,10 @@ export class MediaObjectService extends TypeOrmCrudService<MediaObjectEntity> {
 
   // ค้นหาข้อมูล ByFolderId
   async getByFolderId(id: string) {
+    // Validate
+    if (!id) {
+      throw new BadRequestException('กรุณาระบุ folder_id');
+    }
     return await this.repo.find({
       where: [{ folder_id: id }],
     });

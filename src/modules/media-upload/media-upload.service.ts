@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection, getConnection, QueryRunner, getRepository, Like } from 'typeorm';
@@ -97,7 +97,7 @@ export class MediaUploadService {
     let query = '';
 
     if (!props.search) {
-      throw new InternalServerErrorException('กรุณาใส่ข้อมูล article');
+      throw new BadRequestException('กรุณาใส่ข้อมูล article');
     }
     query = `SELECT TOP (1000) [PRODUCTCODE]
     ,[UNITCODE]
@@ -483,7 +483,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
       if (fineFolder === undefined) {
         console.log('ไม่พบ fineFolder');
-        throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
+        throw new NotFoundException('ไม่สามารถอัพโหลดไฟล์ได้');
       }
       //ค้นหา folder ถ้าไม่มีข้อมูลให้ insert ลง
       const fineFolderByDepart = await getConnection()
@@ -505,8 +505,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .getOne();
 
       if (fineSide === undefined) {
-        console.log('ค้นหาข้อมูล side ไม่สำเร็จ');
-        throw new InternalServerErrorException('ไม่พบข้อมูล side');
+        throw new NotFoundException('ไม่พบข้อมูล side');
       } else sideName = fineSide.side_name;
 
       let colorName;
@@ -519,8 +518,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
         .getOne();
 
       if (fineColor === undefined) {
-        console.log('ค้นหาข้อมูล color ไม่สำเร็จ');
-        throw new InternalServerErrorException('ไม่พบข้อมูล color');
+        throw new NotFoundException('ไม่พบข้อมูล color');
       } else colorName = fineColor.colorx_name;
 
       let folder;
@@ -678,7 +676,6 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           const { id } = await repositoryArticle.save(article);
           id_article = id;
         } catch (err) {
-          console.log('บันทึกข้อมูล article ไม่สำเร็จ' + err);
           throw new InternalServerErrorException('บันทึกข้อมูล article ไม่สำเร็จ' + ' , ' + err);
         }
       } else id_article = fineArticle.id;
@@ -710,7 +707,6 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           const { id } = await repositoryUnit.save(unit);
           id_unit = id;
         } catch (err) {
-          console.log('บันทึกข้อมูล Unit ไม่สำเร็จ');
           throw new InternalServerErrorException('บันทึกข้อมูล Unit ไม่สำเร็จ' + ' , ' + err);
         }
       } else id_unit = fineUnit.id;
@@ -742,7 +738,6 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
           const { id } = await repositorySaleDepartment.save(sale_depart);
           id_sale_depart = id;
         } catch (err) {
-          console.log('บันทึกข้อมูล Sale Depart ไม่สำเร็จ');
           throw new InternalServerErrorException('บันทึกข้อมูล Sale Depart ไม่สำเร็จ' + ' , ' + err);
         }
       } else id_sale_depart = fineSaleDepart.id;
@@ -850,7 +845,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async postDataUploadArticleSetDetail(body: IGetArticleSet, req) {
-    if (!body.folder_id && !body.article_code && !body.article_unit_code) {
+    if (!body.folder_id || !body.article_code || !body.article_unit_code) {
       throw new BadRequestException('กรุณาใส่ข้อมูลให้ถูกต้อง');
     }
 
@@ -935,10 +930,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
   async postDataUploadArticleSet(body: DataUploadArticleSet, req) {
      // Validate
-     if (!body.folder_id && !body.object_name && body.ContentType && body.s3key && body.resolution_id) {
+     if (!body.folder_id || !body.object_name || body.ContentType || body.s3key || body.resolution_id) {
       throw new BadRequestException('ไม่พบข้อมูล, folder_id');
     }
-
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
         const media_object = new MediaObjectEntity();
         media_object.folder_id = body.folder_id; //body.article_side_id;
@@ -1001,10 +995,9 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
      return await this.uploaderService.deleteFile(s3key);
   }
 
-    // ค้นหาข้อมูล
+  // ค้นหาข้อมูล
   async searchArticleSet(props: IGetSearchArticleSet) {
   // Validate
-  console.log('props', props.search_name)
   if (!props.folder_id || !props.search_name) {
     throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
   }
