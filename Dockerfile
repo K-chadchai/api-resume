@@ -1,5 +1,5 @@
 #
-# docker build -t api-authen .
+# docker build -t api-authen:latest .
 # docker tag api-authen:latest newsolution/api-authen:latest
 # docker push newsolution/api-authen:latest
 #
