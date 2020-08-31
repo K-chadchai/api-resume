@@ -236,8 +236,11 @@ export class AuthService {
       // Step - ตรวจสอบค่า uuid
       const { kill_status, id: login_activity_id_tpm } =
         (await runner.manager.findOne(LoginActivityEntity, token.uuid)) || {};
-      if (kill_status === '1' || !login_activity_id_tpm) {
-        throw new UnauthorizedException();
+      if (kill_status === '1') {
+        throw new UnauthorizedException(`Token was killed `);
+      }
+      if (!login_activity_id_tpm) {
+        throw new UnauthorizedException(`Not found uuid `);
       }
 
       // return req.user
