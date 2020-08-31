@@ -75,5 +75,10 @@ export class MediaUploadController {
     console.log('s3key', s3key)
     return await this.service.deleteMediaImage(s3key);
   }
+
+  @Get('/searchArticleSet')
+  async get(@Query() query) {
+    return await this.service.searchArticleSet(query);
+  }
   
 }

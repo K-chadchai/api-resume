@@ -2,7 +2,7 @@
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
 import { InjectConnection } from '@nestjs/typeorm';
-import { Connection, getConnection, QueryRunner, getRepository } from 'typeorm';
+import { Connection, getConnection, QueryRunner, getRepository, Like } from 'typeorm';
 import { UploaderService } from 'src/services/uploader.service';
 import { MediaObjectEntity } from 'src/entities/media_object.entity';
 import { MediaFolderEntity } from 'src/entities/media_folder.entity';
@@ -61,6 +61,11 @@ interface IGetArticleSet {
   article_code: string;
   folder_id: string;
   article_unit_code: string;
+}
+
+interface IGetSearchArticleSet{
+  folder_id:string;
+  search_name:string;
 }
 
 @Injectable()
@@ -995,4 +1000,18 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     }
      return await this.uploaderService.deleteFile(s3key);
   }
+
+    // ค้นหาข้อมูล
+  async searchArticleSet(props: IGetSearchArticleSet) {
+  // Validate
+  console.log('props', props.search_name)
+  if (!props.folder_id || !props.search_name) {
+    throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
+  }
+      return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      return (await runner.manager.find(MediaObjectEntity, 
+        { where: {folder_id:props.folder_id ,object_name: Like(`%${props.search_name}%`) } })) || ({} as MediaObjectEntity);
+  });
+}
+
 }
