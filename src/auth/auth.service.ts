@@ -240,7 +240,7 @@ export class AuthService {
         throw new UnauthorizedException(`Token was killed `);
       }
       if (!login_activity_id_tpm) {
-        throw new UnauthorizedException(`Not found uuid `);
+        throw new UnauthorizedException(`Not found uuid=${token.uuid}`);
       }
 
       // return req.user
