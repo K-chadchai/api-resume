@@ -18,8 +18,8 @@ import { LoginLockEntity } from 'src/entities/login_lock.entity';
 import { LoginConstantEntity } from 'src/entities/login_constant.entity';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { DBAUTHOR } from 'src/app/app.constants';
-import { Utility } from '@nikom.san/api-common';
 import { ILoginLock, JwtConstant, ILoginConstant, ILoginGuard, IRoleActivity, RAuthUserRoles, TokenDto } from '@libs';
+import { Utility } from '@newsolution/api-common';
 
 interface IUserRole {
   RoleCode: string;
