@@ -1,6 +1,0 @@
-
-npm init --scope=@newsolution
-
-// ไปเปลี่ยน packages.version ก่อน publish ด้วยนะจ้ะ
-yarn && npm publish
-
