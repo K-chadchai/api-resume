@@ -22,7 +22,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post(routeApiAuth.login)
   async login(@Request() req): Promise<RAuthLogin> {
-    return await this.authService.loginSuccessed(req.user);
+    return await this.authService.loginLocal(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(routeApiAuth.loginToken)
+  loginToken(@Request() req) {
+    return this.authService.loginToken(req.user);
   }
 
   @UseGuards(JwtAuthGuard)

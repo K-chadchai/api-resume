@@ -3,6 +3,7 @@ import { TokenDto } from '../dtos';
 export const routeApiAuth = {
   getUrl: (host: string, route: string, version = 'v1') => `${host}/${version}/auth/${route}`,
   login: 'login',
+  loginToken: 'login-token',
   logout: 'logout',
   jwtValidate: 'jwtValidate',
   killUser: 'killUser',

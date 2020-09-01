@@ -166,7 +166,7 @@ export class AuthService {
   }
 
   // ผ่านการ validateUser แล้ว (ล็อคอินสำเร็จแล้ว)
-  async loginSuccessed(user: any) {
+  async loginLocal(user: any) {
     //
     const { EmployeeId: userId, Fullname: userName, EmployeeLevel: employeeLevel, LoginActivityId: uuid } = user;
 
@@ -178,6 +178,24 @@ export class AuthService {
 
     // แปลงเป็น JWT
     return { token };
+  }
+
+  // ตรวจสอบ Token
+  async loginToken(user: TokenDto) {
+    const { uuid } = user;
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
+      const findLoginActivity = await runner.manager.findOne(LoginActivityEntity, uuid);
+      if (findLoginActivity.login_success !== '1') {
+        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,login_success !== '1'`);
+      }
+      if (findLoginActivity.logout_status === '1') {
+        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,logout_status === '1'`);
+      }
+      if (findLoginActivity.kill_status === '1') {
+        throw new BadRequestException(`รายการ login_activity.id=${uuid} ,kill_status === '1'`);
+      }
+      return user;
+    });
   }
 
   async logout({ uuid, actionTime }: TokenDto) {
