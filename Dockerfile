@@ -1,13 +1,15 @@
 #
-# docker build -t api-authen:latest .
+# docker build --build-arg NPM_TOKEN=${NPM_TOKEN} -t api-authen:latest .
 # docker tag api-authen:latest newsolution/api-authen:latest
 # docker push newsolution/api-authen:latest
 #
 # stage: 1
 FROM node:13-alpine as builder
 WORKDIR /app
+COPY .npmrc .npmrc  
 COPY ./package.json ./
 RUN yarn
+RUN rm -f .npmrc
 COPY . .
 RUN yarn build
 
