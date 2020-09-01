@@ -67,4 +67,10 @@ export class AuthController {
   async userRole(@Headers(KeysHeader.ApiModuleId) moduleId, @Request() req): Promise<RAuthUserRoles> {
     return await this.authService.getUserRoles(moduleId, req.user);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(routeApiAuth.moduleEnabled)
+  getModuleEnabled(@Body() body) {
+    return this.authService.getModuleEnabled(body);
+  }
 }

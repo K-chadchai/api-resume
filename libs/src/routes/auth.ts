@@ -9,6 +9,7 @@ export const routeApiAuth = {
   killUser: 'killUser',
   payload: 'payload',
   userRoles: 'userRoles',
+  moduleEnabled: 'moduleEnabled',
 };
 
 // login
@@ -36,4 +37,14 @@ export class RAuthUserRoles {
   rolesActoins: { [key: string]: string[] };
   rolesCode: string[];
   actionsCode: string[];
+}
+
+export class BAuthModuleEnabled {
+  EmployeeId: string;
+  Platform: string;
+}
+export class RAuthModuleEnabled {
+  ProgramKey: string;
+  ProgramName: string;
+  ProgramDescribe: string;
 }

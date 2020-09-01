@@ -18,7 +18,17 @@ import { LoginLockEntity } from 'src/entities/login_lock.entity';
 import { LoginConstantEntity } from 'src/entities/login_constant.entity';
 import { RoleActivityEntity } from 'src/entities/role_activity.entity';
 import { DBAUTHOR } from 'src/app/app.constants';
-import { ILoginLock, JwtConstant, ILoginConstant, ILoginGuard, IRoleActivity, RAuthUserRoles, TokenDto } from '@libs';
+import {
+  ILoginLock,
+  JwtConstant,
+  ILoginConstant,
+  ILoginGuard,
+  IRoleActivity,
+  RAuthUserRoles,
+  TokenDto,
+  BAuthModuleEnabled,
+  RAuthModuleEnabled,
+} from '@libs';
 import { Utility } from '@newsolution/api-common';
 
 interface IUserRole {
@@ -334,5 +344,18 @@ export class AuthService {
 
       return userRolesValues;
     });
+  }
+
+  async getModuleEnabled(body: BAuthModuleEnabled): Promise<RAuthModuleEnabled[]> {
+    return (await this.connection.query(`
+    SELECT  p.ProgramKey, p.ProgramName,p.ProgramDescribe 
+    FROM Policy_Actions pa , Programs p , Employees_Roles r 
+    WHERE pa.ProgramKey = p.ProgramKey  
+    AND pa.RoleId = r.Roles_RoleId 
+    AND r.Employees_EmployeeId  = '${body.EmployeeId}' 
+    AND p.Platform = '${body.Platform}'
+    and pa.[Status] = '1'
+    GROUP BY p.ProgramKey, p.ProgramName,p.ProgramDescribe
+    order by p.ProgramKey, p.ProgramName,p.ProgramDescribe`)) as RAuthModuleEnabled[];
   }
 }
