@@ -155,20 +155,21 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
 
   async getMediaImage(s3key, suffix = 'x') {
-    let imageBody: string;
+    let imageBody;
     if (s3key) {
-      imageBody = await this.uploaderService.getImageBody(s3key);
+      imageBody = await this.uploaderService.getImageContentBody(s3key);
     }
     if (imageBody) {
-      imageBody = `data:${'Lname'};base64,${imageBody}`;
+      const {ContentType,Body} = imageBody;
+      imageBody = `data:${ContentType};base64,${Body.toString('base64')}`;
     }
     return { media: 'Lname', s3key, imageBody };
   }
 
   async getMediaImageBase(s3key, suffix = 'x') {
-    let imageBody: string;
+    let imageBody;
     if (s3key) {
-      imageBody = await this.uploaderService.getImageBody(s3key);
+      imageBody = await this.uploaderService.getImageContentBody(s3key);
     }
     if (imageBody) {
       imageBody = `base64,${imageBody}`;

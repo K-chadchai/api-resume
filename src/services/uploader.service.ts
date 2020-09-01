@@ -156,6 +156,23 @@ export class UploaderService {
     }
   }
 
+  async getImageContentBody(s3key) {
+    if (!s3key) return null;
+    try {
+      const s3 = new aws.S3();
+      const file = await s3
+        .getObject({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: s3key,
+        })
+        .promise();
+      return file;
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('ASW Not found image');
+    }
+  }
+
   async getFileBody(s3key): Promise<any> {
     if (!s3key) return null;
     try {
