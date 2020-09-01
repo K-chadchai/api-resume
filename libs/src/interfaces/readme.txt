@@ -1,0 +1,1 @@
+สำหรับเก็บ interface โครงสร้าง tables 
