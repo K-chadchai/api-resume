@@ -161,7 +161,7 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     }
     if (imageBody) {
       const {ContentType,Body} = imageBody;
-      imageBody = `data:${ContentType};base64,${Body.toString('base64')}`;
+      imageBody = `data:image/${ContentType};base64,${Body.toString('base64')}`;
     }
     return { media: 'Lname', s3key, imageBody };
   }
