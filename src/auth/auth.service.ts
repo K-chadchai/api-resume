@@ -354,8 +354,8 @@ export class AuthService {
     AND pa.RoleId = r.Roles_RoleId 
     AND r.Employees_EmployeeId  = '${body.EmployeeId}' 
     AND p.Platform = '${body.Platform}'
-    and pa.[Status] = '1'
-    GROUP BY p.ProgramKey, p.ProgramName,p.ProgramDescribe
-    order by p.ProgramKey, p.ProgramName,p.ProgramDescribe`)) as RAuthModuleEnabled[];
+    AND pa.[Status] = '1'
+    GROUP BY p.ProgramKey, p.ProgramName,p.ProgramDescribe,p.OrderNo
+    ORDER BY ISNULL(p.OrderNo, 9999) , p.ProgramName`)) as RAuthModuleEnabled[];
   }
 }
