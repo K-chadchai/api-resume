@@ -1,4 +1,4 @@
-import { IMediaFolderEntity } from 'src/interfaces/media_folder.interface';
+import { IMediaFolderEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique, PrimaryColumn, Generated } from 'typeorm';
 
 const tname = 'media_folder';

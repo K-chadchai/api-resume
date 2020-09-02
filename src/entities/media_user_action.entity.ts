@@ -1,4 +1,4 @@
-import { IMediaUserActionEntity } from 'src/interfaces/media_user_action.interface';
+import { IMediaUserActionEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 
 const tname = 'media_user_action';

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
-import { IUsersEntity } from 'src/interfaces/users.interface';
+import { IUsersEntity } from '@libs';
 
 const tname = 'users';
 

@@ -1,4 +1,4 @@
-import { IMediaImageShareEntity } from 'src/interfaces/media_image_share.interface';
+import { IMediaImageShareEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique, Generated } from 'typeorm';
 
 const tname = 'media_image_share';

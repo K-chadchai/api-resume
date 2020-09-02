@@ -1,6 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 import { FoldersEntity } from './folders.entity';
-import { ICategoriesEntity } from 'src/interfaces/categories.interface';
+import { ICategoriesEntity } from '@libs';
 
 const tname = 'categories';
 

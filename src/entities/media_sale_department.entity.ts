@@ -1,4 +1,4 @@
-import { IMediaSaleDepartmentEntity } from 'src/interfaces/media_sale_department.interface';
+import { IMediaSaleDepartmentEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 
 const tname = 'media_sale_department';

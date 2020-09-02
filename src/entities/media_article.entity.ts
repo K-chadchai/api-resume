@@ -1,4 +1,4 @@
-import { IMediaArticleEntity } from 'src/interfaces/media_article.interface';
+import { IMediaArticleEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 
 const tname = 'media_article';

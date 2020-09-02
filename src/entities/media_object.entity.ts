@@ -1,4 +1,4 @@
-import { IMediaObjectEntity } from 'src/interfaces/media_object.interface';
+import { IMediaObjectEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique, Generated } from 'typeorm';
 
 const tname = 'media_object';

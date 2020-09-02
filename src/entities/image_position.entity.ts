@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
-import { IImagePostitionEntity } from 'src/interfaces/image_position.interface';
+import { IImagePostitionEntity } from '@libs';
 
 // ตำแหน่งที่ถ่ายภาพ
 const tname = 'image_position';

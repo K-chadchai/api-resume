@@ -1,4 +1,4 @@
-import { IMediaActivityLogEntity } from 'src/interfaces/media_activity_log.interface';
+import { IMediaActivityLogEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique, Generated } from 'typeorm';
 
 const tname = 'media_activity_log';

@@ -1,7 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { MediasEntity } from './medias.entity';
 import { CategoriesEntity } from './categories.entity';
-import { IFoldersEntity } from 'src/interfaces/folders.interface';
+import { IFoldersEntity } from '@libs';
 
 const tname = 'folders';
 

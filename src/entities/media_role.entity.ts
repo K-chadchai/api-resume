@@ -1,4 +1,4 @@
-import { IMediaRoleEntity } from 'src/interfaces/media_role.interface';
+import { IMediaRoleEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 
 const tname = 'media_role';

@@ -1,4 +1,4 @@
-import { IMediaObjectRelationEntity } from 'src/interfaces/media_object_relation.interface';
+import { IMediaObjectRelationEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique, Generated } from 'typeorm';
 
 const tname = 'media_object_relation';

@@ -1,4 +1,4 @@
-import { IMediaColorxEntity } from 'src/interfaces/media_colorx.interface';
+import { IMediaColorxEntity } from '@libs';
 import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 const tname = 'media_colerx';

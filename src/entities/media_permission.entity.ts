@@ -1,4 +1,4 @@
-import { IMediaPermissionEntity } from 'src/interfaces/media_permission';
+import { IMediaPermissionEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique, Generated } from 'typeorm';
 
 const tname = 'media_permission';

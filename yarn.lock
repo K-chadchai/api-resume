@@ -969,6 +969,11 @@
   resolved "https://registry.yarnpkg.com/@nestjsx/util/-/util-4.6.2.tgz#89bd31447a30f9666d7ad1616111c78b2d61dd56"
   integrity sha512-YG2gQvSm7p8zBFaW6MFM5r1Ihk4Vr189SB2OTr7fV7qcjPS+02v7xILw2dTz2emdmu0t0AgCL2RU1V0lY8Aa9w==
 
+"@newsolution/api-authen@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@newsolution/api-authen/-/api-authen-0.0.2.tgz#5349c2b724a2661e0d139daacd65935c060a6438"
+  integrity sha512-AjcWoci/yemLNkyGUcO7cbV6J3opjikUUMdGnVQyX3N8RY0D2S2ofDFjGbeeiXfEusNjtcZz/wwUrWeyUjPNNQ==
+
 "@nikom.san/api-common@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@nikom.san/api-common/-/api-common-1.0.2.tgz#ee5c8e06ce955a836f2ef65235d796a419c821d2"

@@ -1,5 +1,5 @@
 import { Entity, Unique, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IMediaResolutionEntity } from 'src/interfaces/media_resolution.interface';
+import { IMediaResolutionEntity } from '@libs';
 
 const tname = 'media_resolution';
 @Entity(tname)

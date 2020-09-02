@@ -1,4 +1,4 @@
-import { IMediaSideEntity } from 'src/interfaces/media_side.interface';
+import { IMediaSideEntity } from '@libs';
 import { PrimaryGeneratedColumn, Column, Entity, Unique } from 'typeorm';
 
 const tname = 'media_side';

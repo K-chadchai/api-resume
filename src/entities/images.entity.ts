@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne } from 'typeorm';
 import { MediasEntity } from './medias.entity';
-import { IImagesEntity } from 'src/interfaces/images.interface';
+import { IImagesEntity } from '@libs';
 
 const tname = 'images';
 

@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn
 import { ImagePostitionEntity } from './image_position.entity';
 import { FoldersEntity } from './folders.entity';
 import { ImagesEntity } from './images.entity';
-import { IMediasEntity } from 'src/interfaces/medias.interface';
+import { IMediasEntity } from '@libs';
 
 // รูปภาพและวิดีโอ ที่อัพโหลด
 const tname = 'medias';

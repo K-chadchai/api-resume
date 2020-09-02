@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-export class IImagesEntity {
+export interface IImagesEntity {
   id: string;
   suffix: string;
   width: number;
