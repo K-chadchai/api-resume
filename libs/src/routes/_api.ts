@@ -3,7 +3,7 @@ export class Api {
   constructor(module: string) {
     this.module = module;
   }
-  url(host: string, route: string, version = 'v1') {
+  url(host: string, route = '', version = 'v1') {
     return `${host}/${version}/${this.module}${route ? `/${route}` : ''}`;
   }
 }
