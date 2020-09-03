@@ -931,8 +931,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
   async postDataUploadArticleSet(body: DataUploadArticleSet, req) {
      // Validate
-     if (!body.folder_id || !body.object_name || body.ContentType || body.s3key || body.resolution_id) {
-      throw new BadRequestException('ไม่พบข้อมูล, folder_id');
+     if (!body.folder_id || !body.object_name || !body.ContentType || !body.s3key || !body.resolution_id) {
+      throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการบันทึกข้อมูล');
     }
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
         const media_object = new MediaObjectEntity();
