@@ -66,6 +66,7 @@ interface IGetArticleSet {
 interface IGetSearchArticleSet{
   folder_id:string;
   search_name:string;
+  page_no:number;
 }
 
 @Injectable()
@@ -1004,7 +1005,14 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
       return (await runner.manager.find(MediaObjectEntity, 
-        { where: {folder_id:props.folder_id ,object_name: Like(`%${props.search_name}%`) } })) || ({} as MediaObjectEntity);
+        { 
+        where: {folder_id:props.folder_id ,object_name: Like(`%${props.search_name}%`)},
+        order:{
+          object_name:'ASC'
+        },
+        skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+        take:10,
+       })) || ({} as MediaObjectEntity);
   });
 }
 

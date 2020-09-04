@@ -90,7 +90,14 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
     }
         return await this.appService.dbRunner(async (runner: QueryRunner) => {
         return (await runner.manager.find(MediaFolderEntity,
-          { where: {folder_type: 'ARTICLE_SET' ,folder_name: Like(`%${props.search}%`) } })) || ({} as MediaFolderEntity);
+          { 
+          where: {folder_type: 'ARTICLE_SET' ,folder_name: Like(`%${props.search}%`)},
+          order:{
+            folder_name:'ASC'
+          },
+          skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+          take:10,
+          })) || ({} as MediaFolderEntity);
     });
   }
 
