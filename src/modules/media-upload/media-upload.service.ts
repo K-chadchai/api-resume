@@ -14,6 +14,7 @@ import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.en
 import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
 import { v4 as uuid } from 'uuid';
 import { DBMASTER } from 'src/app/app.constants';
+import { MediaActivityLogEntity } from 'src/entities/media_activity_log.entity';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -812,6 +813,19 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
                   MediaObjectRelationEntity,
                   media_object_relation,
                 );
+
+                //เก็บ log
+                const media_activity_log = new MediaActivityLogEntity();
+                media_activity_log.object_id = id;
+                media_activity_log.description = 'อัพโหลดรูปภาพ';
+                media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+                media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+                const sMedia_activity_log = await runner.manager.save(
+                  MediaActivityLogEntity,
+                  media_activity_log,
+                );
+                
                 return sMedia_object_relation;
               } else {
                 throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
@@ -822,8 +836,20 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               });
               if (fineDataObject !== undefined) {
                 fineDataObject.s3key = body.s3key;
-
                 const sMedia_object = await runner.manager.save(MediaObjectEntity, fineDataObject);
+
+                //เก็บ log
+                const media_activity_log = new MediaActivityLogEntity();
+                media_activity_log.object_id = fineData.object_id;
+                media_activity_log.description = 'อัพเดทแทนภาพเดิม';
+                media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+                media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+                const sMedia_activity_log = await runner.manager.save(
+                  MediaActivityLogEntity,
+                  media_activity_log,
+                );
+
                 return sMedia_object;
               }
             }
@@ -915,8 +941,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       }
     } else id_unit = fineUnit.id;
 
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
     //let postDataUploadRelation;
-    const repositorypostObjectRelation = getRepository(MediaObjectRelationEntity);
     const postDataUploadRelation = new MediaObjectRelationEntity();
     postDataUploadRelation.object_id = body.folder_id;
     postDataUploadRelation.article_id = id_article;
@@ -926,8 +952,21 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     postDataUploadRelation.color_id = uuid();
     postDataUploadRelation.resolution_id = uuid();
     postDataUploadRelation.relation_type = 'ARTICLE_SET';
+    const sPostDataUploadRelation = await runner.manager.save(MediaObjectRelationEntity, postDataUploadRelation);
 
-    return await repositorypostObjectRelation.save(postDataUploadRelation);
+    //เก็บ log
+    const media_activity_log = new MediaActivityLogEntity();
+    media_activity_log.object_id = body.folder_id;
+    media_activity_log.description = 'อัพโหลดรูปภาพ';
+    media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+    media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+    const sMedia_activity_log = await runner.manager.save(
+      MediaActivityLogEntity,
+      media_activity_log,
+    );
+    return sPostDataUploadRelation;
+    });
   }
 
   async postDataUploadArticleSet(body: DataUploadArticleSet, req) {
@@ -965,6 +1004,19 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
           //let sMedia_object_relation;
           const sMedia_object_relation = await runner.manager.save(MediaObjectRelationEntity, media_object_relation);
+          
+          //เก็บ log
+          const media_activity_log = new MediaActivityLogEntity();
+          media_activity_log.object_id = body.folder_id;
+          media_activity_log.description = 'อัพโหลดรูปภาพ';
+          media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+          media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+          const sMedia_activity_log = await runner.manager.save(
+            MediaActivityLogEntity,
+            media_activity_log,
+          );
+          
           return sMedia_object_relation;
         } else {
           throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');

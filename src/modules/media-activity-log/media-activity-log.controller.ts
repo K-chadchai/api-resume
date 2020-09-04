@@ -16,4 +16,9 @@ export class MediaActivityLogController {
   async get(@Query() query) {
     return await this.service.getPaging(query);
   }
+
+  @Get('/LogByObjectId')
+  async getLogByObjectId(@Query() query) {
+    return await this.service.getLogByObjectId(query);
+  }
 }
