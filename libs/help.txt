@@ -1,0 +1,5 @@
+// npm i npmrc -g
+// npmrc
+// npm init --scope=@newsolution
+
+yarn && npm publish --access restricted

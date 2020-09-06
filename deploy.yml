@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE_NAME}
+spec:
+  selector:
+    matchLabels:
+      app: ${SERVICE_NAME}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ${SERVICE_NAME}
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 0
+      containers:
+        - name: ${SERVICE_NAME}
+          image: ${REPOSITORY_TAG}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${SERVICE_NAME}
+spec:
+  selector:
+    app: ${SERVICE_NAME}
+  ports:
+    - name: api-port
+      port: 4000
+  type: ClusterIP

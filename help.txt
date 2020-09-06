@@ -7,7 +7,7 @@ git remote remove [project]
 git rm -rf --cached .
 git add .
 >>
-git remote add base https://gitlab.com/dohome-2020/api-authen.git
+git remote add base https://gitlab.com/dohome-2020/api-worker.git
 git fetch base
 git merge base/master --allow-unrelated-histories 
 git remote remove base
