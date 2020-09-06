@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // return await this.authService.jwtValidate(token);
     return await axios
       .post(
-        routeApiAuth.getUrl(process.env.API_AUTHEN_HOST, routeApiAuth.jwtValidate),
+        routeApiAuth.url(process.env.API_AUTHEN_HOST, routeApiAuth.jwtValidate),
         { token },
         {
           headers: {
