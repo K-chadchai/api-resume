@@ -1,6 +1,6 @@
 {
-  "name": "@newsolution/api-media",
-  "version": "0.0.2",
+  "name": "@newsolution/api-worker",
+  "version": "0.0.0",
   "description": "NestJS",
   "author": "",
   "license": "UNLICENSED",
