@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { MediaFolderEntity } from 'src/entities/media_folder.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppService } from 'src/app/app.service';
@@ -81,4 +81,25 @@ export class MediaFolderService extends TypeOrmCrudService<MediaFolderEntity> {
       return { sf1, sf2 };
     });
   }
+
+  // ค้นหาข้อมูล
+  async searchFolderArticleSet(props: IGetFolder) {
+    // Validate
+    if (!props.search) {
+      throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการค้นหา');
+    }
+        return await this.appService.dbRunner(async (runner: QueryRunner) => {
+        return (await runner.manager.find(MediaFolderEntity,
+          { 
+          where: {folder_type: 'ARTICLE_SET' ,folder_name: Like(`%${props.search}%`)},
+          order:{
+            folder_name:'ASC'
+          },
+          skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+          take:10,
+          })) || ({} as MediaFolderEntity);
+    });
+  }
+
+
 }

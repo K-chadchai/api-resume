@@ -20,4 +20,10 @@ export class MediaFolderController {
   async post() {
     return await this.service.postInit();
   }
+
+  @Get('/searchFolderArticleSet')
+  async searchFolderArticleSet(@Query() query) {
+    return await this.service.searchFolderArticleSet(query);
+  }
+
 }

@@ -14,6 +14,7 @@ import { MediaSaleDepartmentEntity } from 'src/entities/media_sale_department.en
 import { MediaColorxEntity } from 'src/entities/media_colorx.entity';
 import { v4 as uuid } from 'uuid';
 import { DBMASTER } from 'src/app/app.constants';
+import { MediaActivityLogEntity } from 'src/entities/media_activity_log.entity';
 
 interface IGetArticleInfo {
   page_no: number;
@@ -66,6 +67,7 @@ interface IGetArticleSet {
 interface IGetSearchArticleSet{
   folder_id:string;
   search_name:string;
+  page_no:number;
 }
 
 @Injectable()
@@ -811,6 +813,19 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
                   MediaObjectRelationEntity,
                   media_object_relation,
                 );
+
+                //เก็บ log
+                const media_activity_log = new MediaActivityLogEntity();
+                media_activity_log.object_id = id;
+                media_activity_log.description = 'อัพโหลดรูปภาพ';
+                media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+                media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+                const sMedia_activity_log = await runner.manager.save(
+                  MediaActivityLogEntity,
+                  media_activity_log,
+                );
+                
                 return sMedia_object_relation;
               } else {
                 throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
@@ -821,8 +836,20 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
               });
               if (fineDataObject !== undefined) {
                 fineDataObject.s3key = body.s3key;
-
                 const sMedia_object = await runner.manager.save(MediaObjectEntity, fineDataObject);
+
+                //เก็บ log
+                const media_activity_log = new MediaActivityLogEntity();
+                media_activity_log.object_id = fineData.object_id;
+                media_activity_log.description = 'อัพเดทแทนภาพเดิม';
+                media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+                media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+                const sMedia_activity_log = await runner.manager.save(
+                  MediaActivityLogEntity,
+                  media_activity_log,
+                );
+
                 return sMedia_object;
               }
             }
@@ -914,8 +941,8 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
       }
     } else id_unit = fineUnit.id;
 
+    return await this.appService.dbRunner(async (runner: QueryRunner) => {
     //let postDataUploadRelation;
-    const repositorypostObjectRelation = getRepository(MediaObjectRelationEntity);
     const postDataUploadRelation = new MediaObjectRelationEntity();
     postDataUploadRelation.object_id = body.folder_id;
     postDataUploadRelation.article_id = id_article;
@@ -925,14 +952,27 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
     postDataUploadRelation.color_id = uuid();
     postDataUploadRelation.resolution_id = uuid();
     postDataUploadRelation.relation_type = 'ARTICLE_SET';
+    const sPostDataUploadRelation = await runner.manager.save(MediaObjectRelationEntity, postDataUploadRelation);
 
-    return await repositorypostObjectRelation.save(postDataUploadRelation);
+    //เก็บ log
+    const media_activity_log = new MediaActivityLogEntity();
+    media_activity_log.object_id = body.folder_id;
+    media_activity_log.description = 'อัพโหลดรูปภาพ';
+    media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+    media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+    const sMedia_activity_log = await runner.manager.save(
+      MediaActivityLogEntity,
+      media_activity_log,
+    );
+    return sPostDataUploadRelation;
+    });
   }
 
   async postDataUploadArticleSet(body: DataUploadArticleSet, req) {
      // Validate
-     if (!body.folder_id || !body.object_name || body.ContentType || body.s3key || body.resolution_id) {
-      throw new BadRequestException('ไม่พบข้อมูล, folder_id');
+     if (!body.folder_id || !body.object_name || !body.ContentType || !body.s3key || !body.resolution_id) {
+      throw new BadRequestException('กรุณาตรวจสอบเงื่อนไขการบันทึกข้อมูล');
     }
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
         const media_object = new MediaObjectEntity();
@@ -964,6 +1004,19 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
 
           //let sMedia_object_relation;
           const sMedia_object_relation = await runner.manager.save(MediaObjectRelationEntity, media_object_relation);
+          
+          //เก็บ log
+          const media_activity_log = new MediaActivityLogEntity();
+          media_activity_log.object_id = body.folder_id;
+          media_activity_log.description = 'อัพโหลดรูปภาพ';
+          media_activity_log.creator = (req.user === undefined)?'':req.user.userId;
+          media_activity_log.created_time = (req.actionTime ===  undefined)?new Date():req.actionTime;
+
+          const sMedia_activity_log = await runner.manager.save(
+            MediaActivityLogEntity,
+            media_activity_log,
+          );
+          
           return sMedia_object_relation;
         } else {
           throw new InternalServerErrorException('ไม่สามารถอัพโหลดไฟล์ได้');
@@ -1004,7 +1057,14 @@ LEFT JOIN TBMaster_Unit un ON pu.UNITCODE = un.CODE where pu.PRODUCTCODE = '${pr
   }
       return await this.appService.dbRunner(async (runner: QueryRunner) => {
       return (await runner.manager.find(MediaObjectEntity, 
-        { where: {folder_id:props.folder_id ,object_name: Like(`%${props.search_name}%`) } })) || ({} as MediaObjectEntity);
+        { 
+        where: {folder_id:props.folder_id ,object_name: Like(`%${props.search_name}%`)},
+        order:{
+          object_name:'ASC'
+        },
+        skip: props.page_no > 0 ? (props.page_no - 1) * 10 : 0,
+        take:10,
+       })) || ({} as MediaObjectEntity);
   });
 }
 
