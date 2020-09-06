@@ -5,7 +5,6 @@ import { v4 as uuid } from 'uuid';
 
 import multer = require('multer');
 import s3Storage = require('multer-sharp-s3');
-import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class UploaderService {
@@ -32,7 +31,7 @@ export class UploaderService {
       .then(
         () => {
           Logger.log('deleted:', s3key);
-          return {s3key};
+          return { s3key };
         },
         (err) => {
           console.error('delete, Error:', err);

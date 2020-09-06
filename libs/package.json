@@ -1,6 +1,6 @@
 {
   "name": "@newsolution/api-media",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "NestJS",
   "author": "",
   "license": "UNLICENSED",
@@ -24,7 +24,7 @@
     "nestjs"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "peerDependencies": {},
   "dependencies": {},
