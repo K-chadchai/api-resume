@@ -1,8 +1,8 @@
 {
   "name": "@newsolution/api-worker",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "NestJS",
-  "author": "",
+  "author": "newsolutiondev",
   "license": "UNLICENSED",
   "main": "dist/index.js",
   "files": [
