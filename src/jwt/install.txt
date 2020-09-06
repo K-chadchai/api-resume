@@ -1,3 +1,0 @@
-yarn add @nestjs/passport passport passport-jwt
-
-https://github.com/nestjs/nest/issues/964
