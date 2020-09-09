@@ -3,8 +3,6 @@ import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 
-const log = new Logger();
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Enable JWT
@@ -17,6 +15,6 @@ async function bootstrap() {
     methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   });
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(4000, '0.0.0.0', (_, address) => log.log(`> API is running ... ` + address));
+  await app.listen(4000);
 }
 bootstrap();
