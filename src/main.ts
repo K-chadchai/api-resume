@@ -17,6 +17,6 @@ async function bootstrap() {
     methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   });
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(4000);
+  await app.listen(4000, '0.0.0.0', (_, address) => log.log(`> API is running ... ` + address));
 }
 bootstrap();
