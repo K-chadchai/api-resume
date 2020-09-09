@@ -3,6 +3,8 @@ import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 
+const log = new Logger();
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Enable JWT
