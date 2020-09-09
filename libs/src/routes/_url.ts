@@ -1,12 +1,11 @@
-export class Api {
-  module: string;
-  constructor(module: string) {
-    this.module = module;
-  }
-  url(host: string, route = '', version = 'v1') {
-    return `${host}/${version}/${this.module}${route ? `/${route}` : ''}`;
-  }
-}
+const queryString = (query) => {
+  return Object.keys(query)
+    .map((key) => key + '=' + query[key])
+    .join('&');
+};
+
+export const url = (host: string, version: string, module: string, route = '', query: object) =>
+  `${host}/${version}/${module}${route ? `/${route}` : ''}${query ? `?${queryString(query)}` : ''}`;
 
 // export const routeApiAuth = {
 //   url: (host: string, route = '', query?: object) => url(host, 'v1', 'auth', route, query),
