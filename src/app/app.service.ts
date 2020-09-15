@@ -14,9 +14,7 @@ export class AppService {
       await runner.startTransaction();
     } catch (error) {
       Logger.error(error);
-      throw new InternalServerErrorException(
-        `Postgres transaction couldn\'t create : ${error.errmsg || error.message}`,
-      );
+      throw new InternalServerErrorException(`Transaction couldn\'t create : ${error.errmsg || error.message}`);
     }
     // Call service
     let returnValue: any;
