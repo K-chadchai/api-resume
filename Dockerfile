@@ -1,6 +1,5 @@
 #
-# docker build --build-arg NPM_TOKEN=${NPM_TOKEN} -t newsolution/api-worker:latest .
-# docker push newsolution/api-worker:latest 
+# docker-compose build && docker-compose push
 #
 # stage: 1
 FROM node:13-alpine as development
