@@ -6,10 +6,10 @@ FROM node:13-alpine as development
 WORKDIR /usr/src/app
 COPY .npmrc .npmrc  
 COPY ./package.json ./
-RUN yarn
+RUN ["yarn", "install"]
 RUN rm -f .npmrc
 COPY . .
-RUN yarn build
+RUN ["yarn", "build"]
 
 # Stage 2 - the production environment
 FROM node:13-alpine as production
