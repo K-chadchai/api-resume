@@ -6,6 +6,7 @@ FROM node:13-alpine as development
 WORKDIR /usr/src/app
 COPY .npmrc .npmrc  
 COPY ./package.json ./
+COPY ./yarn.lock ./
 RUN ["yarn", "install"]
 RUN rm -f .npmrc
 COPY . .
@@ -14,6 +15,15 @@ RUN ["yarn", "build"]
 # Stage 2 - the production environment
 FROM node:13-alpine as production
 LABEL maintainer="api-worker"
+
+# TimeZone
+RUN apk update
+RUN apk upgrade
+RUN apk add ca-certificates && update-ca-certificates
+RUN apk add --update tzdata
+ENV TZ=Asia/Bangkok
+RUN rm -rf /var/cache/apk/*
+
 WORKDIR /usr/src/app
 COPY .npmrc .npmrc  
 COPY package*.json ./
