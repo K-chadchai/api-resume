@@ -21,13 +21,13 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
 
-  if (process.env.DOMAIN.includes('uat') || process.env.NODE_ENV === 'development') {
+  if (process.env.API_HOST.includes('-uat') || process.env.NODE_ENV === 'development') {
     const options = new DocumentBuilder()
       .setTitle('Title : api-worker')
       .setDescription('Description : api-worker')
       .setVersion('1.0')
       .addBearerAuth()
-      .addServer(process.env.DOMAIN)
+      .addServer(process.env.API_HOST)
       .build();
 
     const document = SwaggerModule.createDocument(app, options);
