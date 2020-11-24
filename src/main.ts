@@ -30,10 +30,8 @@ async function bootstrap() {
       .addServer(process.env.DOMAIN)
       .build();
 
-    log.debug("NODE_ENV -> " + process.env.NODE_ENV)
-
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup("api-docs", app, document);
+    SwaggerModule.setup('api-docs', app, document);
   }
 
   await app.listen(4000, '0.0.0.0', (_, address) => log.log(`> ${address} ... ${process.env.NODE_ENV}`));
