@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(token: TokenDto) {
     // return await this.authService.jwtValidate(token);
-    return await axios
+    return axios
       .post(
         routeApiAuth.url(process.env.API_AUTHEN_HOST, routeApiAuth.jwtValidate),
         { token },
