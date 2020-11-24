@@ -15,10 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(token: TokenDto) {
+  async validate(token: TokenDto): Promise<any> {
     // return await this.authService.jwtValidate(token);
-    return axios
-      .post(
+    try {
+      const response = await axios.post(
         routeApiAuth.url(process.env.API_AUTHEN_HOST, routeApiAuth.jwtValidate),
         { token },
         {
@@ -26,13 +26,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             'api-validate-key': JwtConstant.VALIDATE_KEY,
           },
         },
-      )
-      .then((response) => {
-        if (response.data) return response.data;
-        throw new NotFoundException(`jwtValidate : Not found ,response.data`);
-      })
-      .catch((err) => {
-        throw new InternalServerErrorException(`jwtValidate : API Error, ${err}`);
-      });
+      );
+      if (response.data) return response.data;
+      throw new NotFoundException(`jwtValidate : Not found ,response.data`);
+    } catch (err) {
+      throw new InternalServerErrorException(`jwtValidate : API Error, ${err}`);
+    }
   }
 }
