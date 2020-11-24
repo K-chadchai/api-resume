@@ -21,7 +21,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
 
-  if (process.env.API_HOST.includes('-uat') || process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || process.env.API_HOST.includes('-uat')) {
     const options = new DocumentBuilder()
       .setTitle('Title : api-worker')
       .setDescription('Description : api-worker')
