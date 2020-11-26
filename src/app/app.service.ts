@@ -1,4 +1,5 @@
-import { Logger, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
+import { ComException } from '@newsolution/api-common';
 import { Connection, QueryRunner } from 'typeorm';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class AppService {
       await runner.startTransaction();
     } catch (error) {
       Logger.error(error);
-      throw new InternalServerErrorException(`Transaction couldn\'t create : ${error.errmsg || error.message}`);
+      throw new ComException(`Transaction couldn\'t create : ${error.errmsg || error.message}`);
     }
     // Call service
     let returnValue: any;
@@ -23,7 +24,7 @@ export class AppService {
       await runner.commitTransaction();
     } catch (error) {
       await runner.rollbackTransaction();
-      throw new InternalServerErrorException(`Transaction Error,${error.errmsg || error.message}`);
+      throw new ComException(`Transaction Error,${error.errmsg || error.message}`);
     } finally {
       await runner.release();
     }

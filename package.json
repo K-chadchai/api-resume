@@ -32,6 +32,7 @@
     "@nestjsx/crud-request": "^4.6.2",
     "@nestjsx/crud-typeorm": "^4.5.0",
     "@newsolution/api-authen": "^0.0.20",
+    "@newsolution/api-common": "^0.0.28",
     "aws-sdk": "^2.666.0",
     "axios": "^0.20.0",
     "class-transformer": "^0.3.1",

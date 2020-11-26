@@ -690,6 +690,13 @@
   resolved "https://registry.yarnpkg.com/@newsolution/api-authen/-/api-authen-0.0.20.tgz#9a688265a42144376d1466e03bae2738dae4d3b9"
   integrity sha512-eQz2qqG3QHxFEyyF2WsCG3kL2dTxKCBe3xfbE0qvnrGkiscaq2p1YqpcyONaUyabUe6dQJHjwXNXvrMHg1tQ8w==
 
+"@newsolution/api-common@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@newsolution/api-common/-/api-common-0.0.28.tgz#4dcddcdc88dec493398a5a229de13ccaa8a46ef2"
+  integrity sha512-R+K2MnKhbHa+GnFt9npmMC37dWx0yTNC/yHiTdNcrCVPJHVC3Wg1fP0b6v/aa/GEmy9DCCD4lNWzS0SUsY52Ig==
+  dependencies:
+    nodemailer "^6.4.16"
+
 "@nuxtjs/opencollective@0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/opencollective/-/opencollective-0.2.2.tgz#26a761ebf588cc92a422d7cee996a66bd6e2761e"
@@ -5687,6 +5694,11 @@ node-notifier@^6.0.0:
     semver "^6.3.0"
     shellwords "^0.1.1"
     which "^1.3.1"
+
+nodemailer@^6.4.16:
+  version "6.4.16"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.4.16.tgz#5cb6391b1d79ab7eff32d6f9f48366b5a7117293"
+  integrity sha512-68K0LgZ6hmZ7PVmwL78gzNdjpj5viqBdFqKrTtr9bZbJYj6BRj5W6WGkxXrEnUl3Co3CBXi3CZBUlpV/foGnOQ==
 
 noop-logger@^0.1.1:
   version "0.1.1"
