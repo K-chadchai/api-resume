@@ -690,10 +690,10 @@
   resolved "https://registry.yarnpkg.com/@newsolution/api-authen/-/api-authen-0.0.20.tgz#9a688265a42144376d1466e03bae2738dae4d3b9"
   integrity sha512-eQz2qqG3QHxFEyyF2WsCG3kL2dTxKCBe3xfbE0qvnrGkiscaq2p1YqpcyONaUyabUe6dQJHjwXNXvrMHg1tQ8w==
 
-"@newsolution/api-common@^0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@newsolution/api-common/-/api-common-0.0.28.tgz#4dcddcdc88dec493398a5a229de13ccaa8a46ef2"
-  integrity sha512-R+K2MnKhbHa+GnFt9npmMC37dWx0yTNC/yHiTdNcrCVPJHVC3Wg1fP0b6v/aa/GEmy9DCCD4lNWzS0SUsY52Ig==
+"@newsolution/api-common@^0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@newsolution/api-common/-/api-common-0.0.33.tgz#d9671a96faca1c115706f287b3138ca0b6da5ebb"
+  integrity sha512-K0820f2ZnGEnWG9Cp8zU7ydvtHD9QLTre7GNbOuMbuRxKPfttSpuICfyJ7oTdQ0cIeAtxORfj2NLRhfLCPPu0Q==
   dependencies:
     nodemailer "^6.4.16"
 
