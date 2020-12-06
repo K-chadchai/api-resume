@@ -35,7 +35,7 @@ export class AppService {
       await runner.commitTransaction();
     } catch (error) {
       await runner.rollbackTransaction();
-      throw new ComException(error, `dbRunnerCall`);
+      throw new ComException(error, `dbRunnerCallback`);
     } finally {
       await runner.release();
     }
