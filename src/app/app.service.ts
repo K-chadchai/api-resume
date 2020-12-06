@@ -3,6 +3,7 @@ import { BaseExceptionFilter } from '@nestjs/core';
 import { ComException } from '@newsolution/api-common';
 import { Connection, QueryRunner } from 'typeorm';
 
+// AllExceptionsFilter
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
   catch(exception: HttpException | any, host: ArgumentsHost) {
