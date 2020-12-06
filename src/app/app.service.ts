@@ -27,7 +27,7 @@ export class AppService {
       await runner.startTransaction();
     } catch (error) {
       Logger.error(error);
-      throw new ComException(error, `dbRunnerCreate`);
+      throw error;
     }
     // Call service
     let returnValue: any;
@@ -36,7 +36,7 @@ export class AppService {
       await runner.commitTransaction();
     } catch (error) {
       await runner.rollbackTransaction();
-      throw new ComException(error, `dbRunnerCallback`);
+      throw error;
     } finally {
       await runner.release();
     }
