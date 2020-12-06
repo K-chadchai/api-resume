@@ -19,27 +19,23 @@ export class AppService {
   constructor(private connection: Connection) {}
   // Postgres Session
   async dbRunner(onCallback: (runner: QueryRunner) => any): Promise<any> {
-    let runner: QueryRunner;
-    // Create transaction
+    let runner: QueryRunner = undefined;
     try {
       runner = this.connection.createQueryRunner();
       await runner.connect();
       await runner.startTransaction();
-    } catch (error) {
-      Logger.error(error);
-      throw error;
-    }
-    // Call service
-    let returnValue: any;
-    try {
-      returnValue = await onCallback(runner);
+      const returnValue = await onCallback(runner);
       await runner.commitTransaction();
+      return returnValue;
     } catch (error) {
-      await runner.rollbackTransaction();
+      if (runner) {
+        await runner.rollbackTransaction();
+      }
       throw error;
     } finally {
-      await runner.release();
+      if (runner) {
+        await runner.release();
+      }
     }
-    return returnValue;
   }
 }
