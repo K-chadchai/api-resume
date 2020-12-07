@@ -1,4 +1,4 @@
-import { Logger, Injectable, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { Injectable, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { ComException } from '@newsolution/api-common';
 import { Connection, QueryRunner } from 'typeorm';
