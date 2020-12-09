@@ -28,7 +28,7 @@
   },
   "peerDependencies": {},
   "dependencies": {
-    "@newsolution/api-common": "^0.0.39",
+    "@newsolution/api-common": "^0.0.48",
     "class-validator": "^0.12.2"
   },
   "devDependencies": {
