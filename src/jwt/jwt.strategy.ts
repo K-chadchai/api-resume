@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtConstant, TokenDto, routeApiAuth } from '@newsolution/api-authen';
 import axios from 'axios';
+import { ComException } from '@newsolution/api-common';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -21,16 +22,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const response = await axios.post(
         routeApiAuth.url(process.env.API_AUTHEN_HOST, routeApiAuth.jwtValidate),
         { token },
-        {
-          headers: {
-            'api-validate-key': JwtConstant.VALIDATE_KEY,
-          },
-        },
+        { headers: { 'api-validate-key': JwtConstant.VALIDATE_KEY } },
       );
+
       if (response.data) return response.data;
       throw new NotFoundException(`jwtValidate : Not found ,response.data`);
     } catch (err) {
-      throw new InternalServerErrorException(`jwtValidate : API Error, ${err}`);
+      console.log(err);
+      throw new ComException(err, 'jwtValidate Failure');
     }
   }
 }
