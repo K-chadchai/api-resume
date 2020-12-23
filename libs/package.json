@@ -27,10 +27,7 @@
     "access": "restricted"
   },
   "peerDependencies": {},
-  "dependencies": {
-    "@newsolution/api-common": "^0.0.48",
-    "class-validator": "^0.12.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "prettier": "2.0.5",
     "ts-node": "8.1.0",

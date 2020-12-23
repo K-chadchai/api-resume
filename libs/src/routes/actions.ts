@@ -1,7 +1,7 @@
-import { getRoute } from '@newsolution/api-common';
+import { url } from './_url';
 
 export const routeApiActions = {
-  url: (host: string, route = '', query?: object) => getRoute(host, 'v1', 'actions', route, query),
-  // ----------- Actions -----------
-  // ----------- Actions -----------
+  url: (host: string, route = '', query?: object) => url(host, 'v1', 'actions', route, query),
+  // -----
+  // -----
 };
