@@ -4,9 +4,14 @@ import { routes } from './app.routes';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EasyconfigModule } from 'nestjs-easyconfig';
 import { JwtStrategy } from 'src/jwt/jwt.strategy';
+import { ConfigModule } from '@nestjs/config';
+import configuration from 'src/config/configuration';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [configuration],
+    }),
     EasyconfigModule.register({}),
     TypeOrmModule.forRoot({
       type: 'postgres',

@@ -2,17 +2,18 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtConstant, TokenDto, routeApiAuth } from '@newsolution/api-authen';
+import { TokenDto, routeApiAuth } from '@newsolution/api-authen';
 import axios from 'axios';
 import { ComException } from '@newsolution/api-common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: JwtConstant.SECRET_KEY,
+      secretOrKey: configService.get('SECRET_KEY'),
     });
   }
 
@@ -22,7 +23,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const response = await axios.post(
         routeApiAuth.url(process.env.API_AUTHEN_HOST, routeApiAuth.jwtValidate),
         { token },
-        { headers: { 'api-validate-key': JwtConstant.VALIDATE_KEY } },
+        {
+          headers: {
+            'api-validate-key': this.configService.get('VALIDATE_KEY'),
+          },
+        },
       );
 
       if (response.data) return response.data;
