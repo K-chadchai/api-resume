@@ -3,9 +3,9 @@
 #
 version: '3.5'
 services:
-  api-worker:
+  api-testing:
     build:
       context: .
       args:
         - NPM_TOKEN=7636bd9b-678c-40e2-8cb2-06dcddb8fa26
-    image: newsolution/api-worker:latest
+    image: newsolution/api-testing:latest

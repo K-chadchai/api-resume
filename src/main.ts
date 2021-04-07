@@ -1,7 +1,6 @@
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './app/app.service';
@@ -14,7 +13,7 @@ async function bootstrap() {
 
   // Enable JWT
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   // Enable Cors
   app.enableCors({
@@ -27,8 +26,8 @@ async function bootstrap() {
   // Swagger
   if (process.env.NODE_ENV === 'development' || process.env.API_HOST?.includes('-uat')) {
     const options = new DocumentBuilder()
-      .setTitle('Title : api-worker')
-      .setDescription('Description : api-worker')
+      .setTitle('Title : api-testing')
+      .setDescription('Description : api-testing')
       .setVersion('1.0')
       .addBearerAuth()
       .addServer(process.env.API_HOST)

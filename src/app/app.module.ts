@@ -3,9 +3,9 @@ import { RouterModule } from 'nest-router';
 import { routes } from './app.routes';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EasyconfigModule } from 'nestjs-easyconfig';
-import { JwtStrategy } from 'src/jwt/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import configuration from 'src/config/configuration';
+import { SaveContactModule } from 'src/modules/save-contact/save-contact.module';
 
 @Module({
   imports: [
@@ -25,7 +25,8 @@ import configuration from 'src/config/configuration';
       logging: true,
     }),
     RouterModule.forRoutes(routes),
+    SaveContactModule,
   ],
-  providers: [JwtStrategy],
+  providers: [],
 })
 export class AppModule {}
