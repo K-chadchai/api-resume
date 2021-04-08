@@ -14,7 +14,7 @@ RUN ["yarn", "build"]
 
 # Stage 2 - the production environment
 FROM node:14-alpine as production
-LABEL maintainer="api-testing"
+LABEL maintainer="api-resume"
 
 # TimeZone
 RUN apk update

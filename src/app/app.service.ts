@@ -1,18 +1,10 @@
-import { Injectable, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { Injectable, Catch } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { ComException } from '@newsolution/api-common';
 import { Connection, QueryRunner } from 'typeorm';
 
 // AllExceptionsFilter
 @Catch()
-export class AllExceptionsFilter extends BaseExceptionFilter {
-  catch(exception: HttpException | any, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
-    const { statusCode, message } = ComException.getError(exception);
-    response.status(statusCode).send({ statusCode, message });
-  }
-}
+export class AllExceptionsFilter extends BaseExceptionFilter {}
 
 @Injectable()
 export class AppService {
